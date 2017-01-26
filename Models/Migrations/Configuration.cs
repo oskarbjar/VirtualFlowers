@@ -10,7 +10,7 @@ namespace Models.Migrations
         public Configuration()
         {
             AutomaticMigrationsEnabled = false;
-            ContextKey = "Models.DatabaseContext";
+            ContextKey = "CsScraper";
         }
 
         protected override void Seed(Models.DatabaseContext context)
