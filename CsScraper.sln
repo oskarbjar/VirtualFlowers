@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsScraper", "CsScraper\CsSc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Models", "Models\Models.csproj", "{B4AFC29C-B7C1-48C8-AA8D-B0FD5C96A211}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsScraperMVC", "CsScraperMVC\CsScraperMVC.csproj", "{989D271F-274E-491D-A6D4-B645D8A605C2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{B4AFC29C-B7C1-48C8-AA8D-B0FD5C96A211}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B4AFC29C-B7C1-48C8-AA8D-B0FD5C96A211}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B4AFC29C-B7C1-48C8-AA8D-B0FD5C96A211}.Release|Any CPU.Build.0 = Release|Any CPU
+		{989D271F-274E-491D-A6D4-B645D8A605C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{989D271F-274E-491D-A6D4-B645D8A605C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{989D271F-274E-491D-A6D4-B645D8A605C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{989D271F-274E-491D-A6D4-B645D8A605C2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

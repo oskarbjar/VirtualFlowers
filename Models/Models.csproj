@@ -66,6 +66,10 @@
     <Compile Include="Migrations\201701262259205_changestoDatabase.Designer.cs">
       <DependentUpon>201701262259205_changestoDatabase.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201701281648163_TeamID.cs" />
+    <Compile Include="Migrations\201701281648163_TeamID.Designer.cs">
+      <DependentUpon>201701281648163_TeamID.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Ranking.cs" />
@@ -87,6 +91,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201701262259205_changestoDatabase.resx">
       <DependentUpon>201701262259205_changestoDatabase.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701281648163_TeamID.resx">
+      <DependentUpon>201701281648163_TeamID.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
