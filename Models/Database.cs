@@ -11,6 +11,12 @@ namespace Models
     public class DatabaseContext :DbContext
     {
 
-      public DbSet<Teams> Teams {get; set; }
+        public DatabaseContext()
+           : base("CsDatabase")
+        {
+
+        }
+
+        public DbSet<Teams> Teams {get; set; }
     }
 }

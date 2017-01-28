@@ -39,9 +39,9 @@ namespace CsScraper
 
                     if (nodes?.Count() == 8)
                     {
-                        //var matchid     = GetTeamID(teamhtml, matchIdHtmlString);
-                        var team1Id = GetTeamID(teamhtml, team1IdHtmlString);
-                        var team2Id = GetTeamID(teamhtml, team2IdHtmlString);
+                        var matchid = GetMatchId(teamhtml, matchIdHtmlString);
+                        var team1Id = GetTeamId(teamhtml, team1IdHtmlString);
+                        var team2Id = GetTeamId(teamhtml, team2IdHtmlString);
                         var team1Name = GetTeamNameAndResult(nodes[1].InnerText);
                         var team2Name = GetTeamNameAndResult(nodes[2].InnerText);
 
@@ -51,7 +51,7 @@ namespace CsScraper
 
                         var teams = new Teams
                         {
-                            MatchId = 0,
+                            MatchId = matchid,
                             Date = Convert.ToDateTime(testString),
                             Team1 = team1Name.Item1,
                             Team2 = team2Name.Item1,
@@ -61,13 +61,16 @@ namespace CsScraper
                             ResultT2 = team2Name.Item2,
                             Team1Id = team1Id,
                             Team2Id = team2Id
+
                         };
 
                         matches.Add(teams);
                         if (i == 6)
                             Console.WriteLine(team1Name.Item1);
-                        //db.Teams.Add(teams);
-                        //db.SaveChanges();
+
+                        if (db.Teams.Any(s => s.MatchId == matchid)) continue;
+                        db.Teams.Add(teams);
+                        db.SaveChanges();
                     }
                 }
 
@@ -100,26 +103,37 @@ namespace CsScraper
 
         }
 
-        private static Tuple<string,int> GetTeamNameAndResult(string innerText)
+        private static Tuple<string, int> GetTeamNameAndResult(string innerText)
         {
-            string[] stringSeperators = {"("};
+            string[] stringSeperators = { "(" };
 
             var result = innerText.Split(stringSeperators, StringSplitOptions.None);
             var rounds = result[1].Remove(result[1].Length - 1);
-            var tupleString = new Tuple<string, int>(result[0],Convert.ToInt32(rounds));
+            var tupleString = new Tuple<string, int>(result[0], Convert.ToInt32(rounds));
             return tupleString;
 
         }
 
-        private static int GetTeamID(HtmlDocument teamhtml, string htmlstring)
+        private static int GetTeamId(HtmlDocument teamhtml, string htmlstring)
         {
             string[] stringSeparators = new string[] { "&amp;" };
-          
+
             var teamid1 = teamhtml.DocumentNode.SelectNodes(htmlstring);
             var teamid = teamid1[0].Attributes["href"].Value;
             var result = teamid.Split(stringSeparators, StringSplitOptions.None);
-            var teamids = result[1].Substring(7);
-            return Convert.ToInt32(teamids);
+            var teamID = result[1].Substring(7);
+            return Convert.ToInt32(teamID);
+        }
+
+        private static int GetMatchId(HtmlDocument teamhtml, string htmlstring)
+        {
+            string[] stringSeparators = new string[] { "&amp;" };
+
+            var teamid1 = teamhtml.DocumentNode.SelectNodes(htmlstring);
+            var teamid = teamid1[0].Attributes["href"].Value;
+            var result = teamid.Split(stringSeparators, StringSplitOptions.None);
+            var gameId = result[1].Substring(8);
+            return Convert.ToInt32(gameId);
         }
     }
 }
