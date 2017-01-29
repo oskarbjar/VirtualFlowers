@@ -21,7 +21,7 @@ namespace CsScraper
                 var list = input.Split('-');
                 var tid = list[0];
                 var filter = list[1];
-                var matches = new List<Teams>();
+                var matches = new List<Match>();
 
                 string url = $"http://www.hltv.org/?pageid=188&statsfilter={filter}&teamid={tid}";
                 HtmlDocument teamhtml = HWeb.Load(url);
@@ -40,21 +40,37 @@ namespace CsScraper
                     if (nodes?.Count() == 8)
                     {
                         var matchid = GetMatchId(teamhtml, matchIdHtmlString);
+                        // If matchId had been previously saved, we skip
+                        if (db.Match.Any(s => s.MatchId == matchid)) continue;
+
                         var team1Id = GetTeamId(teamhtml, team1IdHtmlString);
                         var team2Id = GetTeamId(teamhtml, team2IdHtmlString);
+
+                        // Get Team Name and result
                         var team1Name = GetTeamNameAndResult(nodes[1].InnerText);
                         var team2Name = GetTeamNameAndResult(nodes[2].InnerText);
+
+                        // Create team if needed
+                        CheckIfNeedToCreateTeam(team1Id, team1Name.Item1);
+                        CheckIfNeedToCreateTeam(team2Id, team2Name.Item1);
 
                         var testString = nodes[0].InnerText;//date
                         var teststring3 = nodes[3].InnerText;//map
                         var teststring4 = nodes[4].InnerText;//event
 
-                        var teams = new Teams
+                        /*****GET MORE INFO******
+                         * All players
+                         * Create player if he does not exist
+                         * 1st round winner - and if ct or terr
+                         * 16th round winner - and if ct or terr 
+                         */
+
+                        var match = new Match
                         {
                             MatchId = matchid,
                             Date = Convert.ToDateTime(testString),
-                            Team1 = team1Name.Item1,
-                            Team2 = team2Name.Item1,
+                            //Team1 = team1Name.Item1,
+                            //Team2 = team2Name.Item1,
                             Map = teststring3,
                             Event = teststring4,
                             ResultT1 = team1Name.Item2,
@@ -64,12 +80,11 @@ namespace CsScraper
 
                         };
 
-                        matches.Add(teams);
+                        matches.Add(match);
                         if (i == 6)
                             Console.WriteLine(team1Name.Item1);
 
-                        if (db.Teams.Any(s => s.MatchId == matchid)) continue;
-                        db.Teams.Add(teams);
+                        db.Match.Add(match);
                         db.SaveChanges();
                     }
                 }
@@ -79,14 +94,16 @@ namespace CsScraper
                     Map = n.Key,
                     Wins = n.Count(p => p.ResultT1 > p.ResultT2),
                     Losses = n.Count(p => p.ResultT2 > p.ResultT1),
-                    WinPercent = Math.Round(n.Count(s => s.ResultT1 > s.ResultT2) / (double)n.Count() * 100, 1)
+                    WinPercent = Math.Round(n.Count(s => s.ResultT1 > s.ResultT2) / (double)n.Count() * 100, 1),
+                    AverageRoundsWin = Math.Round(n.Sum(k => k.ResultT1) / (double)n.Count(),1),//perhaps only count wins?
+                    AverageRoundsLost = Math.Round(n.Sum(k => k.ResultT2) / (double)n.Count(),1)//perhaps only count wins?
                 }
                 )
                 .OrderByDescending(n => n.WinPercent);
 
                 foreach (var maps in result)
                 {
-                    Console.WriteLine(maps.Map + ": " + maps.Wins + " / " + maps.Losses + "  " + maps.WinPercent + "% winrate");
+                    Console.WriteLine(maps.Map + ": " + maps.Wins + " / " + maps.Losses + "  " + maps.WinPercent + "% winrate - Av rounds w/l: " + maps.AverageRoundsWin + " / " + maps.AverageRoundsLost);
                 }
                 Console.WriteLine("");
             }
@@ -103,6 +120,16 @@ namespace CsScraper
 
         }
 
+        private static void CheckIfNeedToCreateTeam(int TeamId, string TeamName)
+        {
+            if (!db.Team.Any(s => s.TeamId == TeamId))
+            {
+                var newTeam = new Team { TeamId = TeamId, TeamName = TeamName };
+                db.Team.Add(newTeam);
+                db.SaveChanges();
+            }
+        }
+
         private static Tuple<string, int> GetTeamNameAndResult(string innerText)
         {
             string[] stringSeperators = { "(" };
@@ -116,24 +143,30 @@ namespace CsScraper
 
         private static int GetTeamId(HtmlDocument teamhtml, string htmlstring)
         {
+            int lTeamID = 0;
             string[] stringSeparators = new string[] { "&amp;" };
 
             var teamid1 = teamhtml.DocumentNode.SelectNodes(htmlstring);
             var teamid = teamid1[0].Attributes["href"].Value;
             var result = teamid.Split(stringSeparators, StringSplitOptions.None);
             var teamID = result[1].Substring(7);
-            return Convert.ToInt32(teamID);
+
+            int.TryParse(teamID, out lTeamID);
+            return lTeamID;
         }
 
         private static int GetMatchId(HtmlDocument teamhtml, string htmlstring)
         {
+            int lMatchID = 0;
             string[] stringSeparators = new string[] { "&amp;" };
 
             var teamid1 = teamhtml.DocumentNode.SelectNodes(htmlstring);
             var teamid = teamid1[0].Attributes["href"].Value;
             var result = teamid.Split(stringSeparators, StringSplitOptions.None);
             var gameId = result[1].Substring(8);
-            return Convert.ToInt32(gameId);
+
+            int.TryParse(gameId, out lMatchID);
+            return lMatchID;
         }
     }
 }

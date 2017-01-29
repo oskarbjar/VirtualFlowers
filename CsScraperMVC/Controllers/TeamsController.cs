@@ -17,7 +17,7 @@ namespace CsScraperMVC.Controllers
         // GET: Teams
         public ActionResult Index()
         {
-            return View(db.Teams.ToList());
+            return View(db.Match.ToList());
         }
 
         // GET: Teams/Details/5
@@ -27,12 +27,12 @@ namespace CsScraperMVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Teams teams = db.Teams.Find(id);
-            if (teams == null)
+            Match match = db.Match.Find(id);
+            if (match == null)
             {
                 return HttpNotFound();
             }
-            return View(teams);
+            return View(match);
         }
 
         // GET: Teams/Create
@@ -46,16 +46,16 @@ namespace CsScraperMVC.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,MatchId,Team1Id,Team2Id,Date,Team1,Team2,Map,Event,ResultT1,ResultT2")] Teams teams)
+        public ActionResult Create([Bind(Include = "Id,MatchId,Team1Id,Team2Id,Date,Team1,Team2,Map,Event,ResultT1,ResultT2")] Match match)
         {
             if (ModelState.IsValid)
             {
-                db.Teams.Add(teams);
+                db.Match.Add(match);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            return View(teams);
+            return View(match);
         }
 
         // GET: Teams/Edit/5
@@ -65,12 +65,12 @@ namespace CsScraperMVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Teams teams = db.Teams.Find(id);
-            if (teams == null)
+            Match match = db.Match.Find(id);
+            if (match == null)
             {
                 return HttpNotFound();
             }
-            return View(teams);
+            return View(match);
         }
 
         // POST: Teams/Edit/5
@@ -78,15 +78,15 @@ namespace CsScraperMVC.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,MatchId,Team1Id,Team2Id,Date,Team1,Team2,Map,Event,ResultT1,ResultT2")] Teams teams)
+        public ActionResult Edit([Bind(Include = "Id,MatchId,Team1Id,Team2Id,Date,Team1,Team2,Map,Event,ResultT1,ResultT2")] Match match)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(teams).State = EntityState.Modified;
+                db.Entry(match).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(teams);
+            return View(match);
         }
 
         // GET: Teams/Delete/5
@@ -96,12 +96,12 @@ namespace CsScraperMVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Teams teams = db.Teams.Find(id);
-            if (teams == null)
+            Match match = db.Match.Find(id);
+            if (match == null)
             {
                 return HttpNotFound();
             }
-            return View(teams);
+            return View(match);
         }
 
         // POST: Teams/Delete/5
@@ -109,8 +109,8 @@ namespace CsScraperMVC.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Teams teams = db.Teams.Find(id);
-            db.Teams.Remove(teams);
+            Match match = db.Match.Find(id);
+            db.Match.Remove(match);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

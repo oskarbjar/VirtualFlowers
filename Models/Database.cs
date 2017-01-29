@@ -17,6 +17,10 @@ namespace Models
 
         }
 
-        public DbSet<Teams> Teams {get; set; }
+        public DbSet<Player> Player { get; set; }
+        public DbSet<Team> Team { get; set; }
+        public DbSet<Match> Match { get; set; }
+        public DbSet<RankingList> RankingList { get; set; }
+        public DbSet<Rank> Rank { get; set; }
     }
 }
