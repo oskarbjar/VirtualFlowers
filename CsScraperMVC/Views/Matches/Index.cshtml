@@ -1,0 +1,169 @@
+﻿@using CsScraperMVC.Models
+@model List<MatchesViewModel>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            MatchId
+        </th>
+        <th>
+            Date
+        </th>
+        <th>
+            Map
+        </th>
+        <th>
+            Event
+        </th>
+        <th>
+            ResultT1
+        </th>
+        <th>
+            ResultT2
+        </th>
+        @*<th>
+            @Html.DisplayNameFor(model => model.FirstRound1HWinTeamId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FirstRound2HWinTeamId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FirstRound1HWinCtTerr)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FirstRound2HWinCtTerr)
+        </th>*@
+        <th>
+            Team1Name
+        </th>
+        @*<th>
+            @Html.DisplayNameFor(model => model.T1Player1Id)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.T1Player2Id)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.T1Player3Id)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.T1Player4Id)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.T1Player5Id)
+        </th>*@
+        <th>
+            Team2Name
+        </th>
+        @*<th>
+            @Html.DisplayNameFor(model => model.T2Player1Id)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.T2Player2Id)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.T2Player3Id)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.T2Player4Id)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.T2Player5Id)
+        </th>*@
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.MatchId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Date)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Map)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Event)
+        </td>
+        @*<td>
+            @Html.DisplayFor(modelItem => item.FirstRound1HWinTeamId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.FirstRound2HWinTeamId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.FirstRound1HWinCtTerr)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.FirstRound2HWinCtTerr)
+        </td>*@
+        <td>
+            @if (item.ResultT1 > item.ResultT2)
+            {
+                <div style="color:lightgreen">@Html.DisplayFor(modelItem => item.Team1Name)</div>
+            }
+            else
+            {
+                <div style="color:red">@Html.DisplayFor(modelItem => item.Team1Name)</div>
+                }
+            </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ResultT1)
+        </td>
+        @*<td>
+            @Html.DisplayFor(modelItem => item.T1Player1Id)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.T1Player2Id)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.T1Player3Id)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.T1Player4Id)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.T1Player5Id)
+        </td>*@
+        <td>
+            @Html.DisplayFor(modelItem => item.ResultT2)
+        </td>
+        <td>
+            @if (item.ResultT1 < item.ResultT2)
+            {
+                <div style="color:lightgreen">@Html.DisplayFor(modelItem => item.Team2Name)</div>
+            }
+            else
+            {
+                <div style="color:red">@Html.DisplayFor(modelItem => item.Team2Name)</div>
+            }
+        </td>
+        @*<td>
+            @Html.DisplayFor(modelItem => item.T2Player1Id)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.T2Player2Id)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.T2Player3Id)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.T2Player4Id)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.T2Player5Id)
+        </td>*@
+        <td>
+            @Html.ActionLink("Details", "Details", new { id=item.Id }) 
+        </td>
+    </tr>
+}
+
+</table>

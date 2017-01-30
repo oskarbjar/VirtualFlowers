@@ -1,45 +1,18 @@
-﻿@model IEnumerable<Models.Teams>
+﻿@model IEnumerable<Models.Team>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Teams";
 }
 
 <h2>Index</h2>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.MatchId)
+            @Html.DisplayNameFor(model => model.TeamId)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Team1Id)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Team2Id)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Date)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Team1)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Team2)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Map)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Event)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ResultT1)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ResultT2)
+            @Html.DisplayNameFor(model => model.TeamName)
         </th>
         <th></th>
     </tr>
@@ -47,39 +20,10 @@
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.MatchId)
+            @Html.DisplayFor(modelItem => item.TeamId)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Team1Id)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Team2Id)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Date)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Team1)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Team2)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Map)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Event)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ResultT1)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ResultT2)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+            @Html.ActionLink(item.TeamName, "Index", "Matches", new { TeamId = item.TeamId }, null)
         </td>
     </tr>
 }
