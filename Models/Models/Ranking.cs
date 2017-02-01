@@ -9,7 +9,7 @@ namespace Models
     public class RankingList
     {
         public int      Id            { get; set; }
-        public int      RankingListId { get; set; }
+        public Guid      RankingListId { get; set; }
         public DateTime DateOfRank    { get; set; }
     }
 
@@ -17,7 +17,7 @@ namespace Models
     {
         public int Id            { get; set; }
         public int RankId        { get; set; }
-        public int RankingListId { get; set; }
+        public Guid RankingListId { get; set; }
         public int RankPosition  { get; set; }
         public int TeamId        { get; set; }
         public int Points        { get; set; }

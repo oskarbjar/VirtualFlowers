@@ -53,7 +53,7 @@ namespace Models.Migrations
                     {
                         Id = c.Int(nullable: false, identity: true),
                         RankId = c.Int(nullable: false),
-                        RankingListId = c.Int(nullable: false),
+                        RankingListId = c.Guid(nullable: false),
                         RankPosition = c.Int(nullable: false),
                         TeamId = c.Int(nullable: false),
                         Points = c.Int(nullable: false),
@@ -65,7 +65,7 @@ namespace Models.Migrations
                 c => new
                     {
                         Id = c.Int(nullable: false, identity: true),
-                        RankingListId = c.Int(nullable: false),
+                        RankingListId = c.Guid(nullable: false),
                         DateOfRank = c.DateTime(nullable: false),
                     })
                 .PrimaryKey(t => t.Id);
