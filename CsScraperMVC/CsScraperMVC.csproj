@@ -201,6 +201,7 @@
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\MatchesController.cs" />
     <Compile Include="Controllers\TeamsController.cs" />
+    <Compile Include="Data\dataWorker.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -208,6 +209,7 @@
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\MatchesViewModel.cs" />
+    <Compile Include="Models\CompareStatisticModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -271,6 +273,8 @@
     <Content Include="Views\Matches\Index.cshtml" />
     <Content Include="Views\Teams\Details.cshtml" />
     <Content Include="Views\Teams\Index.cshtml" />
+    <Content Include="Views\Home\Compare.cshtml" />
+    <Content Include="Views\Home\Partials\_TeamStatistic.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

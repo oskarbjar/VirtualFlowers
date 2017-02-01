@@ -1,0 +1,30 @@
+﻿@using CsScraperMVC.Models
+@model CompareStatisticModel
+
+@{
+    ViewBag.Title = "Compare";
+}
+
+<h2>Compare</h2>
+
+<form action="Compare" method="post">
+    <div class="col-md-6" style="float:left">
+        <input type="text" name="Team1Id" value="" placeholder="Team 1" />
+    </div>
+    <div class="col-md-6" style="float:right">
+        <input type="text" name="Team2Id" value="" placeholder="Team 2" />
+    </div>
+    <input type="submit" name="name" value="Compare" />
+</form>
+
+@if (Model != null)
+{
+    foreach (var Team in Model?.Teams)
+    {
+        <div class="col-md-6">
+            @Html.Partial("Partials/_TeamStatistic", Team)
+        </div>
+    }
+}
+
+

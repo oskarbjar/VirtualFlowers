@@ -6,18 +6,20 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
-using Models;
+using CsScraperMVC.Data;
 
 namespace CsScraperMVC.Controllers
 {
     public class TeamsController : Controller
     {
-        private DatabaseContext db = new DatabaseContext();
-
+        private dataWorker _dataWorker = new dataWorker();
+        
         // GET: Teams
         public ActionResult Index()
         {
-            return View(db.Team.ToList());
+            var result = _dataWorker.GetTeamsList();
+
+            return View(result);
         }
 
         // GET: Teams/Details/5
@@ -27,7 +29,9 @@ namespace CsScraperMVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Team team = db.Team.Find(id);
+
+            var team = _dataWorker.GetTeamDetails(id);
+
             if (team == null)
             {
                 return HttpNotFound();

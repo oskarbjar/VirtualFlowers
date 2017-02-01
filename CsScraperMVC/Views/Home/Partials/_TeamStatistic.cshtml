@@ -1,0 +1,40 @@
+﻿@using CsScraperMVC.Models
+@model TeamStatisticPeriodModel
+@{
+    ViewBag.Title = "_TeamStatistic";
+}
+
+<h2>@Model.TeamName</h2>
+
+    @foreach (var period in Model.TeamStatistics)
+    {
+        <h3>@period.Period</h3>
+        <table class="table">
+            @foreach (var map in period.Maps)
+            {
+                <tr>
+                    <td>
+                        @map.Map
+                    </td>
+                    <td>
+                        @map.TotalWins / @map.TotalLosses
+                    </td>
+                    <td>
+                        @map.WinPercent %
+                    </td>
+                    <td>
+                        Av. rounds: @map.AverageWinRounds / @map.AverageLossRounds
+                    </td>
+                    @*<td>
+                        DifficultyRating: @map.DifficultyRating
+                    </td>
+                    <td>
+                        FullTeamPercent: @map.FullTeamPercent %
+                    </td>*@
+                </tr>            
+            }
+        </table>
+        <br />
+        <br />
+    }
+
