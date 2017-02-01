@@ -22,10 +22,16 @@
                     <td>
                         @map.WinPercent %
                     </td>
-                    <td>
-                        Av. rounds: @map.AverageWinRounds / @map.AverageLossRounds
+                    <td style="cursor: help" title="Av.(win): @map.AverageWinRoundsWhenWin / @map.AverageLossRoundsWhenWin&#010;Av.(loss): @map.AverageWinRoundsWhenLoss / @map.AverageLossRoundsWhenLoss&#010;">
+                        Av.: @map.AverageWinRounds / @map.AverageLossRounds
                     </td>
                     @*<td>
+                        Av.(win): @map.AverageWinRoundsWhenWin / @map.AverageLossRoundsWhenWin
+                    </td>
+                    <td>
+                        Av.(loss): @map.AverageWinRoundsWhenLoss / @map.AverageLossRoundsWhenLoss
+                    </td>
+                    <td>
                         DifficultyRating: @map.DifficultyRating
                     </td>
                     <td>

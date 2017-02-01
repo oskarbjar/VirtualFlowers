@@ -48,6 +48,10 @@ namespace CsScraperMVC.Models
         public double WinPercent { get; set; }
         public double AverageWinRounds { get; set; }
         public double AverageLossRounds { get; set; }
+        public double AverageWinRoundsWhenWin { get; set; }
+        public double AverageLossRoundsWhenWin { get; set; }
+        public double AverageWinRoundsWhenLoss { get; set; }
+        public double AverageLossRoundsWhenLoss { get; set; }
         public double DifficultyRating { get; set; }
         public double FullTeamPercent { get; set; }
     }

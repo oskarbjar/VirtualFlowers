@@ -124,16 +124,34 @@ namespace CsScraperMVC.Data
                 .Where(p => (p.Team1Id == TeamId || p.Team2Id == TeamId)
                 && (p.Date >= dFrom.Date && p.Date <= dTo.Date))
                 .GroupBy(k => k.Map).ToList();
-
+            
             result = matches.Select(n => new MapStatisticModel
-                {
-                    Map = n.Key,
-                    TotalWins = n.Count(p => p.ResultT1 > p.ResultT2),
-                    TotalLosses = n.Count(p => p.ResultT2 > p.ResultT1),
-                    WinPercent = Math.Round(n.Count(s => s.ResultT1 > s.ResultT2) / (double)n.Count() * 100, 1),
-                    AverageWinRounds = Math.Round(n.Where(e => e.ResultT1 > e.ResultT2).Sum(k => k.ResultT1) / (double)n.Count(e => e.ResultT1 > e.ResultT2), 1),
-                    AverageLossRounds = Math.Round(n.Where(e => e.ResultT1 > e.ResultT2).Sum(k => k.ResultT2) / (double)n.Count(e => e.ResultT1 > e.ResultT2), 1)
-                }).OrderByDescending(n => n.WinPercent).ToList();
+            {
+                Map = n.Key,
+                TotalWins = n.Count(p => (p.Team1Id == TeamId) ? p.ResultT1 > p.ResultT2 : p.ResultT2 > p.ResultT1),
+                TotalLosses = n.Count(p => (p.Team1Id == TeamId) ? p.ResultT2 > p.ResultT1 : p.ResultT1 > p.ResultT2),
+                WinPercent = Math.Round(n.Count(p => (p.Team1Id == TeamId) ? p.ResultT1 > p.ResultT2 : p.ResultT2 > p.ResultT1) / (double)n.Count() * 100, 1),
+                // *** Get Average Win rounds ***
+                AverageWinRounds = Math.Round(n.Sum(p => (p.Team1Id == TeamId) ? p.ResultT1 : p.ResultT2) / (double)n.Count(), 1),
+                // *** Get Average Loss rounds ***
+                AverageLossRounds = Math.Round(n.Sum(p => (p.Team1Id == TeamId) ? p.ResultT2 : p.ResultT1) / (double)n.Count(), 1),
+                // *** Get Average Win rounds when team has won ***
+                AverageWinRoundsWhenWin = Math.Round(n.Where(p => (p.Team1Id == TeamId) ? p.ResultT1 > p.ResultT2 : p.ResultT2 > p.ResultT1) // Where team won
+                    .Sum(p => (p.Team1Id == TeamId) ? p.ResultT1 : p.ResultT2) / // Sum team rounds
+                    (double)n.Count(p => (p.Team1Id == TeamId) ? p.ResultT1 > p.ResultT2 : p.ResultT2 > p.ResultT1), 1), // Divided total games we won
+                // *** Get Average Loss rounds when team has won ***
+                AverageLossRoundsWhenWin = Math.Round(n.Where(p => (p.Team1Id == TeamId) ? p.ResultT1 > p.ResultT2 : p.ResultT2 > p.ResultT1) // Where team won
+                    .Sum(p => (p.Team1Id == TeamId) ? p.ResultT2 : p.ResultT1) / // Sum opponents rounds
+                    (double)n.Count(p => (p.Team1Id == TeamId) ? p.ResultT1 > p.ResultT2 : p.ResultT2 > p.ResultT1), 1), // Divided total games we won
+                // *** Get Average Win rounds when team has lost ***
+                AverageWinRoundsWhenLoss = Math.Round(n.Where(p => (p.Team1Id == TeamId) ? p.ResultT1 < p.ResultT2 : p.ResultT2 < p.ResultT1) // Where team lost
+                    .Sum(p => (p.Team1Id == TeamId) ? p.ResultT1 : p.ResultT2) / // Sum team rounds
+                    (double)n.Count(p => (p.Team1Id == TeamId) ? p.ResultT1 < p.ResultT2 : p.ResultT2 < p.ResultT1), 1), // Divided total games we lost
+                // *** Get Average Loss rounds when team has lost ***
+                AverageLossRoundsWhenLoss = Math.Round(n.Where(p => (p.Team1Id == TeamId) ? p.ResultT1 < p.ResultT2 : p.ResultT2 < p.ResultT1) // Where team lost
+                    .Sum(p => (p.Team1Id == TeamId) ? p.ResultT2 : p.ResultT1) / // Sum opponents rounds
+                    (double)n.Count(p => (p.Team1Id == TeamId) ? p.ResultT1 < p.ResultT2 : p.ResultT2 < p.ResultT1), 1) // Divided total games we lost
+            }).OrderByDescending(n => n.WinPercent).ToList();
 
             return result;
         }
