@@ -20,7 +20,7 @@ namespace VirtualFlowersMVC.Controllers
         {
             var result = _dataWorker.GetMatches(TeamId);
 
-            return View(TeamId);
+            return View(result);
         }
 
         // GET: Matches/Details/5
