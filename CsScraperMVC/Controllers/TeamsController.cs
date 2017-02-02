@@ -6,9 +6,9 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
-using CsScraperMVC.Data;
+using VirtualFlowersMVC.Data;
 
-namespace CsScraperMVC.Controllers
+namespace VirtualFlowersMVC.Controllers
 {
     public class TeamsController : Controller
     {

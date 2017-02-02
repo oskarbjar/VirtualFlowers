@@ -6,9 +6,9 @@ using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
-using CsScraperMVC.Models;
+using VirtualFlowersMVC.Models;
 
-namespace CsScraperMVC.Controllers
+namespace VirtualFlowersMVC.Controllers
 {
     [Authorize]
     public class ManageController : Controller

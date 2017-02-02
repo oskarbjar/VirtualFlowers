@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsScraper", "CsScraper\CsScraper.csproj", "{7F58940B-CB3D-41E1-9E04-1881067BF4AC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtualFlowers", "CsScraper\VirtualFlowers.csproj", "{7F58940B-CB3D-41E1-9E04-1881067BF4AC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Models", "Models\Models.csproj", "{B4AFC29C-B7C1-48C8-AA8D-B0FD5C96A211}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsScraperMVC", "CsScraperMVC\CsScraperMVC.csproj", "{989D271F-274E-491D-A6D4-B645D8A605C2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtualFlowersMVC", "CsScraperMVC\VirtualFlowersMVC.csproj", "{989D271F-274E-491D-A6D4-B645D8A605C2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

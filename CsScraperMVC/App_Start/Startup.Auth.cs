@@ -5,9 +5,9 @@ using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.Google;
 using Owin;
-using CsScraperMVC.Models;
+using VirtualFlowersMVC.Models;
 
-namespace CsScraperMVC
+namespace VirtualFlowersMVC
 {
     public partial class Startup
     {

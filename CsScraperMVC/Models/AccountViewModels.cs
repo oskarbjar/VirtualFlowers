@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace CsScraperMVC.Models
+namespace VirtualFlowersMVC.Models
 {
     public class ExternalLoginConfirmationViewModel
     {

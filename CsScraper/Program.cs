@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Match = Models.Match;
 
-namespace CsScraper
+namespace VirtualFlowers
 {
     class Program
     {

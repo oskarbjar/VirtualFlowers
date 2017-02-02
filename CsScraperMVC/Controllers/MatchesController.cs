@@ -7,9 +7,9 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Models;
-using CsScraperMVC.Data;
+using VirtualFlowersMVC.Data;
 
-namespace CsScraperMVC.Controllers
+namespace VirtualFlowersMVC.Controllers
 {
     public class MatchesController : Controller
     {

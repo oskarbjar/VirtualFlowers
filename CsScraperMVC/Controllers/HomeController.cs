@@ -1,12 +1,12 @@
-﻿using CsScraperMVC.Data;
-using CsScraperMVC.Models;
+﻿using VirtualFlowersMVC.Data;
+using VirtualFlowersMVC.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace CsScraperMVC.Controllers
+namespace VirtualFlowersMVC.Controllers
 {
     public class HomeController : Controller
     {

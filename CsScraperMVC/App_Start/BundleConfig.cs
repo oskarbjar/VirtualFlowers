@@ -1,7 +1,7 @@
 ﻿using System.Web;
 using System.Web.Optimization;
 
-namespace CsScraperMVC
+namespace VirtualFlowersMVC
 {
     public class BundleConfig
     {

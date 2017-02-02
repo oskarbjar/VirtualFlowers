@@ -1,8 +1,8 @@
 ﻿using Microsoft.Owin;
 using Owin;
 
-[assembly: OwinStartupAttribute(typeof(CsScraperMVC.Startup))]
-namespace CsScraperMVC
+[assembly: OwinStartupAttribute(typeof(VirtualFlowersMVC.Startup))]
+namespace VirtualFlowersMVC
 {
     public partial class Startup
     {
