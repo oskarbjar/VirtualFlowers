@@ -1,9 +1,10 @@
 ﻿@using VirtualFlowersMVC.Models
 @model CompareStatisticModel
-
 @{
     ViewBag.Title = "Compare";
 }
+
+<script src="~/Scripts/jquery-3.1.1.min.js"></script>
 
 <h2>Compare</h2>
 
@@ -14,8 +15,9 @@
     <div class="col-md-6" style="float:right">
         <input type="text" name="Team2Id" value="" placeholder="Team 2" />
     </div>
-    <input type="submit" name="name" value="Compare" />
+    <input type="submit" id="CompareBtn" value="Compare" />
 </form>
+@*<div id="CompareSpinner" style="display: block; margin: auto; width: 35%;">@Html.Partial("Components/_WaitSpinnerPartial")</div>*@
 
 @if (Model != null)
 {
@@ -28,3 +30,22 @@
 }
 
 
+<script>
+    $(document).ready(function () {
+            //$("#CompareSpinner").fadeIn();
+
+            //$("#CompareBtn")
+            //.click(function () {
+            //    // Loading spinner
+            //    $("#CompareSpinner").fadeIn();
+            //});
+
+            //$("#loading").fadeIn();
+
+            $("#CompareBtn").click(function () {
+                // Loading spinner
+                $("#loading").fadeIn();
+            });
+
+    });
+</script>
