@@ -8,24 +8,31 @@ using Match = Models.Match;
 
 namespace VirtualFlowers
 {
-    class Program
+    public class Program
     {
         static readonly HtmlWeb HWeb = new HtmlAgilityPack.HtmlWeb();
         private static readonly DatabaseContext db = new DatabaseContext();
+        private static bool quitTeamDetails;
+        private static bool quit;
 
         static void Main(string[] args)
         {
             GetTeamDetails();
-            GetRankingList();
+            
+            //Import url from mvc project
+            //GetRankingList(); 
         }
 
         private static void GetTeamDetails()
         {
-           
+
+            while (!quitTeamDetails)
+            {
+
                 Console.WriteLine("Write quit, or enter TeamID");
                 var input = Console.ReadLine();
                 if (input.ToLower() == "quit")
-                    Environment.Exit(0);
+                    quitTeamDetails = true;
 
                 for (int m = 0; m < 2; m++)
                 {
@@ -124,24 +131,19 @@ namespace VirtualFlowers
                     Console.WriteLine("");
                 }
 
-              
-
-            
+            }
         }
 
-        private static void GetRankingList()
+        public static void GetRankingList(string rankingUrl)
         {
-            Console.WriteLine("Enter Ranking url");
-            var input = Console.ReadLine();
-
             //string RankingUrl = "http://www.hltv.org/ranking/teams/2017/january/2/";
             //string RankingUrl = "http://www.hltv.org/ranking/teams/2017/january/9/";
             //string RankingUrl = "http://www.hltv.org/ranking/teams/2017/january/16/";
-            string RankingUrl = "http://www.hltv.org/ranking/teams/2017/january/23/";
+            //string RankingUrl = "http://www.hltv.org/ranking/teams/2017/january/23/";
 
 
-            var dateTime = GetDateTime(RankingUrl);
-            HtmlDocument rankingHtmlDocument = HWeb.Load(input);
+            var dateTime = GetDateTime(rankingUrl);
+            HtmlDocument rankingHtmlDocument = HWeb.Load(rankingUrl);
             if (!db.RankingList.Any(s => s.DateOfRank == dateTime))
             {
                 var rankingListId = Guid.NewGuid();
@@ -174,8 +176,9 @@ namespace VirtualFlowers
                 }
                 db.SaveChanges();
             }
-        }
 
+
+        }
         private static DateTime GetDateTime(string rankingUrl)
         {
             string[] stringSeperators = { "/teams/" };

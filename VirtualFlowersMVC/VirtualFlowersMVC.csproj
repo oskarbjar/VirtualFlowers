@@ -200,6 +200,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\MatchesController.cs" />
+    <Compile Include="Controllers\RanksController.cs" />
     <Compile Include="Controllers\TeamsController.cs" />
     <Compile Include="Data\dataWorker.cs" />
     <Compile Include="Global.asax.cs">
@@ -275,6 +276,12 @@
     <Content Include="Views\Teams\Index.cshtml" />
     <Content Include="Views\Home\Compare.cshtml" />
     <Content Include="Views\Home\Partials\_TeamStatistic.cshtml" />
+    <Content Include="Views\Ranks\Create.cshtml" />
+    <Content Include="Views\Ranks\Delete.cshtml" />
+    <Content Include="Views\Ranks\Details.cshtml" />
+    <Content Include="Views\Ranks\Edit.cshtml" />
+    <Content Include="Views\Ranks\Index.cshtml" />
+    <Content Include="Views\Ranks\NewRank.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -294,6 +301,10 @@
     <ProjectReference Include="..\Models\Models.csproj">
       <Project>{b4afc29c-b7c1-48c8-aa8d-b0fd5c96a211}</Project>
       <Name>Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\VirtualFlowers\VirtualFlowers.csproj">
+      <Project>{7f58940b-cb3d-41e1-9e04-1881067bf4ac}</Project>
+      <Name>VirtualFlowers</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

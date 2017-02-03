@@ -1,0 +1,37 @@
+﻿@model IEnumerable<Models.RankingList>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.RankingListId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DateOfRank)
+        </th>
+       
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            <a href="@Url.Action("Details", "Ranks", new { id = item.RankingListId })">
+                @item.RankingListId</a>
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DateOfRank)
+        </td>
+       
+    </tr>
+}
+
+</table>

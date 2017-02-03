@@ -199,6 +199,15 @@ namespace VirtualFlowersMVC.Data
             return result;
         }
 
+        public List<Rank> GetRankingList(Guid? listID)
+        {
+            var result = (from rank in _db.Rank
+                where rank.RankingListId == listID
+                select rank).ToList();
+
+            return result;
+        } 
+
         #endregion
     }
 
