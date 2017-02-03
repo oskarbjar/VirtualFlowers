@@ -12,7 +12,7 @@
     <div class="col-md-4">
         <h2>Team Compare</h2>
         <p>
-            Compare cs:go teams statistics.  To make educational bets!.
+            Compare cs:go teams statistics.  To make educational bets!  Or even better profittable!.
         </p>
         <p><a class="btn btn-default" href="Home/Compare">Compare &raquo;</a></p>
     </div>
@@ -22,32 +22,8 @@
         <p><a class="btn btn-default" href="~/Teams/Index">Teams &raquo;</a></p>
     </div>
     <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a>
-        </p>
+        <h2>Ranking</h2>
+        <p>Here is all the ranking you would ever want!  Who was top side, start of march 2016?  We know! We care! lets find out.</p>
+        <p><a class="btn btn-default" href="~/Ranks/Index">Ranking &raquo;</a></p>
     </div>
-
-
-
-    @using (Html.BeginForm("NewRank", "Ranks", FormMethod.Post))
-    {
-        @Html.AntiForgeryToken()
-
-        <div class="form-horizontal">
-            <h4>Rank</h4>
-            <hr/>
-            <div class="col-md-5">
-
-                <input type="text" name="url" size="450"/>
-          </div>
-
-                <div class="form-group">
-                    <div class="col-md-offset-2 col-md-8">
-                        <input type="submit" value="Create" class="btn btn-default"/>
-                    </div>
-                </div>
-            </div>
-    }
-
 </div>

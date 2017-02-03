@@ -4,11 +4,15 @@
     ViewBag.Title = "Index";
 }
 
-<h2>Index</h2>
+<h2>Ranking lists</h2>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
+@Html.ActionLink("Add new ranking list", "NewRank", "Ranks")
+<br />
+@using (Html.BeginForm("ScrapeFromXml", "Ranks", FormMethod.Post))
+{
+    <input type="submit" value="Scrape from XML" class="btn btn-default" />
+}
+
 <table class="table">
     <tr>
         <th>

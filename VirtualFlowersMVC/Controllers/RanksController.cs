@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
 using Models;
-using VirtualFlowers;
 using VirtualFlowersMVC.Data;
+using VirtualFlowers;
 
-namespace CsScraperMVC.Controllers
+namespace VirtualFlowersMVC.Controllers
 {
     public class RanksController : Controller
     {
@@ -20,17 +17,34 @@ namespace CsScraperMVC.Controllers
         // GET: Ranks
         public ActionResult Index()
         {
-          
-
             return View(db.RankingList.ToList());
         }
         
+        public ActionResult NewRank()
+        {
+            return View();
+        }
+
         [HttpPost]
         public ActionResult NewRank(string url)
         {
-           
+            // Add to Xml file
+            Utility.Utility.AddToRankingListsXml(url);
+            
+            // And scrape it
             Program.GetRankingList(url);
 
+            return RedirectToAction("Index");
+        }
+
+        public ActionResult ScrapeFromXml()
+        {
+            var RankingList = Utility.Utility.GetRankingListsFromXml();
+            foreach (var url in RankingList.Url)
+            {
+                Program.GetRankingList(url);
+            }
+            
             return RedirectToAction("Index");
         }
 
