@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using VirtualFlowers;
 
 namespace VirtualFlowersMVC.Controllers
 {
@@ -31,12 +32,16 @@ namespace VirtualFlowersMVC.Controllers
         {
             if (model != null)
             {
-                if(model.Team1Id > 0)
+                // These filters searches last 3 months and 2016
+                var filter = new List<string>(new string[] { "5", "9" });
+                if (model.Team1Id > 0)
                 {
+                    Program.GetTeamDetails(model.Team1Id, filter);
                     model.Teams.Add(_dataWorker.GetTeamPeriodStatistics(model.Team1Id));
                 }
                 if (model.Team2Id > 0)
                 {
+                    Program.GetTeamDetails(model.Team2Id, filter);
                     model.Teams.Add(_dataWorker.GetTeamPeriodStatistics(model.Team2Id));
                 }
             }

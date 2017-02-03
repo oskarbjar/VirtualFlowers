@@ -54,19 +54,31 @@
     <Compile Include="Migrations\201702011934342_FirstMigration.Designer.cs">
       <DependentUpon>201702011934342_FirstMigration.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201702031031403_AddedRankingInfoForMatches.cs" />
+    <Compile Include="Migrations\201702031031403_AddedRankingInfoForMatches.Designer.cs">
+      <DependentUpon>201702031031403_AddedRankingInfoForMatches.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\Ranking.cs" />
     <Compile Include="Models\Match.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201702011934342_FirstMigration.resx">
       <DependentUpon>201702011934342_FirstMigration.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201702031031403_AddedRankingInfoForMatches.resx">
+      <DependentUpon>201702031031403_AddedRankingInfoForMatches.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

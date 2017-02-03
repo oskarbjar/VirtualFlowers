@@ -34,18 +34,20 @@ namespace Models
         public string   FirstRound1HWinCtTerr { get; set; }
         public string   FirstRound2HWinCtTerr { get; set; }
 
-        public int Team1Id     { get; set; }
-        public int T1Player1Id { get; set; }
-        public int T1Player2Id { get; set; }
-        public int T1Player3Id { get; set; }
-        public int T1Player4Id { get; set; }
-        public int T1Player5Id { get; set; }
+        public int    Team1Id        { get; set; }
+        public double Team1RankValue { get; set; }
+        public int    T1Player1Id    { get; set; }
+        public int    T1Player2Id    { get; set; }
+        public int    T1Player3Id    { get; set; }
+        public int    T1Player4Id    { get; set; }
+        public int    T1Player5Id    { get; set; }
 
-        public int Team2Id     { get; set; }
-        public int T2Player1Id { get; set; }
-        public int T2Player2Id { get; set; }
-        public int T2Player3Id { get; set; }
-        public int T2Player4Id { get; set; }
-        public int T2Player5Id { get; set; }
+        public int    Team2Id        { get; set; }
+        public double Team2RankValue { get; set; }
+        public int    T2Player1Id    { get; set; }
+        public int    T2Player2Id    { get; set; }
+        public int    T2Player3Id    { get; set; }
+        public int    T2Player4Id    { get; set; }
+        public int    T2Player5Id    { get; set; }
     }
 }

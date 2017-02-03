@@ -90,8 +90,9 @@ namespace VirtualFlowers
                                 ResultT1 = team1Name.Item2,
                                 ResultT2 = team2Name.Item2,
                                 Team1Id = team1Id,
-                                Team2Id = team2Id
-
+                                //Team1RankValue = 1,
+                                Team2Id = team2Id//,
+                                //Team2RankValue = 1
                             };
 
                             matches.Add(match);
@@ -132,6 +133,114 @@ namespace VirtualFlowers
                 }
 
             }
+        }
+
+        public static void GetTeamDetails(int TeamId, List<string> Filters)
+        {
+            foreach (var filter in Filters)
+            {
+                var matches = new List<Match>();
+                string url = $"http://www.hltv.org/?pageid=188&statsfilter={filter}&teamid={TeamId}";
+                HtmlDocument teamhtml = HWeb.Load(url);
+                for (int i = 5; i < 2074; i++)
+                {
+
+                    i++;
+                    var htmlstring = $"//*[@id='back']/div[3]/div[3]/div/div[3]/div/div[{i}]/div";
+                    var htmlSectionss = teamhtml.DocumentNode.SelectNodes(htmlstring);
+
+                    var matchIdHtmlString = htmlstring + "/a[1]";
+                    var team1IdHtmlString = htmlstring + "/a[2]";
+                    var team2IdHtmlString = htmlstring + "/a[3]";
+                    var nodes = htmlSectionss?[0].SelectNodes(".//div");
+
+                    if (nodes?.Count() == 8)
+                    {
+                        var matchid = GetMatchId(teamhtml, matchIdHtmlString);
+                        // If matchId had been previously saved, we skip
+                        if (db.Match.Any(s => s.MatchId == matchid)) continue;
+
+                        var team1Id = GetTeamId(teamhtml, team1IdHtmlString);
+                        var team2Id = GetTeamId(teamhtml, team2IdHtmlString);
+
+                        // Get Team Name and result
+                        var team1Name = GetTeamNameAndResult(nodes[1].InnerText);
+                        var team2Name = GetTeamNameAndResult(nodes[2].InnerText);
+
+                        // Create team if needed
+                        CheckIfNeedToCreateTeam(team1Id, team1Name.Item1);
+                        CheckIfNeedToCreateTeam(team2Id, team2Name.Item1);
+
+                        var dateString = nodes[0].InnerText; //date
+                        var mapString = nodes[3].InnerText; //map
+                        var eventString = nodes[4].InnerText; //event
+                        var dDate = Convert.ToDateTime(dateString);
+
+                        /*****GET MORE INFO******
+                         * All players
+                         * Create player if he does not exist
+                         * 1st round winner - and if ct or terr
+                         * 16th round winner - and if ct or terr 
+                         */
+
+
+
+                        var match = new Match
+                        {
+                            MatchId = matchid,
+                            Date = dDate,
+                            Map = mapString,
+                            Event = eventString,
+                            ResultT1 = team1Name.Item2,
+                            ResultT2 = team2Name.Item2,
+                            Team1Id = team1Id,
+                            Team1RankValue = GetRankingValueForTeam(team1Id, dDate),
+                            Team2Id = team2Id,
+                            Team2RankValue = GetRankingValueForTeam(team2Id, dDate),
+                        };
+
+                        matches.Add(match);
+                        if (i == 6)
+                            Console.WriteLine(team1Name.Item1);
+
+                        db.Match.Add(match);
+                        db.SaveChanges();
+                    }
+                }
+            }            
+        }
+
+        private static double GetRankingValueForTeam(int TeamId, DateTime dDate)
+        {
+            var result = 0.5;
+            var dDateFrom = dDate.AddDays(-7);
+
+            // Check if we find RankingList within the last 7 days
+            var RankingList = db.RankingList.Where(p => p.DateOfRank > dDateFrom && p.DateOfRank <= dDate).OrderByDescending(n => n.DateOfRank).FirstOrDefault();
+            if (RankingList != null)
+            {
+                // Is this teamid on that list
+                var Rank = db.Rank.Where(p => p.TeamId == TeamId && p.RankingListId == RankingList.RankingListId).FirstOrDefault();
+                if (Rank != null && Rank.RankPosition != 0)
+                {
+                    if (Rank.RankPosition <= 6) // Tier 1
+                        result = 1.0;
+                    else if (Rank.RankPosition <= 12) // Tier 2
+                        result = 0.9;
+                    else if (Rank.RankPosition <= 18) // Tier 3
+                        result = 0.8;
+                    else if (Rank.RankPosition <= 24) // Tier 4
+                        result = 0.7; // Tier 5
+                    else if (Rank.RankPosition <= 30) // Tier 5
+                        result = 0.6;
+                    else // No on the list for this period, ergo: Tier 6
+                        result = 0.5;
+                }
+            }
+            else // Set special value when no ranking list was found for this period, so we may update it later if we want.
+                result = 0.51;
+
+            return result;
         }
 
         public static void GetRankingList(string rankingUrl)
