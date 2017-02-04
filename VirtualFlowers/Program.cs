@@ -18,9 +18,9 @@ namespace VirtualFlowers
         static void Main(string[] args)
         {
             GetTeamDetails();
-            
+
             //Import url from mvc project
-            //GetRankingList(); 
+            //GetRankingList("http://www.hltv.org/ranking/teams/2016/january/5/");
         }
 
         private static void GetTeamDetails()
@@ -207,7 +207,7 @@ namespace VirtualFlowers
                         db.SaveChanges();
                     }
                 }
-            }            
+            }
         }
 
         private static double GetRankingValueForTeam(int TeamId, DateTime dDate)
@@ -270,23 +270,28 @@ namespace VirtualFlowers
                     var IdString = $"//*[@id='back']/div[3]/div[3]/div/div[{index}]/*[1]";
                     var rankingUrlStringNo = $"//*[@id='back']/div[3]/div[3]/div/div[{index}]/*[1]/*[2]";
                     var id = rankingHtmlDocument.DocumentNode.SelectNodes(IdString);
-                    var teamId = id[0].Id.Remove(0, 5);
-                    var team = rankingHtmlDocument.DocumentNode.SelectNodes(rankingUrlStringNo);
-                    var teamAndRanking = GetTeamRanking(team[0].InnerText);
 
-                    var ranking = new Rank
+                    if (id != null)
                     {
-                        RankPosition = index - 1,
-                        Points = teamAndRanking.Item2,
-                        TeamId = Convert.ToInt32(teamId),
-                        RankingListId = rankingListId
-                    };
-                    db.Rank.Add(ranking);
+                        var teamId = id[0].Id.Remove(0, 5);
+                        var team = rankingHtmlDocument.DocumentNode.SelectNodes(rankingUrlStringNo);
+                        var teamAndRanking = GetTeamRanking(team[0].InnerText);
+
+                        var ranking = new Rank
+                        {
+                            RankPosition = index - 1,
+                            Points = teamAndRanking.Item2,
+                            TeamId = Convert.ToInt32(teamId),
+                            RankingListId = rankingListId
+                        };
+                        db.Rank.Add(ranking);
+                      
+                    }
+                    db.SaveChanges();
+
                 }
-                db.SaveChanges();
+
             }
-
-
         }
         private static DateTime GetDateTime(string rankingUrl)
         {
