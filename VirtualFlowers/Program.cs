@@ -231,7 +231,7 @@ namespace VirtualFlowers
             }
         }
 
-        private static double GetRankingValueForTeam(int TeamId, DateTime dDate)
+        public static double GetRankingValueForTeam(int TeamId, DateTime dDate)
         {
             var result = 0.5;
             var dDateFrom = dDate.AddDays(-7);

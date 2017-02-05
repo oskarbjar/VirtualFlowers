@@ -25,51 +25,42 @@ namespace VirtualFlowersMVC.Controllers
         {            
             return View();
         }
-
-        // GET: Home/CompareTeams
-        [HttpPost]
-        public ActionResult CompareTeams(string matchURl)
-        {
-            var compareStatisticModel = new CompareStatisticModel();
-            var result = Program.GetTeamIdsFromUrl(matchURl);
-
-
-            if (result != null)
-            {
-                var model = new CompareStatisticModel
-                {
-                    Team1Id = result.Item1,
-                    Team2Id = result.Item2
-
-                };
-
-                compareStatisticModel = model;
-            }
-
-
-            return RedirectToAction("compare", new { CompareStatisticModel = compareStatisticModel});
-        }
-
+        
         //
         // POST: /Home/Compare
         [HttpPost]
         public ActionResult Compare(CompareStatisticModel model)
         {
-            if (model != null)
+            try
             {
-                if (model.Team1Id > 0)
+                if (model != null)
                 {
-                    Program.GetTeamDetails(model.Team1Id);
-                    model.Teams.Add(_dataWorker.GetTeamPeriodStatistics(model.Team1Id));
+                    if (!string.IsNullOrEmpty(model.MatchUrl))
+                    {
+                        var result = Program.GetTeamIdsFromUrl(model.MatchUrl);
+                        model.Team1Id = result.Item1;
+                        model.Team2Id = result.Item2;
+                    }
+                    if (model.Team1Id > 0)
+                    {
+                        Program.GetTeamDetails(model.Team1Id);
+                        model.Teams.Add(_dataWorker.GetTeamPeriodStatistics(model.Team1Id));
+                    }
+                    if (model.Team2Id > 0)
+                    {
+                        Program.GetTeamDetails(model.Team2Id);
+                        model.Teams.Add(_dataWorker.GetTeamPeriodStatistics(model.Team2Id));
+                    }
                 }
-                if (model.Team2Id > 0)
-                {
-                    Program.GetTeamDetails(model.Team2Id);
-                    model.Teams.Add(_dataWorker.GetTeamPeriodStatistics(model.Team2Id));
-                }
-            }
 
-            return View(model);
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                // just redisplay the form if something failed.
+                ModelState.AddModelError("", ex.Message);
+                return View();
+            }
         }
 
         public ActionResult About()

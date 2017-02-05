@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using VirtualFlowers;
 
 namespace VirtualFlowersMVC.Data
 {
@@ -85,6 +86,7 @@ namespace VirtualFlowersMVC.Data
             var result = new TeamStatisticPeriodModel();
             result.TeamId = TeamId;
             result.TeamName = GetTeamName(TeamId);
+            result.TeamDifficultyRating = Program.GetRankingValueForTeam(TeamId, DateTime.Now);
             result.TeamStatistics.Add(GetTeamPeriodStatistics(TeamId, PeriodEnum.ThreeMonths));
             result.TeamStatistics.Add(GetTeamPeriodStatistics(TeamId, PeriodEnum.Year));
 
@@ -158,8 +160,40 @@ namespace VirtualFlowersMVC.Data
                 AverageLossRoundsWhenLoss = Math.Round(n.Where(p => p.ResultT1 < p.ResultT2) // Where team lost
                     .Sum(p => p.ResultT2) / // Sum opponents rounds
                     (double)n.Count(p => p.ResultT1 < p.ResultT2), 1), // Divided total games we lost
-                DifficultyRating = Math.Round(n.Sum(p => p.Team2RankValue) / (double)n.Count(),2)
+                DifficultyRating = Math.Round(n.Sum(p => p.Team2RankValue) / (double)n.Count(),2),
+                DiffTitleGroupBy = GetDiffTitleGroupBy(n.ToList())
             }).OrderByDescending(n => n.WinPercent).ToList();
+
+            return result;
+        }
+
+        private string GetDiffTitleGroupBy(List<Match> Map)
+        {
+            var result = "";
+            var diffList = new List<Tuple<double, string>>();
+            var returnSymbol = "&#010;";
+
+            // Group by Difficulty rating.
+            var diffRankList = Map.GroupBy(p => p.Team2RankValue).ToList();
+            foreach (var n in diffRankList)
+            {
+                var TotalWins = n.Count(p => p.ResultT1 > p.ResultT2);
+                var TotalLosses = n.Count(p => p.ResultT2 > p.ResultT1);
+                var WinPercent = Math.Round(n.Count(p => p.ResultT1 > p.ResultT2) / (double)n.Count() * 100, 1);
+                var AverageWinRounds = Math.Round(n.Sum(p => p.ResultT1) / (double)n.Count(), 1);
+                var AverageLossRounds = Math.Round(n.Sum(p => p.ResultT2) / (double)n.Count(), 1);
+                diffList.Add(new Tuple<double, string>(n.Key,  TotalWins + " / " + TotalLosses + " " + WinPercent + "% av.r: " + AverageWinRounds + " / " + AverageLossRounds));
+            }
+
+            // Order the list by difficulty
+            var orderedList = diffList.OrderByDescending(p => p.Item1).ToList();
+
+            // Create the title "hover" list
+            foreach (Tuple<double,string> tup in orderedList)
+            {
+                result += string.IsNullOrEmpty(result) ? " " : " " + returnSymbol + " ";
+                result += tup.Item1 == 1? tup.Item1 + ".0" + " - " + tup.Item2 : tup.Item1 + " - " + tup.Item2;
+            }
 
             return result;
         }

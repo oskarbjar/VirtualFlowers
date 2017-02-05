@@ -4,7 +4,7 @@
     ViewBag.Title = "_TeamStatistic";
 }
 
-<h2>@Model.TeamName</h2>
+<h2>@Model.TeamName (@Model.TeamDifficultyRating)</h2>
 
     @foreach (var period in Model?.TeamStatistics)
     {
@@ -22,10 +22,10 @@
                     <td>
                         @map.WinPercent %
                     </td>
-                    <td style="cursor: help" title="Av.(win): @map.AverageWinRoundsWhenWin / @map.AverageLossRoundsWhenWin&#010;Av.(loss): @map.AverageWinRoundsWhenLoss / @map.AverageLossRoundsWhenLoss&#010;">
+                    <td style="cursor: help" title="Av.(win): @map.AverageWinRoundsWhenWin / @map.AverageLossRoundsWhenWin &#010;Av.(loss): @map.AverageWinRoundsWhenLoss / @map.AverageLossRoundsWhenLoss &#010;">
                         Av.: @map.AverageWinRounds / @map.AverageLossRounds
                     </td>
-                    <td>
+                    <td style="cursor: help" title="@Html.Raw(@map.DiffTitleGroupBy)">
                         Diff.R: @map.DifficultyRating
                     </td>
                     @*

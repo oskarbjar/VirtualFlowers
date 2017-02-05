@@ -4,25 +4,18 @@
     ViewBag.Title = "Compare";
 }
 <script src="~/Scripts/jquery-3.1.1.min.js"></script>
-<h2>Compare</h2>
-<form action="Compare" method="post">
-    <div class="col-md-6" style="float: left">
-        <input type="text" name="Team1Id" value="" placeholder="Team 1"/>
+<h2>
+    @Html.ActionLink("Compare", "Compare", new { }, new { style="text-decoration:none" })
+</h2>
+<form action="Compare" method="post" class="form-inline">
+    <div class="col-lg-3">
+        <input type="text" style="width:80px" class="form-control" name="Team1Id" value="" placeholder="Team 1" />
+        <input type="text" style="width:80px" class="form-control" name="Team2Id" value="" placeholder="Team 2" />
     </div>
-    <div class="col-md-6" style="float: right">
-        <input type="text" name="Team2Id" value="" placeholder="Team 2"/>
+    <div class="col-lg-9">
+        <label for="MatchUrl">Or&nbsp;&nbsp;&nbsp;</label><input type="text" style="width: 800px" class="form-control" name="MatchUrl" value="" placeholder="MatchUrl" />
+        <input type="submit" class="btn btn-primary" id="CompareBtn" value="Compare" />
     </div>
-    <input type="submit" id="CompareBtn" value="Compare"/>
-</form>
-
-<h2>Match url</h2>
-
-<form action="CompareTeams" method="post">
-    <div class="col-md-6" style="float:left">
-        <input type="text" name="MatchUrl" value="" placeholder="MatchUrl" />
-    </div>
-  
-    <input type="submit" id="CompareBtn1" value="Read URl" />
 </form>
 
 @*<div id="CompareSpinner" style="display: block; margin: auto; width: 35%;">@Html.Partial("Components/_WaitSpinnerPartial")</div>*@
@@ -40,20 +33,20 @@
 
 <script>
     $(document).ready(function () {
-            //$("#CompareSpinner").fadeIn();
+        //$("#CompareSpinner").fadeIn();
 
-            //$("#CompareBtn")
-            //.click(function () {
-            //    // Loading spinner
-            //    $("#CompareSpinner").fadeIn();
-            //});
+        //$("#CompareBtn")
+        //.click(function () {
+        //    // Loading spinner
+        //    $("#CompareSpinner").fadeIn();
+        //});
 
-            //$("#loading").fadeIn();
+        //$("#loading").fadeIn();
 
-            $("#CompareBtn").click(function () {
-                // Loading spinner
-                $("#loading").fadeIn();
-            });
+        $("#CompareBtn").click(function () {
+            // Loading spinner
+            $("#loading").fadeIn();
+        });
 
     });
 </script>

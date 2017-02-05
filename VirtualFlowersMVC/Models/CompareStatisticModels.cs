@@ -9,6 +9,7 @@ namespace VirtualFlowersMVC.Models
     {
         public int Team1Id { get; set; }
         public int Team2Id { get; set; }
+        public string MatchUrl { get; set; }
         public List<TeamStatisticPeriodModel> Teams { get; set; }
 
         public CompareStatisticModel()
@@ -21,6 +22,7 @@ namespace VirtualFlowersMVC.Models
     {
         public int TeamId { get; set; }
         public string TeamName { get; set; }
+        public double TeamDifficultyRating { get; set; }
         public List<TeamStatisticModel> TeamStatistics { get; set; }
 
         public TeamStatisticPeriodModel()
@@ -54,5 +56,6 @@ namespace VirtualFlowersMVC.Models
         public double AverageLossRoundsWhenLoss { get; set; }
         public double DifficultyRating { get; set; }
         public double FullTeamPercent { get; set; }
+        public string DiffTitleGroupBy { get; set; }
     }
 }
