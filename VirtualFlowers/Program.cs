@@ -18,7 +18,7 @@ namespace VirtualFlowers
         static void Main(string[] args)
         {
             GetTeamDetails();
-
+            GetTeamIdsFromUrl("http://www.hltv.org/match/2307714-g2-flipsid3-iem-katowice-2017-eu-closed-qualifier");
             //Import url from mvc project
             //GetRankingList("http://www.hltv.org/ranking/teams/2016/january/5/");
         }
@@ -263,7 +263,7 @@ namespace VirtualFlowers
 
                 };
                 db.RankingList.Add(rankingList);
-                for (int index = 2; index < 31; index++)
+                for (int index = 2; index <= 35; index++)
                 {
                     //*[1] - Selects the first div in within div[{index 1-31}] 
                     //*[2] - Selects the second div in *[1]
@@ -365,6 +365,38 @@ namespace VirtualFlowers
             var result = results.Split(stringSeperators, StringSplitOptions.None);
             var rounds = result[1].Remove(result[1].Length - 9);
             var tupleString = new Tuple<string, int>(result[0].TrimStart(), Convert.ToInt32(rounds));
+            return tupleString;
+
+        }
+
+        public static Tuple<int, int> GetTeamIdsFromUrl(string matchUrls)
+        {
+            string url = matchUrls;
+            HtmlDocument matchHtml = HWeb.Load(url);
+
+            string[] stringSeperators = { ";teamid=" };
+            string[] SecondSpilt = { ">" };
+           
+            var team1IdHtmlString = $"  //*[@id='back']/div[3]/div[3]/div/div[1]/div[1]/span/div/div/div[1]/span[1]/a";
+            var htmlSectionss = matchHtml.DocumentNode.SelectNodes(team1IdHtmlString);
+
+            var result = htmlSectionss[0].OuterHtml.Split(stringSeperators, StringSplitOptions.None);
+            var team1Spilt = result[1].Split(SecondSpilt, StringSplitOptions.None);
+            var team11Id = team1Spilt[0].Remove(team1Spilt[0].Length - 1);
+
+
+            var team2IdHtmlString = $"    //*[@id='back']/div[3]/div[3]/div/div[1]/div[1]/span/div/div/div[3]/span/a";
+            //*[@id="back"]/div[3]/div[3]/div/div[1]/div[1]/span/div/div/div[3]/span
+            var team2HtmlSections = matchHtml.DocumentNode.SelectNodes(team2IdHtmlString);
+
+          
+            var result2 = team2HtmlSections[0].OuterHtml.Split(stringSeperators, StringSplitOptions.None);
+            var team2Spilt = result2[1].Split(SecondSpilt, StringSplitOptions.None);
+
+            var team2Id = team2Spilt[0].Remove(team2Spilt[0].Length - 1);
+            var tupleString = new Tuple<int, int>(Convert.ToInt32(team11Id), Convert.ToInt32(team2Id));
+
+
             return tupleString;
 
         }
