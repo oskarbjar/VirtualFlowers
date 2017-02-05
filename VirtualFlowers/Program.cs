@@ -135,77 +135,98 @@ namespace VirtualFlowers
             }
         }
 
-        public static void GetTeamDetails(int TeamId, List<string> Filters)
+        public static void GetTeamDetails(int TeamId)
         {
-            foreach (var filter in Filters)
+            DateTime lastScraped = new DateTime(1900,1,1);
+            // Get ScrapeHistoryTeams record for latest scrape info for this team
+            var history = db.ScrapeHistoryTeams.Where(p => p.TeamId == TeamId).OrderByDescending(k => k.LastDayScraped).ToList();
+            if (history.Any())
+                lastScraped = history.FirstOrDefault().LastDayScraped;
+
+            int lCounter = 0;
+
+            string url = $"http://www.hltv.org/?pageid=188&teamid={TeamId}";
+            bool bHasCreatedCurrentTeam = false;
+            HtmlDocument teamhtml = HWeb.Load(url);
+            for (int i = 5; i < 2074; i++)
             {
-                var matches = new List<Match>();
-                string url = $"http://www.hltv.org/?pageid=188&statsfilter={filter}&teamid={TeamId}";
-                HtmlDocument teamhtml = HWeb.Load(url);
-                for (int i = 5; i < 2074; i++)
+
+                i++;
+                var htmlstring = $"//*[@id='back']/div[3]/div[3]/div/div[3]/div/div[{i}]/div";
+                var htmlSectionss = teamhtml.DocumentNode.SelectNodes(htmlstring);
+
+                var matchIdHtmlString = htmlstring + "/a[1]";
+                var team1IdHtmlString = htmlstring + "/a[2]";
+                var team2IdHtmlString = htmlstring + "/a[3]";
+                var nodes = htmlSectionss?[0].SelectNodes(".//div");
+
+                if (nodes?.Count() == 8)
                 {
+                    var matchid = GetMatchId(teamhtml, matchIdHtmlString);
+                    // If matchId had been previously saved, we skip
+                    if (db.Match.Any(s => s.MatchId == matchid)) continue;
 
-                    i++;
-                    var htmlstring = $"//*[@id='back']/div[3]/div[3]/div/div[3]/div/div[{i}]/div";
-                    var htmlSectionss = teamhtml.DocumentNode.SelectNodes(htmlstring);
+                    var team1Id = GetTeamId(teamhtml, team1IdHtmlString);
+                    var team2Id = GetTeamId(teamhtml, team2IdHtmlString);
 
-                    var matchIdHtmlString = htmlstring + "/a[1]";
-                    var team1IdHtmlString = htmlstring + "/a[2]";
-                    var team2IdHtmlString = htmlstring + "/a[3]";
-                    var nodes = htmlSectionss?[0].SelectNodes(".//div");
+                    // Get Team Name and result
+                    var team1Name = GetTeamNameAndResult(nodes[1].InnerText);
+                    var team2Name = GetTeamNameAndResult(nodes[2].InnerText);
 
-                    if (nodes?.Count() == 8)
+                    // Create team if needed, no need after that.
+                    if (bHasCreatedCurrentTeam)
                     {
-                        var matchid = GetMatchId(teamhtml, matchIdHtmlString);
-                        // If matchId had been previously saved, we skip
-                        if (db.Match.Any(s => s.MatchId == matchid)) continue;
-
-                        var team1Id = GetTeamId(teamhtml, team1IdHtmlString);
-                        var team2Id = GetTeamId(teamhtml, team2IdHtmlString);
-
-                        // Get Team Name and result
-                        var team1Name = GetTeamNameAndResult(nodes[1].InnerText);
-                        var team2Name = GetTeamNameAndResult(nodes[2].InnerText);
-
-                        // Create team if needed
                         CheckIfNeedToCreateTeam(team1Id, team1Name.Item1);
-                        CheckIfNeedToCreateTeam(team2Id, team2Name.Item1);
-
-                        var dateString = nodes[0].InnerText; //date
-                        var mapString = nodes[3].InnerText; //map
-                        var eventString = nodes[4].InnerText; //event
-                        var dDate = Convert.ToDateTime(dateString);
-
-                        /*****GET MORE INFO******
-                         * All players
-                         * Create player if he does not exist
-                         * 1st round winner - and if ct or terr
-                         * 16th round winner - and if ct or terr 
-                         */
-
-
-
-                        var match = new Match
-                        {
-                            MatchId = matchid,
-                            Date = dDate,
-                            Map = mapString,
-                            Event = eventString,
-                            ResultT1 = team1Name.Item2,
-                            ResultT2 = team2Name.Item2,
-                            Team1Id = team1Id,
-                            Team1RankValue = GetRankingValueForTeam(team1Id, dDate),
-                            Team2Id = team2Id,
-                            Team2RankValue = GetRankingValueForTeam(team2Id, dDate),
-                        };
-
-                        matches.Add(match);
-                        if (i == 6)
-                            Console.WriteLine(team1Name.Item1);
-
-                        db.Match.Add(match);
-                        db.SaveChanges();
+                        bHasCreatedCurrentTeam = true;
                     }
+                    CheckIfNeedToCreateTeam(team2Id, team2Name.Item1);
+
+                    var dateString = nodes[0].InnerText; //date
+                    var mapString = nodes[3].InnerText; //map
+                    var eventString = nodes[4].InnerText; //event
+                    var dDate = Convert.ToDateTime(dateString);
+
+                    // If we have moved past last scraped date, or year old data
+                    if (dDate < lastScraped.AddDays(-1) || dDate < DateTime.Now.AddYears(-1))
+                    {
+                        // And we have added some records
+                        if (lCounter > 0)
+                        {
+                            // We save history record when last scraped for this team.
+                            db.ScrapeHistoryTeams.Add(new ScrapeHistoryTeams { TeamId = TeamId, LastDayScraped = DateTime.Now });
+                            db.SaveChanges();
+                        }
+
+                        // And quit scraping
+                        return;
+                    }
+
+                    /*****GET MORE INFO******
+                     * All players
+                     * Create player if he does not exist
+                     * 1st round winner - and if ct or terr
+                     * 16th round winner - and if ct or terr 
+                     */
+
+
+
+                    var match = new Match
+                    {
+                        MatchId = matchid,
+                        Date = dDate,
+                        Map = mapString,
+                        Event = eventString,
+                        ResultT1 = team1Name.Item2,
+                        ResultT2 = team2Name.Item2,
+                        Team1Id = team1Id,
+                        Team1RankValue = GetRankingValueForTeam(team1Id, dDate),
+                        Team2Id = team2Id,
+                        Team2RankValue = GetRankingValueForTeam(team2Id, dDate),
+                    };
+                    
+                    db.Match.Add(match);
+                    db.SaveChanges();
+                    lCounter++;
                 }
             }
         }
@@ -263,7 +284,7 @@ namespace VirtualFlowers
 
                 };
                 db.RankingList.Add(rankingList);
-                for (int index = 2; index < 31; index++)
+                for (int index = 2; index < 35; index++)
                 {
                     //*[1] - Selects the first div in within div[{index 1-31}] 
                     //*[2] - Selects the second div in *[1]

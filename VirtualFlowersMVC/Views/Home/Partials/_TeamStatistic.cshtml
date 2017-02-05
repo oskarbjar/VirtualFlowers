@@ -6,7 +6,7 @@
 
 <h2>@Model.TeamName</h2>
 
-    @foreach (var period in Model.TeamStatistics)
+    @foreach (var period in Model?.TeamStatistics)
     {
         <h3>@period.Period</h3>
         <table class="table">

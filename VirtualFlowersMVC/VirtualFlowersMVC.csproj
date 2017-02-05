@@ -13,8 +13,8 @@
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CsScraperMVC</RootNamespace>
-    <AssemblyName>CsScraperMVC</AssemblyName>
+    <RootNamespace>VirtualFlowersMVC</RootNamespace>
+    <AssemblyName>VirtualFlowersMVC</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
@@ -211,6 +211,7 @@
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\MatchesViewModel.cs" />
     <Compile Include="Models\CompareStatisticModels.cs" />
+    <Compile Include="Models\RankingViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Utility\Utility.cs" />
@@ -284,10 +285,8 @@
     <Content Include="Views\Teams\Index.cshtml" />
     <Content Include="Views\Home\Compare.cshtml" />
     <Content Include="Views\Home\Partials\_TeamStatistic.cshtml" />
-    <Content Include="Views\Ranks\Create.cshtml" />
     <Content Include="Views\Ranks\Delete.cshtml" />
     <Content Include="Views\Ranks\Details.cshtml" />
-    <Content Include="Views\Ranks\Edit.cshtml" />
     <Content Include="Views\Ranks\Index.cshtml" />
     <Content Include="Views\Ranks\NewRank.cshtml" />
     <Content Include="Views\Shared\Components\_WaitSpinner.cshtml" />

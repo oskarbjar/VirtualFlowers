@@ -11,13 +11,13 @@ namespace VirtualFlowersMVC.Controllers
 {
     public class RanksController : Controller
     {
-        private DatabaseContext db = new DatabaseContext();
+        private DatabaseContext _db = new DatabaseContext();
         private dataWorker _dataWorker = new dataWorker();
 
         // GET: Ranks
         public ActionResult Index()
         {
-            return View(db.RankingList.ToList());
+            return View(_db.RankingList.OrderByDescending(p => p.DateOfRank).ToList());
         }
         
         public ActionResult NewRank()
@@ -55,8 +55,11 @@ namespace VirtualFlowersMVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+            
+            var result = _dataWorker.GetRankingList((Guid)id);
+            if (result != null && result.Count > 0)
+                ViewBag.Date = _db.RankingList.FirstOrDefault(p => p.RankingListId == id).DateOfRank.ToShortDateString();
 
-            var result = _dataWorker.GetRankingList(id);
             return View(result);
         }
 
@@ -66,54 +69,6 @@ namespace VirtualFlowersMVC.Controllers
             return View();
         }
 
-        // POST: Ranks/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,RankId,RankingListId,RankPosition,TeamId,Points")] Rank rank)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Rank.Add(rank);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-
-            return View(rank);
-        }
-
-        // GET: Ranks/Edit/5
-        public ActionResult Edit(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Rank rank = db.Rank.Find(id);
-            if (rank == null)
-            {
-                return HttpNotFound();
-            }
-            return View(rank);
-        }
-
-        // POST: Ranks/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,RankId,RankingListId,RankPosition,TeamId,Points")] Rank rank)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Entry(rank).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            return View(rank);
-        }
-
         // GET: Ranks/Delete/5
         public ActionResult Delete(int? id)
         {
@@ -121,7 +76,7 @@ namespace VirtualFlowersMVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Rank rank = db.Rank.Find(id);
+            Rank rank = _db.Rank.Find(id);
             if (rank == null)
             {
                 return HttpNotFound();
@@ -134,9 +89,9 @@ namespace VirtualFlowersMVC.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Rank rank = db.Rank.Find(id);
-            db.Rank.Remove(rank);
-            db.SaveChanges();
+            Rank rank = _db.Rank.Find(id);
+            _db.Rank.Remove(rank);
+            _db.SaveChanges();
             return RedirectToAction("Index");
         }
 
@@ -144,7 +99,7 @@ namespace VirtualFlowersMVC.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                _db.Dispose();
             }
             base.Dispose(disposing);
         }

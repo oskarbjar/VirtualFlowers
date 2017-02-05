@@ -16,12 +16,11 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.RankingListId)
-        </th>
-        <th>
             @Html.DisplayNameFor(model => model.DateOfRank)
         </th>
-       
+        <th>
+            @Html.DisplayNameFor(model => model.RankingListId)
+        </th>       
         <th></th>
     </tr>
 
@@ -29,12 +28,13 @@
     <tr>
         <td>
             <a href="@Url.Action("Details", "Ranks", new { id = item.RankingListId })">
-                @item.RankingListId</a>
+                @Html.DisplayFor(modelItem => item.DateOfRank)
+            </a>
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.DateOfRank)
-        </td>
-       
+            <a href="@Url.Action("Details", "Ranks", new { id = item.RankingListId })">
+                @item.RankingListId</a>
+        </td>       
     </tr>
 }
 

@@ -105,17 +105,21 @@
             @Html.DisplayFor(modelItem => item.FirstRound2HWinCtTerr)
         </td>*@
         <td>
+            @Html.ActionLink(item.Team1Name, "Index", "Matches", new { TeamId = item.Team1Id }, null)
+        </td>
+        <td>
             @if (item.ResultT1 > item.ResultT2)
             {
-                <div style="color:lightgreen">@Html.DisplayFor(modelItem => item.Team1Name)</div>
+                <div style="color:lightgreen">
+                    @Html.DisplayFor(modelItem => item.ResultT1)
+                </div>
             }
             else
             {
-                <div style="color:red">@Html.DisplayFor(modelItem => item.Team1Name)</div>
-                }
-            </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ResultT1)
+                <div style="color:red">
+                    @Html.DisplayFor(modelItem => item.ResultT1)
+                </div>
+            }
         </td>
         @*<td>
             @Html.DisplayFor(modelItem => item.T1Player1Id)
@@ -133,17 +137,21 @@
             @Html.DisplayFor(modelItem => item.T1Player5Id)
         </td>*@
         <td>
-            @Html.DisplayFor(modelItem => item.ResultT2)
-        </td>
-        <td>
             @if (item.ResultT1 < item.ResultT2)
             {
-                <div style="color:lightgreen">@Html.DisplayFor(modelItem => item.Team2Name)</div>
+                <div style="color:lightgreen">
+                    @Html.DisplayFor(modelItem => item.ResultT2)
+                </div>
             }
             else
             {
-                <div style="color:red">@Html.DisplayFor(modelItem => item.Team2Name)</div>
+                <div style="color:red">
+                    @Html.DisplayFor(modelItem => item.ResultT2)
+                </div>
             }
+        </td>
+        <td>
+                    @Html.ActionLink(item.Team2Name, "Index", "Matches", new { TeamId = item.Team2Id }, null)
         </td>
         @*<td>
             @Html.DisplayFor(modelItem => item.T2Player1Id)

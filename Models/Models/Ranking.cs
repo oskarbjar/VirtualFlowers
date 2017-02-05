@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -10,7 +11,9 @@ namespace Models
     public class RankingList
     {
         public int      Id            { get; set; }
-        public Guid      RankingListId { get; set; }
+        public Guid     RankingListId { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd-MM-yyyy}")]
+        [DataType(DataType.Date)]
         public DateTime DateOfRank    { get; set; }
     }
 

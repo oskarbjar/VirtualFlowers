@@ -1,21 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Models.Models
+namespace Models
 {
-    class ScrapeHistoryTeams
+    public class ScrapeHistoryTeams
     {
         public int Id { get; set; }
         public int TeamId { get; set; }
-        public int LatestMatchId { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd-MM-yyyy}")]
+        [DataType(DataType.Date)]
+        public DateTime LastDayScraped { get; set; }
     }
 
-    class ScrapeHistoryRankingList
+    public class ScrapeHistoryRankingList
     {
         public int Id { get; set; }
-        public int LatestRankingListId { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd-MM-yyyy}")]
+        [DataType(DataType.Date)]
+        public DateTime LastDayScraped { get; set; }
     }
 }

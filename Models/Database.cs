@@ -22,5 +22,7 @@ namespace Models
         public DbSet<Match> Match { get; set; }
         public DbSet<RankingList> RankingList { get; set; }
         public DbSet<Rank> Rank { get; set; }
+        public DbSet<ScrapeHistoryTeams> ScrapeHistoryTeams { get; set; }
+        public DbSet<ScrapeHistoryRankingList> ScrapeHistoryRankingList { get; set; }
     }
 }

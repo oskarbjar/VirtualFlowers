@@ -33,7 +33,9 @@ namespace VirtualFlowersMVC.Data
                                Event = p.Event,
                                ResultT1 = p.ResultT1,
                                ResultT2 = p.ResultT2,
+                               Team1Id = p.Team1Id,
                                Team1Name = _db.Team.FirstOrDefault(k => k.TeamId == p.Team1Id).TeamName,
+                               Team2Id = p.Team2Id,
                                Team2Name = _db.Team.FirstOrDefault(k => k.TeamId == p.Team2Id).TeamName
                            }).ToList();
 
@@ -69,7 +71,7 @@ namespace VirtualFlowersMVC.Data
         {
             var result = "";
 
-            result = _db.Team.SingleOrDefault(p => p.TeamId == id).TeamName;
+            result = _db.Team.SingleOrDefault(p => p.TeamId == id)?.TeamName;
 
             return result ?? "";
         }
@@ -202,14 +204,24 @@ namespace VirtualFlowersMVC.Data
             return result;
         }
 
-        public List<Rank> GetRankingList(Guid? listID)
+        #endregion
+
+        #region RANKING
+
+        public List<RankViewModel> GetRankingList(Guid listID)
         {
             var result = (from rank in _db.Rank
                 where rank.RankingListId == listID
-                select rank).ToList();
+                select new RankViewModel
+                {
+                    RankPosition = rank.RankPosition,
+                    TeamId = rank.TeamId,
+                    TeamName = _db.Team.FirstOrDefault(k => k.TeamId == rank.TeamId).TeamName,
+                    Points = rank.Points
+                }).ToList();
 
             return result;
-        } 
+        }
 
         #endregion
     }

@@ -1,21 +1,21 @@
-﻿@model IEnumerable<Models.Rank>
+﻿@model List<VirtualFlowersMVC.Models.RankViewModel>
 
 @{
     ViewBag.Title = "Ranking list";
 }
 
-<h2>Ranking list </h2>
+<h2>Ranking list - @ViewBag.Date</h2>
 
 <table class="table">
     <tr>
        <th>
-            @Html.DisplayNameFor(model => model.RankPosition)
+            RankPosition
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.TeamId)
+            TeamName
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Points)
+            Points
         </th>
         <th></th>
     </tr>
@@ -27,7 +27,7 @@
                 @Html.DisplayFor(modelItem => item.RankPosition)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.TeamId)
+                @Html.ActionLink(item.TeamName, "Index", "Matches", new { TeamId = item.TeamId }, null)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Points)
