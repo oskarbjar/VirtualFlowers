@@ -26,6 +26,30 @@ namespace VirtualFlowersMVC.Controllers
             return View();
         }
 
+        // GET: Home/CompareTeams
+        [HttpPost]
+        public ActionResult CompareTeams(string matchURl)
+        {
+            var compareStatisticModel = new CompareStatisticModel();
+            var result = Program.GetTeamIdsFromUrl(matchURl);
+
+
+            if (result != null)
+            {
+                var model = new CompareStatisticModel
+                {
+                    Team1Id = result.Item1,
+                    Team2Id = result.Item2
+
+                };
+
+                compareStatisticModel = model;
+            }
+
+
+            return RedirectToAction("compare", new { CompareStatisticModel = compareStatisticModel});
+        }
+
         //
         // POST: /Home/Compare
         [HttpPost]

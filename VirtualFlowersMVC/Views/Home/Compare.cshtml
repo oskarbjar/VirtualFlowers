@@ -6,14 +6,25 @@
 <script src="~/Scripts/jquery-3.1.1.min.js"></script>
 <h2>Compare</h2>
 <form action="Compare" method="post">
-    <div class="col-md-6" style="float:left">
-        <input type="text" name="Team1Id" value="" placeholder="Team 1" />
+    <div class="col-md-6" style="float: left">
+        <input type="text" name="Team1Id" value="" placeholder="Team 1"/>
     </div>
-    <div class="col-md-6" style="float:right">
-        <input type="text" name="Team2Id" value="" placeholder="Team 2" />
+    <div class="col-md-6" style="float: right">
+        <input type="text" name="Team2Id" value="" placeholder="Team 2"/>
     </div>
-    <input type="submit" id="CompareBtn" value="Compare" />
+    <input type="submit" id="CompareBtn" value="Compare"/>
 </form>
+
+<h2>Match url</h2>
+
+<form action="CompareTeams" method="post">
+    <div class="col-md-6" style="float:left">
+        <input type="text" name="MatchUrl" value="" placeholder="MatchUrl" />
+    </div>
+  
+    <input type="submit" id="CompareBtn1" value="Read URl" />
+</form>
+
 @*<div id="CompareSpinner" style="display: block; margin: auto; width: 35%;">@Html.Partial("Components/_WaitSpinnerPartial")</div>*@
 
 @if (Model != null)
