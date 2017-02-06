@@ -174,7 +174,7 @@ namespace VirtualFlowers
                     var team2Name = GetTeamNameAndResult(nodes[2].InnerText);
 
                     // Create team if needed, no need after that.
-                    if (bHasCreatedCurrentTeam)
+                    if (!bHasCreatedCurrentTeam)
                     {
                         CheckIfNeedToCreateTeam(team1Id, team1Name.Item1);
                         bHasCreatedCurrentTeam = true;
@@ -234,7 +234,7 @@ namespace VirtualFlowers
         public static double GetRankingValueForTeam(int TeamId, DateTime dDate)
         {
             var result = 0.5;
-            var dDateFrom = dDate.AddDays(-7);
+            var dDateFrom = dDate.AddDays(-8);
 
             // Check if we find RankingList within the last 7 days
             var RankingList = db.RankingList.Where(p => p.DateOfRank > dDateFrom && p.DateOfRank <= dDate).OrderByDescending(n => n.DateOfRank).FirstOrDefault();
