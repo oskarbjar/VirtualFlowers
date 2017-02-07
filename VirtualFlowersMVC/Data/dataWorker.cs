@@ -88,7 +88,7 @@ namespace VirtualFlowersMVC.Data
             result.TeamName = GetTeamName(TeamId);
             result.TeamDifficultyRating = Program.GetRankingValueForTeam(TeamId, DateTime.Now);
             result.TeamStatistics.Add(GetTeamPeriodStatistics(TeamId, PeriodEnum.ThreeMonths));
-            result.TeamStatistics.Add(GetTeamPeriodStatistics(TeamId, PeriodEnum.Year));
+            result.TeamStatistics.Add(GetTeamPeriodStatistics(TeamId, PeriodEnum.SixMonths));
 
             return result;
         }
