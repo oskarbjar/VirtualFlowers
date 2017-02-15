@@ -21,8 +21,122 @@ namespace VirtualFlowers
             GetTeamIdsFromUrl("http://www.hltv.org/match/2307714-g2-flipsid3-iem-katowice-2017-eu-closed-qualifier");
             //Import url from mvc project
             //GetRankingList("http://www.hltv.org/ranking/teams/2016/january/5/");
+            //GetTeamLineup("http://www.hltv.org/match/2307909-nip-cloud9-dreamhack-masters-las-vegas-2017");
+
+            GetTeamLineup("http://www.hltv.org/match/2307906-virtuspro-misfits-dreamhack-masters-las-vegas-2017");
+
+
         }
 
+
+        private static void GetTeamLineup(string matchUrls)
+        {
+
+            var teamIDs = GetTeamIdsFromUrl(matchUrls);
+
+            int firstdivId = 0;
+            int secondDivId = 0;
+            bool finished = false;
+            string url = matchUrls;
+            HtmlDocument matchHtml = HWeb.Load(url);
+            var team1string = "//*[@id='back']/div[3]/div[3]/div/div[1]/div[20]/div";
+            var matchOver = "//*[@id='back']/div[3]/div[3]/div/div[1]/div[3]";
+            var matchOverCheck = matchHtml.DocumentNode.SelectNodes(matchOver);
+            if (matchOverCheck[0].InnerText == "Match over")
+            {
+                firstdivId = 19;
+                secondDivId = 22;
+
+            }
+            else
+            {
+                firstdivId = 16;
+                secondDivId = 19;
+            }
+
+            for (int i = 1; i < 10; i++)
+            {
+                var span1 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[{firstdivId}]/div[{i}]/div[1]/span/a";
+                var span1Name = matchHtml.DocumentNode.SelectNodes(span1);
+                var name = span1Name[0].InnerText;
+                var ID = GetPlayerID(span1Name[0].OuterHtml);
+                var Team1 = teamIDs.Item1;
+                /*Create new player*/
+                var span2 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[{secondDivId}]/div[{i}]/div[1]/span/a";
+                var span2Name = matchHtml.DocumentNode.SelectNodes(span2);
+                var name2 = span2Name[0].InnerText;
+                var ID2 = GetPlayerID(span2Name[0].OuterHtml);
+                var team2ID = teamIDs.Item2;
+
+                /*Create new player*/
+
+               
+
+                //*[@id='back']/div[3]/div[3]/div/div[1]/div[16]/div[3]/div[1]/span
+                //*[@id='back']/div[3]/div[3]/div/div[1]/div[16]/div[5]/div[1]/span
+                //*[@id='back']/div[3]/div[3]/div/div[1]/div[16]/div[7]/div[1]/span
+                //*[@id='back']/div[3]/div[3]/div/div[1]/div[16]/div[9]/div[1]/span
+
+
+                /*Buin*/
+                //*[@id="back"]/div[3]/div[3]/div/div[1]/div[{secondDivId}]
+
+                /*Buin seinni*/
+                //*[@id="back"]/div[3]/div[3]/div/div[1]/div[22]
+
+                i++;
+            }
+
+           
+
+        }
+
+        private static int GetPlayerID(string outerHtml)
+        {
+            bool first = false;
+            string wordToFind = "/player/";
+            int final = -1;
+
+            if (outerHtml.Contains(wordToFind))
+            {
+                first = true;
+            }
+
+
+            if (first)
+            {
+            
+            string[] stringSeparators = { "<a href=" };
+            string[] secondSplint = { "><span style=" };
+            string[] thirdspilt = { "-" };
+            string word = "/player//";
+
+            var result = outerHtml.Split(stringSeparators, StringSplitOptions.None);
+            var result2 = result[1].Split(secondSplint, StringSplitOptions.None);
+            var ID = result2[0].Remove(0, word.Length);
+            var ids = ID.Split(thirdspilt, StringSplitOptions.None);
+             final = Convert.ToInt32(ids[0]);
+            }
+            else
+            {
+
+                string[] stringSeparators = { "pageid=173&amp;" };
+                string[] secondSplint = { "\">" };
+                string[] thirdspilt = { "-" };
+                string word = "playerid=";
+                var result = outerHtml.Split(stringSeparators, StringSplitOptions.None);
+                var result2 = result[1].Split(secondSplint, StringSplitOptions.None);
+                var ID = result2[0].Remove(0, word.Length);
+
+                final = Convert.ToInt32(ID);
+
+
+            }
+
+
+
+            return final;
+        }
         private static void GetTeamDetails()
         {
 
