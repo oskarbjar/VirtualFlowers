@@ -43,13 +43,15 @@ namespace VirtualFlowersMVC.Controllers
                     }
                     if (model.Team1Id > 0)
                     {
-                        Program.GetTeamDetails(model.Team1Id);
-                        model.Teams.Add(_dataWorker.GetTeamPeriodStatistics(model.Team1Id));
+                        if(model.Scrape)
+                            Program.GetTeamDetails(model.Team1Id);
+                        model.Teams.Add(_dataWorker.GetTeamPeriodStatistics(model.Team1Id, model.PeriodSelection));
                     }
                     if (model.Team2Id > 0)
                     {
-                        Program.GetTeamDetails(model.Team2Id);
-                        model.Teams.Add(_dataWorker.GetTeamPeriodStatistics(model.Team2Id));
+                        if (model.Scrape)
+                            Program.GetTeamDetails(model.Team2Id);
+                        model.Teams.Add(_dataWorker.GetTeamPeriodStatistics(model.Team2Id, model.PeriodSelection));
                     }
                 }
 

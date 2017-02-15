@@ -10,11 +10,14 @@ namespace VirtualFlowersMVC.Models
         public int Team1Id { get; set; }
         public int Team2Id { get; set; }
         public string MatchUrl { get; set; }
+        public List<string> PeriodSelection { get; set; }
+        public bool Scrape { get; set; }
         public List<TeamStatisticPeriodModel> Teams { get; set; }
 
         public CompareStatisticModel()
         {
             this.Teams = new List<TeamStatisticPeriodModel>();
+            this.PeriodSelection = new List<string>();
         }
     }
 

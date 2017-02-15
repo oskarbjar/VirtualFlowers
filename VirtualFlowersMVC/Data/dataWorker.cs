@@ -81,14 +81,16 @@ namespace VirtualFlowersMVC.Data
 
         #region COMPARE
 
-        public TeamStatisticPeriodModel GetTeamPeriodStatistics(int TeamId)
+        public TeamStatisticPeriodModel GetTeamPeriodStatistics(int TeamId, List<string> PeriodSelection)
         {
             var result = new TeamStatisticPeriodModel();
             result.TeamId = TeamId;
             result.TeamName = GetTeamName(TeamId);
             result.TeamDifficultyRating = Program.GetRankingValueForTeam(TeamId, DateTime.Now);
-            result.TeamStatistics.Add(GetTeamPeriodStatistics(TeamId, PeriodEnum.ThreeMonths));
-            result.TeamStatistics.Add(GetTeamPeriodStatistics(TeamId, PeriodEnum.SixMonths));
+            foreach (var period in PeriodSelection)
+            {
+                result.TeamStatistics.Add(GetTeamPeriodStatistics(TeamId, (PeriodEnum)int.Parse(period)));
+            }
 
             return result;
         }
@@ -262,8 +264,8 @@ namespace VirtualFlowersMVC.Data
 
     public enum PeriodEnum
     {
-        ThreeMonths = 1,
-        SixMonths = 2,
-        Year = 3
+        ThreeMonths = 3,
+        SixMonths = 6,
+        Year = 12
     }
 }
