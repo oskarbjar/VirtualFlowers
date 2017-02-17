@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,7 +18,9 @@ namespace Models
     {
         public int Id         { get; set; }
         public int PlayerId   { get; set; }
-        public int PlayerName { get; set; }
+        public string PlayerName { get; set; }
+        [NotMapped]
+        public int TeamID { get; set; }
     }
 
     public class Match

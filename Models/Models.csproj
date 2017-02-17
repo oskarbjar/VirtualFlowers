@@ -62,7 +62,16 @@
     <Compile Include="Migrations\201702051205128_AddingHistoryForScrapers.Designer.cs">
       <DependentUpon>201702051205128_AddingHistoryForScrapers.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201702162318193_matchChanges.cs" />
+    <Compile Include="Migrations\201702162318193_matchChanges.Designer.cs">
+      <DependentUpon>201702162318193_matchChanges.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201702170011538_Errorlogger.cs" />
+    <Compile Include="Migrations\201702170011538_Errorlogger.Designer.cs">
+      <DependentUpon>201702170011538_Errorlogger.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\ErrorLogger.cs" />
     <Compile Include="Models\ScrapeHistory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\Ranking.cs" />
@@ -83,6 +92,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201702051205128_AddingHistoryForScrapers.resx">
       <DependentUpon>201702051205128_AddingHistoryForScrapers.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201702162318193_matchChanges.resx">
+      <DependentUpon>201702162318193_matchChanges.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201702170011538_Errorlogger.resx">
+      <DependentUpon>201702170011538_Errorlogger.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
