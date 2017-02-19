@@ -62,6 +62,10 @@
     <Compile Include="Migrations\201702051205128_AddingHistoryForScrapers.Designer.cs">
       <DependentUpon>201702051205128_AddingHistoryForScrapers.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201702161930008_AddTransferHistory.cs" />
+    <Compile Include="Migrations\201702161930008_AddTransferHistory.Designer.cs">
+      <DependentUpon>201702161930008_AddTransferHistory.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ScrapeHistory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -83,6 +87,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201702051205128_AddingHistoryForScrapers.resx">
       <DependentUpon>201702051205128_AddingHistoryForScrapers.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201702161930008_AddTransferHistory.resx">
+      <DependentUpon>201702161930008_AddTransferHistory.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

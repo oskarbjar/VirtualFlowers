@@ -24,5 +24,6 @@ namespace Models
         public DbSet<Rank> Rank { get; set; }
         public DbSet<ScrapeHistoryTeams> ScrapeHistoryTeams { get; set; }
         public DbSet<ScrapeHistoryRankingList> ScrapeHistoryRankingList { get; set; }
+        public DbSet<TransferHistory> TransferHistory { get; set; }
     }
 }
