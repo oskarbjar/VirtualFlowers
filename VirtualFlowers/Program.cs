@@ -218,57 +218,53 @@ namespace VirtualFlowers
                 var team2IdHtmlString = htmlstring + "/a[3]";
                 var nodes = htmlSectionss?[0].SelectNodes(".//div");
 
-
+                if (nodes?.Count() != 8) continue;
                 var matchid = GetMatchId(teamhtml, matchIdHtmlString);
                 if (db.Match.Any(s => s.MatchId == matchid)) continue;
+                // If matchId had been previously saved, we skip
+
+                var team1Id = GetTeamId(teamhtml, team1IdHtmlString);
+                var team2Id = GetTeamId(teamhtml, team2IdHtmlString);
+
+                // Get Team Name and result
+                var team1Name = GetTeamNameAndResult(nodes[1].InnerText);
+                var team2Name = GetTeamNameAndResult(nodes[2].InnerText);
+
+                var gameURL = $"http://www.hltv.org/?pageid=188&matchid={matchid}";
+                var Players = GetPlayers(gameURL, team1Id, team2Id);
 
 
-                if (nodes?.Count() == 8)
+
+
+                // Create team if needed, no need after that.
+                if (!bHasCreatedCurrentTeam)
                 {
-                    // If matchId had been previously saved, we skip
+                    CheckIfNeedToCreateTeam(team1Id, team1Name.Item1);
+                    bHasCreatedCurrentTeam = true;
+                }
+                CheckIfNeedToCreateTeam(team2Id, team2Name.Item1);
 
-                    var team1Id = GetTeamId(teamhtml, team1IdHtmlString);
-                    var team2Id = GetTeamId(teamhtml, team2IdHtmlString);
+                var dateString = nodes[0].InnerText; //date
+                var mapString = nodes[3].InnerText; //map
+                var eventString = nodes[4].InnerText; //event
+                var dDate = Convert.ToDateTime(dateString);
 
-                    // Get Team Name and result
-                    var team1Name = GetTeamNameAndResult(nodes[1].InnerText);
-                    var team2Name = GetTeamNameAndResult(nodes[2].InnerText);
-
-                    var gameURL = $"http://www.hltv.org/?pageid=188&matchid={matchid}";
-                    var Players = GetPlayers(gameURL, team1Id, team2Id);
-
-
-
-
-                    // Create team if needed, no need after that.
-                    if (!bHasCreatedCurrentTeam)
+                // If we have moved past last scraped date, or year old data
+                if (dDate < lastScraped.AddDays(-1) || dDate < DateTime.Now.AddYears(-1))
+                {
+                    // And we have added some records
+                    if (lCounter > 0)
                     {
-                        CheckIfNeedToCreateTeam(team1Id, team1Name.Item1);
-                        bHasCreatedCurrentTeam = true;
-                    }
-                    CheckIfNeedToCreateTeam(team2Id, team2Name.Item1);
-
-                    var dateString = nodes[0].InnerText; //date
-                    var mapString = nodes[3].InnerText; //map
-                    var eventString = nodes[4].InnerText; //event
-                    var dDate = Convert.ToDateTime(dateString);
-
-                    // If we have moved past last scraped date, or year old data
-                    if (dDate < lastScraped.AddDays(-1) || dDate < DateTime.Now.AddYears(-1))
-                    {
-                        // And we have added some records
-                        if (lCounter > 0)
-                        {
-                            // We save history record when last scraped for this team.
-                            db.ScrapeHistoryTeams.Add(new ScrapeHistoryTeams { TeamId = TeamId, LastDayScraped = DateTime.Now });
-                            db.SaveChanges();
-                        }
-
-                        // And quit scraping
-                        return;
+                        // We save history record when last scraped for this team.
+                        db.ScrapeHistoryTeams.Add(new ScrapeHistoryTeams { TeamId = TeamId, LastDayScraped = DateTime.Now });
+                        db.SaveChanges();
                     }
 
-                    /*****GET MORE INFO******
+                    // And quit scraping
+                    return;
+                }
+
+                /*****GET MORE INFO******
                      * All players
                      * Create player if he does not exist
                      * 1st round winner - and if ct or terr
@@ -277,43 +273,42 @@ namespace VirtualFlowers
 
 
 
-                    var match = new Match
-                    {
-                        MatchId = matchid,
-                        Date = dDate,
-                        Map = mapString,
-                        Event = eventString,
-                        ResultT1 = team1Name.Item2,
-                        ResultT2 = team2Name.Item2,
-                        Team1Id = team1Id,
-                        Team1RankValue = GetRankingValueForTeam(team1Id, dDate),
-                        Team2Id = team2Id,
-                        Team2RankValue = GetRankingValueForTeam(team2Id, dDate),
-                    };
+                var match = new Match
+                {
+                    MatchId = matchid,
+                    Date = dDate,
+                    Map = mapString,
+                    Event = eventString,
+                    ResultT1 = team1Name.Item2,
+                    ResultT2 = team2Name.Item2,
+                    Team1Id = team1Id,
+                    Team1RankValue = GetRankingValueForTeam(team1Id, dDate),
+                    Team2Id = team2Id,
+                    Team2RankValue = GetRankingValueForTeam(team2Id, dDate),
+                };
 
-                    var t1Players = Players.Where(x => x.TeamID == team1Id).ToArray();
-                    match.T1Player1Id = t1Players[0].PlayerId;
-                    match.T1Player2Id = t1Players[1].PlayerId;
-                    match.T1Player3Id = t1Players[2].PlayerId;
-                    match.T1Player4Id = t1Players[3].PlayerId;
-                    match.T1Player5Id = t1Players[4].PlayerId;
-
-
-                    var t2Players = Players.Where(x => x.TeamID == team2Id).ToArray();
-                    match.T2Player1Id = t2Players[0].PlayerId;
-                    match.T2Player2Id = t2Players[1].PlayerId;
-                    match.T2Player3Id = t2Players[2].PlayerId;
-                    match.T2Player4Id = t2Players[3].PlayerId;
-                    match.T2Player5Id = t2Players[4].PlayerId;
+                var t1Players = Players.Where(x => x.TeamID == team1Id).ToArray();
+                match.T1Player1Id = t1Players[0].PlayerId;
+                match.T1Player2Id = t1Players[1].PlayerId;
+                match.T1Player3Id = t1Players[2].PlayerId;
+                match.T1Player4Id = t1Players[3].PlayerId;
+                match.T1Player5Id = t1Players[4].PlayerId;
 
 
+                var t2Players = Players.Where(x => x.TeamID == team2Id).ToArray();
+                match.T2Player1Id = t2Players[0].PlayerId;
+                match.T2Player2Id = t2Players[1].PlayerId;
+                match.T2Player3Id = t2Players[2].PlayerId;
+                match.T2Player4Id = t2Players[3].PlayerId;
+                match.T2Player5Id = t2Players[4].PlayerId;
 
 
 
-                    db.Match.Add(match);
-                    db.SaveChanges();
-                    lCounter++;
-                }
+
+
+                db.Match.Add(match);
+                db.SaveChanges();
+                lCounter++;
             }
         }
 
@@ -527,11 +522,23 @@ namespace VirtualFlowers
             string[] stringSeparators = new string[] { "&amp;" };
 
             var teamid1 = teamhtml.DocumentNode.SelectNodes(htmlstring);
-            var teamid = teamid1[0].Attributes["href"].Value;
-            var result = teamid.Split(stringSeparators, StringSplitOptions.None);
-            var gameId = result[1].Substring(8);
 
-            int.TryParse(gameId, out lMatchID);
+            if (teamid1 != null)
+            {
+                var teamid = teamid1[0].Attributes["href"].Value;
+                var result = teamid.Split(stringSeparators, StringSplitOptions.None);
+                var gameId = result[1].Substring(8);
+
+                int.TryParse(gameId, out lMatchID);
+            }
+            else
+            {
+                lMatchID = 0;
+            }
+          
+
+            
+          
             return lMatchID;
         }
 
