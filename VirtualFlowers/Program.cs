@@ -17,15 +17,136 @@ namespace VirtualFlowers
 
         static void Main(string[] args)
         {
-            GetTeamDetails(4501);
+            //GetTeamDetails(4501);
 
             //GetTeamIdsFromUrl("http://www.hltv.org/match/2307714-g2-flipsid3-iem-katowice-2017-eu-closed-qualifier");
             //Import url from mvc project
             //GetRankingList("http://www.hltv.org/ranking/teams/2016/january/5/");
+            // GetFirstAndSixtenthRound()
+
+            //GetTeamLineup("http://www.hltv.org/match/2308074-godsent-endpoint-esea-premier-season-24-europe");
+
 
         }
 
+        public static ExpectedLineUp GetTeamLineup(string matchUrls)
+        {
 
+            try
+            {
+
+                var expectedLineUp = new ExpectedLineUp();
+                var lineUps = new ExpectedLineUp().Players;
+                var players = new List<Player>();
+
+                if (expectedLineUp.Players == null)
+                {
+                    expectedLineUp.Players = new List<Player>();
+                }
+
+
+
+
+
+                var teamIDs = GetTeamIdsFromUrl(matchUrls);
+
+                //*[@id="myTab"]
+
+                int firstdivId = 0;
+                int secondDivId = 0;
+                bool finished = false;
+                string url = matchUrls;
+                HtmlDocument matchHtml = HWeb.Load(url);
+
+                var matchIDHtml = "//*[@id='myTab']/li";
+
+                var matchID = matchHtml.DocumentNode.SelectNodes(matchIDHtml);
+                var team1string = "//*[@id='back']/div[3]/div[3]/div/div[1]/div[20]/div";
+                var matchOver = "//*[@id='back']/div[3]/div[3]/div/div[1]/div[3]";
+                var matchOverCheck = matchHtml.DocumentNode.SelectNodes(matchOver);
+                if (matchOverCheck[0].InnerText == "Match over")
+                {
+                    firstdivId = 19;
+                    secondDivId = 22;
+
+                }
+                else
+                {
+                    firstdivId = 16;
+                    secondDivId = 19;
+                }
+
+                for (int i = 1; i < 10; i++)
+                {
+                    var span1 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[{firstdivId}]/div[{i}]/div[1]/span/a";
+                    var span1Name = matchHtml.DocumentNode.SelectNodes(span1);
+                    var name = span1Name[0].InnerText;
+                    var ID = GetPlayerID(span1Name[0].OuterHtml);
+                    var Team1 = teamIDs.Item1;
+
+                    var pl = new Player
+                    {
+                        Id = ID,
+                        PlayerName = name,
+                        TeamID = Team1
+
+                    };
+                    expectedLineUp.Players.Add(pl);
+
+
+
+
+
+                    /*Create new player*/
+                    var span2 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[{secondDivId}]/div[{i}]/div[1]/span/a";
+                    var span2Name = matchHtml.DocumentNode.SelectNodes(span2);
+                    var name2 = span2Name[0].InnerText;
+                    var ID2 = GetPlayerID(span2Name[0].OuterHtml);
+                    var team2ID = teamIDs.Item2;
+
+                    var pl2 = new Player
+                    {
+                        Id = ID2,
+                        PlayerName = name2,
+                        TeamID = team2ID
+
+                    };
+
+                    expectedLineUp.Players.Add(pl2);
+
+
+                    /*Create new player*/
+
+
+
+                    //*[@id='back']/div[3]/div[3]/div/div[1]/div[16]/div[3]/div[1]/span
+                    //*[@id='back']/div[3]/div[3]/div/div[1]/div[16]/div[5]/div[1]/span
+                    //*[@id='back']/div[3]/div[3]/div/div[1]/div[16]/div[7]/div[1]/span
+                    //*[@id='back']/div[3]/div[3]/div/div[1]/div[16]/div[9]/div[1]/span
+
+
+                    /*Buin*/
+                    //*[@id="back"]/div[3]/div[3]/div/div[1]/div[{secondDivId}]
+
+                    /*Buin seinni*/
+                    //*[@id="back"]/div[3]/div[3]/div/div[1]/div[22]
+
+                    i++;
+                }
+
+               //expectedLineUp.Players.Add(lineUps);
+
+                return expectedLineUp;
+
+            }
+            catch (Exception)
+            {
+                /*Logga niður villur*/
+                throw;
+            }
+
+
+        }
 
 
         private static int GetPlayerID(string outerHtml)
@@ -535,10 +656,10 @@ namespace VirtualFlowers
             {
                 lMatchID = 0;
             }
-          
 
-            
-          
+
+
+
             return lMatchID;
         }
 
@@ -589,85 +710,3 @@ namespace VirtualFlowers
     }
 }
 
-
-
-
-
-
-
-
-
-#region "Unused"
-
-
-
-// private static void GetTeamLineup(string matchUrls)
-//        {
-
-//            var teamIDs = GetTeamIdsFromUrl(matchUrls);
-
-//            //*[@id="myTab"]
-
-//            int firstdivId = 0;
-//            int secondDivId = 0;
-//            bool finished = false;
-//            string url = matchUrls;
-//            HtmlDocument matchHtml = HWeb.Load(url);
-
-//            var matchIDHtml = "//*[@id='myTab']/li";
-
-//            var matchID = matchHtml.DocumentNode.SelectNodes(matchIDHtml);
-//            var team1string = "//*[@id='back']/div[3]/div[3]/div/div[1]/div[20]/div";
-//            var matchOver = "//*[@id='back']/div[3]/div[3]/div/div[1]/div[3]";
-//            var matchOverCheck = matchHtml.DocumentNode.SelectNodes(matchOver);
-//            if (matchOverCheck[0].InnerText == "Match over")
-//            {
-//                firstdivId = 19;
-//                secondDivId = 22;
-
-//            }
-//            else
-//            {
-//                firstdivId = 16;
-//                secondDivId = 19;
-//            }
-
-//            for (int i = 1; i < 10; i++)
-//            {
-//                var span1 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[{firstdivId}]/div[{i}]/div[1]/span/a";
-//                var span1Name = matchHtml.DocumentNode.SelectNodes(span1);
-//                var name = span1Name[0].InnerText;
-//                var ID = GetPlayerID(span1Name[0].OuterHtml);
-//                var Team1 = teamIDs.Item1;
-//                /*Create new player*/
-//var span2 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[{secondDivId}]/div[{i}]/div[1]/span/a";
-//var span2Name = matchHtml.DocumentNode.SelectNodes(span2);
-//var name2 = span2Name[0].InnerText;
-//var ID2 = GetPlayerID(span2Name[0].OuterHtml);
-//var team2ID = teamIDs.Item2;
-
-///*Create new player*/
-
-
-
-////*[@id='back']/div[3]/div[3]/div/div[1]/div[16]/div[3]/div[1]/span
-////*[@id='back']/div[3]/div[3]/div/div[1]/div[16]/div[5]/div[1]/span
-////*[@id='back']/div[3]/div[3]/div/div[1]/div[16]/div[7]/div[1]/span
-////*[@id='back']/div[3]/div[3]/div/div[1]/div[16]/div[9]/div[1]/span
-
-
-///*Buin*/
-////*[@id="back"]/div[3]/div[3]/div/div[1]/div[{secondDivId}]
-
-///*Buin seinni*/
-////*[@id="back"]/div[3]/div[3]/div/div[1]/div[22]
-
-//i++;
-//            }
-
-
-
-//        }
-
-
-#endregion

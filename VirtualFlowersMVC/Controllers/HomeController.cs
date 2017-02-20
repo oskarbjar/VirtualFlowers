@@ -38,6 +38,7 @@ namespace VirtualFlowersMVC.Controllers
                     if (!string.IsNullOrEmpty(model.MatchUrl))
                     {
                         var result = Program.GetTeamIdsFromUrl(model.MatchUrl);
+                        var ExpextedLineup = Program.GetTeamLineup(model.MatchUrl);
                         model.Team1Id = result.Item1;
                         model.Team2Id = result.Item2;
                     }
