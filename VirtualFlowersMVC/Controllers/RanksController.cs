@@ -95,6 +95,39 @@ namespace VirtualFlowersMVC.Controllers
             return RedirectToAction("Index");
         }
 
+
+        // GET: TransferHistory
+        public ActionResult TransferHistory()
+        {
+            return View(_db.TransferHistory.OrderByDescending(p => p.TransferDate).ToList());
+        }
+
+        // GET: TransferHistory
+        [HttpGet]
+        public ActionResult CreateTransfer()
+        {
+            return View();
+        }
+
+        // GET: TransferHistory
+        [HttpPost]
+        public ActionResult CreateTransfer(TransferHistory model)
+        {
+            if(ModelState.IsValid)
+            {
+                model.NewTeamName = _db.Team.FirstOrDefault(k => k.TeamId == model.NewTeamId).TeamName;
+                model.OldTeamName = _db.Team.FirstOrDefault(k => k.TeamId == model.OldTeamId).TeamName;
+                _db.TransferHistory.Add(model);
+                _db.SaveChanges();
+
+                // Scrape matches from both teams.
+                Program.GetTeamDetails(model.NewTeamId);
+                Program.GetTeamDetails(model.OldTeamId);
+            }
+
+            return RedirectToAction("TransferHistory");
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)

@@ -26,5 +26,6 @@ namespace Models
         public DbSet<ScrapeHistoryRankingList> ScrapeHistoryRankingList { get; set; }
 
         public DbSet<ErrorLogger> ErrorLoggers { get; set; }
+        public DbSet<TransferHistory> TransferHistory { get; set; }
     }
 }

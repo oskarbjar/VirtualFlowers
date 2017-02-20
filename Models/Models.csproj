@@ -71,6 +71,10 @@
     <Compile Include="Migrations\201702170011538_Errorlogger.Designer.cs">
       <DependentUpon>201702170011538_Errorlogger.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201702161930008_AddTransferHistory.cs" />
+    <Compile Include="Migrations\201702161930008_AddTransferHistory.Designer.cs">
+      <DependentUpon>201702161930008_AddTransferHistory.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ErrorLogger.cs" />
     <Compile Include="Models\ScrapeHistory.cs" />
@@ -99,6 +103,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201702170011538_Errorlogger.resx">
       <DependentUpon>201702170011538_Errorlogger.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201702161930008_AddTransferHistory.resx">
+      <DependentUpon>201702161930008_AddTransferHistory.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

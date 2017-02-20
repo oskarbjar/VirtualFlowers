@@ -1,0 +1,52 @@
+﻿@model List<Models.TransferHistory>
+@{
+    ViewBag.Title = "TransferHistory";
+}
+
+<h2>TransferHistory</h2>
+
+@Html.ActionLink("Add new transfer", "CreateTransfer", "Ranks")
+<br />
+
+<table class="table">
+    <tr>
+        <th>
+            TransferDate
+        </th>
+        <th>
+            OldTeamId
+        </th>
+        <th>
+            OldTeamName
+        </th>
+        <th>
+            NewTeamId
+        </th>
+        <th>
+            NewTeamName
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.TransferDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OldTeamId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OldTeamName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NewTeamId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NewTeamName)
+            </td>
+        </tr>
+    }
+
+</table>

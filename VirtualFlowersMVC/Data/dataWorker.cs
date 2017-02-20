@@ -125,6 +125,10 @@ namespace VirtualFlowersMVC.Data
         public List<MapStatisticModel> GetMapStatistics(int TeamId, DateTime dFrom, DateTime dTo)
         {
             var result = new List<MapStatisticModel>();
+            var secondaryTeam = _db.TransferHistory.Where(p => p.NewTeamId == TeamId).OrderByDescending(k => k.TransferDate).FirstOrDefault();
+            var secondaryTeamId = 0;
+            if (secondaryTeam != null)
+                secondaryTeamId = secondaryTeam.OldTeamId;
 
             var matches = _db.Match
                 .Where(p => (p.Team1Id == TeamId || p.Team2Id == TeamId)
@@ -132,6 +136,21 @@ namespace VirtualFlowersMVC.Data
 
             // Fix matches so that "our" team is always Team1, to simplify later query
             var fixedMatches = FixTeamMatches(matches, TeamId);
+
+            if (secondaryTeamId > 0)
+            {
+                // Get matches for secondaryTeamId
+                var secondaryMatches = _db.Match
+                .Where(p => (p.Team1Id == secondaryTeamId || p.Team2Id == secondaryTeamId)
+                && (p.Date >= dFrom.Date && p.Date <= dTo.Date)).ToList();
+
+                // Fix matches for secondaryMatches
+                var fixedsecondaryMatches = FixTeamMatches(secondaryMatches, secondaryTeamId);
+
+                // Add matches from secondaryTeamId to fixedMatches
+                fixedMatches.AddRange(fixedsecondaryMatches);
+            }
+
 
             // Group list by maps.
             var groupedbymaps = fixedMatches.GroupBy(k => k.Map).ToList();
