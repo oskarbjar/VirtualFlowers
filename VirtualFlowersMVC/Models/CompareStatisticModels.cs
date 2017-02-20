@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -13,6 +14,7 @@ namespace VirtualFlowersMVC.Models
         public List<string> PeriodSelection { get; set; }
         public bool Scrape { get; set; }
         public List<TeamStatisticPeriodModel> Teams { get; set; }
+        public ExpectedLineUp ExpectedLineUp { get; set; }
 
         public CompareStatisticModel()
         {

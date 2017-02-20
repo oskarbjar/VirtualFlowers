@@ -50,9 +50,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Database.cs" />
-    <Compile Include="Migrations\201702191620309_FirstMigration.cs" />
-    <Compile Include="Migrations\201702191620309_FirstMigration.Designer.cs">
-      <DependentUpon>201702191620309_FirstMigration.cs</DependentUpon>
+    <Compile Include="Models\ExpectedLineUp.cs" />
+    <Compile Include="Migrations\201702011934342_FirstMigration.cs" />
+    <Compile Include="Migrations\201702011934342_FirstMigration.Designer.cs">
+      <DependentUpon>201702011934342_FirstMigration.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ErrorLogger.cs" />
