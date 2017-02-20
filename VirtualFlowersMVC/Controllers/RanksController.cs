@@ -115,14 +115,15 @@ namespace VirtualFlowersMVC.Controllers
         {
             if(ModelState.IsValid)
             {
+                // Scrape matches from both teams.
+                Program.GetTeamDetails(model.NewTeamId);
+                Program.GetTeamDetails(model.OldTeamId);
+
                 model.NewTeamName = _db.Team.FirstOrDefault(k => k.TeamId == model.NewTeamId).TeamName;
                 model.OldTeamName = _db.Team.FirstOrDefault(k => k.TeamId == model.OldTeamId).TeamName;
                 _db.TransferHistory.Add(model);
                 _db.SaveChanges();
 
-                // Scrape matches from both teams.
-                Program.GetTeamDetails(model.NewTeamId);
-                Program.GetTeamDetails(model.OldTeamId);
             }
 
             return RedirectToAction("TransferHistory");

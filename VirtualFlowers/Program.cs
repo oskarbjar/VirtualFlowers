@@ -288,19 +288,29 @@ namespace VirtualFlowers
                 };
 
                 var t1Players = Players.Where(x => x.TeamID == team1Id).ToArray();
-                match.T1Player1Id = t1Players[0].PlayerId;
-                match.T1Player2Id = t1Players[1].PlayerId;
-                match.T1Player3Id = t1Players[2].PlayerId;
-                match.T1Player4Id = t1Players[3].PlayerId;
-                match.T1Player5Id = t1Players[4].PlayerId;
+                if (t1Players.Length > 0)
+                    match.T1Player1Id = t1Players[0].PlayerId;
+                if (t1Players.Length > 1)
+                    match.T1Player2Id = t1Players[1].PlayerId;
+                if (t1Players.Length > 2)
+                    match.T1Player3Id = t1Players[2].PlayerId;
+                if (t1Players.Length > 3)
+                    match.T1Player4Id = t1Players[3].PlayerId;
+                if (t1Players.Length > 4)
+                    match.T1Player5Id = t1Players[4].PlayerId;
 
 
                 var t2Players = Players.Where(x => x.TeamID == team2Id).ToArray();
-                match.T2Player1Id = t2Players[0].PlayerId;
-                match.T2Player2Id = t2Players[1].PlayerId;
-                match.T2Player3Id = t2Players[2].PlayerId;
-                match.T2Player4Id = t2Players[3].PlayerId;
-                match.T2Player5Id = t2Players[4].PlayerId;
+                if(t2Players.Length > 0)
+                    match.T2Player1Id = t2Players[0].PlayerId;
+                if (t2Players.Length > 1)
+                    match.T2Player2Id = t2Players[1].PlayerId;
+                if (t2Players.Length > 2)
+                    match.T2Player3Id = t2Players[2].PlayerId;
+                if (t2Players.Length > 3)
+                    match.T2Player4Id = t2Players[3].PlayerId;
+                if (t2Players.Length > 4)
+                    match.T2Player5Id = t2Players[4].PlayerId;
 
 
 
