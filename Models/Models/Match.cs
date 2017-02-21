@@ -44,6 +44,8 @@ namespace Models
         public int    T1Player3Id    { get; set; }
         public int    T1Player4Id    { get; set; }
         public int    T1Player5Id    { get; set; }
+        [NotMapped]
+        public double T1FTR;
 
         public int    Team2Id        { get; set; }
         public double Team2RankValue { get; set; }

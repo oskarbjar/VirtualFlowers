@@ -28,8 +28,8 @@
                     <td style="cursor: help" title="@Html.Raw(@map.DiffTitleGroupBy)">
                         Diff.R: @map.DifficultyRating
                     </td>
-                    <td>
-                        FTR: @map.FullTeamPercent
+                    <td style="cursor: help" title="@Html.Raw(@map.FullTeamRanking.Item2)">
+                        FTR: @Math.Round(@map.FullTeamRanking.Item1,1)
                     </td>
                 </tr>            
             }

@@ -183,50 +183,74 @@ namespace VirtualFlowersMVC.Data
                     (double)n.Count(p => p.ResultT1 < p.ResultT2), 1), // Divided total games we lost
                 DifficultyRating = Math.Round(n.Sum(p => p.Team2RankValue) / (double)n.Count(),2),
                 DiffTitleGroupBy = GetDiffTitleGroupBy(n.ToList()),
-                FullTeamPercent = Math.Round(GetFullTeamPercent(TeamId, n.ToList(), expectedLinup),1)
+                FullTeamRanking = GetFullTeamPercent(TeamId, n.ToList(), expectedLinup)
             }).OrderByDescending(n => n.WinPercent).ToList();
 
             return result;
         }
 
-        private double GetFullTeamPercent(int TeamId, List<Match> Map, ExpectedLineUp expectedLinup)
+        private Tuple<double,string> GetFullTeamPercent(int TeamId, List<Match> Map, ExpectedLineUp expectedLinup)
         {
-            double result = 0;
+            Tuple<double, string> result = new Tuple<double, string>(0, "");
             double Accumulator = 0;
+            double AvFTR = 0;
 
+            // Calculate how many of expectedLinup played each match.
             foreach (var match in Map)
             {
+                int FTRank = 0;
                 if (match.Team1Id == TeamId)
                 {
                     if (expectedLinup.Players.Where(p => p.TeamID == TeamId && p.PlayerId == match.T1Player1Id).Any())
-                        Accumulator += 1;
+                        FTRank += 1;
                     if (expectedLinup.Players.Where(p => p.TeamID == TeamId && p.PlayerId == match.T1Player2Id).Any())
-                        Accumulator += 1;
+                        FTRank += 1;
                     if (expectedLinup.Players.Where(p => p.TeamID == TeamId && p.PlayerId == match.T1Player3Id).Any())
-                        Accumulator += 1;
+                        FTRank += 1;
                     if (expectedLinup.Players.Where(p => p.TeamID == TeamId && p.PlayerId == match.T1Player4Id).Any())
-                        Accumulator += 1;
+                        FTRank += 1;
                     if (expectedLinup.Players.Where(p => p.TeamID == TeamId && p.PlayerId == match.T1Player5Id).Any())
-                        Accumulator += 1;
-                }
-                else
-                {
-                    if (expectedLinup.Players.Where(p => p.TeamID == TeamId && p.PlayerId == match.T2Player1Id).Any())
-                        Accumulator += 1;                                                           
-                    if (expectedLinup.Players.Where(p => p.TeamID == TeamId && p.PlayerId == match.T2Player2Id).Any())
-                        Accumulator += 1;                                                           
-                    if (expectedLinup.Players.Where(p => p.TeamID == TeamId && p.PlayerId == match.T2Player3Id).Any())
-                        Accumulator += 1;                                                           
-                    if (expectedLinup.Players.Where(p => p.TeamID == TeamId && p.PlayerId == match.T2Player4Id).Any())
-                        Accumulator += 1;                                                           
-                    if (expectedLinup.Players.Where(p => p.TeamID == TeamId && p.PlayerId == match.T2Player5Id).Any())
-                        Accumulator += 1;
+                        FTRank += 1;
+
+                    // How many played this map
+                    match.T1FTR = FTRank;
+
+                    // Add to Accumulator for total average.
+                    Accumulator += FTRank;
                 }
             }
 
-            if (Accumulator > 0)
-                result = Accumulator / Map.Count;
+            var rankList = new List<Tuple<double, string>>();
+            var FTRankList = Map.GroupBy(p => p.T1FTR).ToList();
+            var returnSymbol = "&#010;";
+            var Title = "";
 
+            // Group by FTRating.
+            foreach (var n in FTRankList)
+            {
+                var TotalWins = n.Count(p => p.ResultT1 > p.ResultT2);
+                var TotalLosses = n.Count(p => p.ResultT2 > p.ResultT1);
+                var WinPercent = Math.Round(n.Count(p => p.ResultT1 > p.ResultT2) / (double)n.Count() * 100, 1);
+                var AverageWinRounds = Math.Round(n.Sum(p => p.ResultT1) / (double)n.Count(), 1);
+                var AverageLossRounds = Math.Round(n.Sum(p => p.ResultT2) / (double)n.Count(), 1);
+                rankList.Add(new Tuple<double, string>(n.Key, $"{TotalWins} / {TotalLosses} {WinPercent}% av.r: {AverageWinRounds} / {AverageLossRounds}"));
+            }
+
+            // Order the list by FTRating
+            var orderedList = rankList.OrderByDescending(p => p.Item1).ToList();
+
+            // Create the title "hover" list
+            foreach (Tuple<double, string> tup in orderedList)
+            {
+                Title += string.IsNullOrEmpty(Title) ? " " : " " + returnSymbol + " ";
+                Title += tup.Item1 + " - " + tup.Item2;
+            }
+
+            // Av. played
+            if (Accumulator > 0)
+                AvFTR = Accumulator / Map.Count;
+
+            result = new Tuple<double, string>(AvFTR, Title);
             return result;
         }
 
@@ -245,7 +269,7 @@ namespace VirtualFlowersMVC.Data
                 var WinPercent = Math.Round(n.Count(p => p.ResultT1 > p.ResultT2) / (double)n.Count() * 100, 1);
                 var AverageWinRounds = Math.Round(n.Sum(p => p.ResultT1) / (double)n.Count(), 1);
                 var AverageLossRounds = Math.Round(n.Sum(p => p.ResultT2) / (double)n.Count(), 1);
-                diffList.Add(new Tuple<double, string>(n.Key,  TotalWins + " / " + TotalLosses + " " + WinPercent + "% av.r: " + AverageWinRounds + " / " + AverageLossRounds));
+                diffList.Add(new Tuple<double, string>(n.Key, $"{TotalWins} / {TotalLosses} {WinPercent}% av.r: {AverageWinRounds} / {AverageLossRounds}"));
             }
 
             // Order the list by difficulty
