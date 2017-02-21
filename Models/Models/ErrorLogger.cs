@@ -8,7 +8,7 @@ namespace Models
 {
     public class ErrorLogger
     {
-        public string url;
+        public string url { get; set; }
         public int Id { get; set; }
         public string Error { get; set; }
     }

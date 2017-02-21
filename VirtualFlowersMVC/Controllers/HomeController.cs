@@ -38,7 +38,7 @@ namespace VirtualFlowersMVC.Controllers
                     if (!string.IsNullOrEmpty(model.MatchUrl))
                     {
                         var result = Program.GetTeamIdsFromUrl(model.MatchUrl);
-                        var ExpextedLineup = Program.GetTeamLineup(model.MatchUrl);
+                        model.ExpectedLineUp = Program.GetTeamLineup(model.MatchUrl);
                         model.Team1Id = result.Item1;
                         model.Team2Id = result.Item2;
                     }
@@ -46,13 +46,13 @@ namespace VirtualFlowersMVC.Controllers
                     {
                         if(model.Scrape)
                             Program.GetTeamDetails(model.Team1Id);
-                        model.Teams.Add(_dataWorker.GetTeamPeriodStatistics(model.Team1Id, model.PeriodSelection));
+                        model.Teams.Add(_dataWorker.GetTeamPeriodStatistics(model.Team1Id, model.PeriodSelection, model.ExpectedLineUp));
                     }
                     if (model.Team2Id > 0)
                     {
                         if (model.Scrape)
                             Program.GetTeamDetails(model.Team2Id);
-                        model.Teams.Add(_dataWorker.GetTeamPeriodStatistics(model.Team2Id, model.PeriodSelection));
+                        model.Teams.Add(_dataWorker.GetTeamPeriodStatistics(model.Team2Id, model.PeriodSelection, model.ExpectedLineUp));
                     }
                 }
 

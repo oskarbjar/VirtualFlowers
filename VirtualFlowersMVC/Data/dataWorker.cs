@@ -81,7 +81,7 @@ namespace VirtualFlowersMVC.Data
 
         #region COMPARE
 
-        public TeamStatisticPeriodModel GetTeamPeriodStatistics(int TeamId, List<string> PeriodSelection)
+        public TeamStatisticPeriodModel GetTeamPeriodStatistics(int TeamId, List<string> PeriodSelection, ExpectedLineUp expectedLinup)
         {
             var result = new TeamStatisticPeriodModel();
             result.TeamId = TeamId;
@@ -89,13 +89,13 @@ namespace VirtualFlowersMVC.Data
             result.TeamDifficultyRating = Program.GetRankingValueForTeam(TeamId, DateTime.Now);
             foreach (var period in PeriodSelection)
             {
-                result.TeamStatistics.Add(GetTeamPeriodStatistics(TeamId, (PeriodEnum)int.Parse(period)));
+                result.TeamStatistics.Add(GetTeamPeriodStatistics(TeamId, (PeriodEnum)int.Parse(period), expectedLinup));
             }
 
             return result;
         }
 
-        public TeamStatisticModel GetTeamPeriodStatistics(int TeamId, PeriodEnum period)
+        public TeamStatisticModel GetTeamPeriodStatistics(int TeamId, PeriodEnum period, ExpectedLineUp expectedLinup)
         {
             var result = new TeamStatisticModel();
             var dTo = DateTime.Now;
@@ -117,12 +117,12 @@ namespace VirtualFlowersMVC.Data
                     break;
             }
 
-            result.Maps = GetMapStatistics(TeamId, dFrom, dTo);
+            result.Maps = GetMapStatistics(TeamId, dFrom, dTo, expectedLinup);
             
             return result;
         }
 
-        public List<MapStatisticModel> GetMapStatistics(int TeamId, DateTime dFrom, DateTime dTo)
+        public List<MapStatisticModel> GetMapStatistics(int TeamId, DateTime dFrom, DateTime dTo, ExpectedLineUp expectedLinup)
         {
             var result = new List<MapStatisticModel>();
             var secondaryTeam = _db.TransferHistory.Where(p => p.NewTeamId == TeamId).OrderByDescending(k => k.TransferDate).FirstOrDefault();
@@ -182,8 +182,50 @@ namespace VirtualFlowersMVC.Data
                     .Sum(p => p.ResultT2) / // Sum opponents rounds
                     (double)n.Count(p => p.ResultT1 < p.ResultT2), 1), // Divided total games we lost
                 DifficultyRating = Math.Round(n.Sum(p => p.Team2RankValue) / (double)n.Count(),2),
-                DiffTitleGroupBy = GetDiffTitleGroupBy(n.ToList())
+                DiffTitleGroupBy = GetDiffTitleGroupBy(n.ToList()),
+                FullTeamPercent = Math.Round(GetFullTeamPercent(TeamId, n.ToList(), expectedLinup),1)
             }).OrderByDescending(n => n.WinPercent).ToList();
+
+            return result;
+        }
+
+        private double GetFullTeamPercent(int TeamId, List<Match> Map, ExpectedLineUp expectedLinup)
+        {
+            double result = 0;
+            double Accumulator = 0;
+
+            foreach (var match in Map)
+            {
+                if (match.Team1Id == TeamId)
+                {
+                    if (expectedLinup.Players.Where(p => p.TeamID == TeamId && p.PlayerId == match.T1Player1Id).Any())
+                        Accumulator += 1;
+                    if (expectedLinup.Players.Where(p => p.TeamID == TeamId && p.PlayerId == match.T1Player2Id).Any())
+                        Accumulator += 1;
+                    if (expectedLinup.Players.Where(p => p.TeamID == TeamId && p.PlayerId == match.T1Player3Id).Any())
+                        Accumulator += 1;
+                    if (expectedLinup.Players.Where(p => p.TeamID == TeamId && p.PlayerId == match.T1Player4Id).Any())
+                        Accumulator += 1;
+                    if (expectedLinup.Players.Where(p => p.TeamID == TeamId && p.PlayerId == match.T1Player5Id).Any())
+                        Accumulator += 1;
+                }
+                else
+                {
+                    if (expectedLinup.Players.Where(p => p.TeamID == TeamId && p.PlayerId == match.T2Player1Id).Any())
+                        Accumulator += 1;                                                           
+                    if (expectedLinup.Players.Where(p => p.TeamID == TeamId && p.PlayerId == match.T2Player2Id).Any())
+                        Accumulator += 1;                                                           
+                    if (expectedLinup.Players.Where(p => p.TeamID == TeamId && p.PlayerId == match.T2Player3Id).Any())
+                        Accumulator += 1;                                                           
+                    if (expectedLinup.Players.Where(p => p.TeamID == TeamId && p.PlayerId == match.T2Player4Id).Any())
+                        Accumulator += 1;                                                           
+                    if (expectedLinup.Players.Where(p => p.TeamID == TeamId && p.PlayerId == match.T2Player5Id).Any())
+                        Accumulator += 1;
+                }
+            }
+
+            if (Accumulator > 0)
+                result = Accumulator / Map.Count;
 
             return result;
         }

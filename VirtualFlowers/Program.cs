@@ -86,7 +86,7 @@ namespace VirtualFlowers
 
                     var pl = new Player
                     {
-                        Id = ID,
+                        PlayerId = ID,
                         PlayerName = name,
                         TeamID = Team1
 
@@ -106,7 +106,7 @@ namespace VirtualFlowers
 
                     var pl2 = new Player
                     {
-                        Id = ID2,
+                        PlayerId = ID2,
                         PlayerName = name2,
                         TeamID = team2ID
 
