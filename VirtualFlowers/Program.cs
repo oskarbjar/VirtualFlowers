@@ -57,6 +57,7 @@ namespace VirtualFlowers
                 bool finished = false;
                 string url = matchUrls;
                 HtmlDocument matchHtml = HWeb.Load(url);
+                bool changeDiv = false;
 
                 var matchIDHtml = "//*[@id='myTab']/li";
 
@@ -78,8 +79,17 @@ namespace VirtualFlowers
 
                 for (int i = 1; i < 10; i++)
                 {
+                    //var span1  =$//*[@id="back"]/div[3]/div[3]/div/div[1]/div[19]/div[1]/div[1]/span/a
                     var span1 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[{firstdivId}]/div[{i}]/div[1]/span/a";
                     var span1Name = matchHtml.DocumentNode.SelectNodes(span1);
+
+                    if (span1Name == null)
+                    {
+                        span1 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[19]/div[{i}]/div[1]/span/a";
+                        span1Name = matchHtml.DocumentNode.SelectNodes(span1);
+                        changeDiv = true;
+
+                    }
                     var name = span1Name[0].InnerText;
                     var ID = GetPlayerID(span1Name[0].OuterHtml);
                     var Team1 = teamIDs.Item1;
@@ -98,8 +108,17 @@ namespace VirtualFlowers
 
 
                     /*Create new player*/
+                    //*[@id="back"]/div[3]/div[3]/div/div[1]/div[22]/div[1]/div[1]/span/a
+
                     var span2 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[{secondDivId}]/div[{i}]/div[1]/span/a";
                     var span2Name = matchHtml.DocumentNode.SelectNodes(span2);
+
+                    if (changeDiv)
+                    {
+                        span2 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[22]/div[{i}]/div[1]/span/a";
+                        span2Name = matchHtml.DocumentNode.SelectNodes(span2);
+
+                    }
                     var name2 = span2Name[0].InnerText;
                     var ID2 = GetPlayerID(span2Name[0].OuterHtml);
                     var team2ID = teamIDs.Item2;
@@ -134,7 +153,7 @@ namespace VirtualFlowers
                     i++;
                 }
 
-               //expectedLineUp.Players.Add(lineUps);
+                //expectedLineUp.Players.Add(lineUps);
 
                 return expectedLineUp;
 
@@ -422,7 +441,7 @@ namespace VirtualFlowers
 
 
                 var t2Players = Players.Where(x => x.TeamID == team2Id).ToArray();
-                if(t2Players.Length > 0)
+                if (t2Players.Length > 0)
                     match.T2Player1Id = t2Players[0].PlayerId;
                 if (t2Players.Length > 1)
                     match.T2Player2Id = t2Players[1].PlayerId;
