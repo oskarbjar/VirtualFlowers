@@ -199,7 +199,7 @@ namespace VirtualFlowersMVC.Data
             foreach (var match in Map)
             {
                 int FTRank = 0;
-                if (match.Team1Id == TeamId)
+                if (match.Team1Id == TeamId && expectedLinup != null)
                 {
                     if (expectedLinup.Players.Where(p => p.TeamID == TeamId && p.PlayerId == match.T1Player1Id).Any())
                         FTRank += 1;
