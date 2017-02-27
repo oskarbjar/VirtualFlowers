@@ -3,13 +3,65 @@
 @{
     ViewBag.Title = "_TeamStatistic";
 }
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/foundicons/3.0.0/foundation-icons.min.css" />
 
 <h2>@Model.TeamName (@Model.TeamDifficultyRating)</h2>
 
     @foreach (var period in Model?.TeamStatistics)
     {
+        if (period.SuggestedMaps != null)
+        {
+            foreach (var suggestedMap in period.SuggestedMaps)
+            {
+                if (suggestedMap.SuggestedRank == 1)
+                {
+                    <i class="fi-die-one"></i>
+                }
+                else if (suggestedMap.SuggestedRank == 2)
+                {
+                    <i class="fi-die-two"></i>
+                }
+                else if (suggestedMap.SuggestedRank == 3)
+                {
+                    <i class="fi-die-three"></i>
+                }
+                else if (suggestedMap.SuggestedRank == 4)
+                {
+                    <i class="fi-die-four"></i>
+                }
+                else if (suggestedMap.SuggestedRank == 5)
+                {
+                    <i class="fi-die-five"></i>
+                }
+                else if (suggestedMap.SuggestedRank == 6)
+                {
+                    <i class="fi-die-six"></i>
+                }
+                <span> @suggestedMap.Map - Win: @suggestedMap.WinPercent% - Diff.R: @suggestedMap.DifficultyRating</span><br />
+            };
+        }
         <h3>@period.Period</h3>
-        <table class="table">
+        <table class="table .table-condensed">
+            <tr>
+                <th>
+                    Map
+                </th>
+                <th>
+                    Winrate
+                </th>
+                <th>
+                    Win%
+                </th>
+                <th title="Average rounds">
+                    Av. rounds
+                </th>
+                <th title="Difficulty Rating">
+                    Diff.R
+                </th>
+                <th title="Full Team Ranking">
+                    FTR
+                </th>
+            </tr>
             @foreach (var map in period.Maps)
             {
                 <tr>
@@ -20,16 +72,16 @@
                         @map.TotalWins / @map.TotalLosses
                     </td>
                     <td>
-                        @map.WinPercent %
+                        @map.WinPercent%
                     </td>
                     <td style="cursor: help" title="Av.(win): @map.AverageWinRoundsWhenWin / @map.AverageLossRoundsWhenWin &#010;Av.(loss): @map.AverageWinRoundsWhenLoss / @map.AverageLossRoundsWhenLoss &#010;">
-                        Av.: @map.AverageWinRounds / @map.AverageLossRounds
+                        @map.AverageWinRounds / @map.AverageLossRounds
                     </td>
                     <td style="cursor: help" title="@Html.Raw(@map.DiffTitleGroupBy)">
-                        Diff.R: @map.DifficultyRating
+                        @map.DifficultyRating
                     </td>
                     <td style="cursor: help" title="@Html.Raw(@map.FullTeamRanking.Item2)">
-                        FTR: @Math.Round(@map.FullTeamRanking.Item1,1)
+                        @Math.Round(@map.FullTeamRanking.Item1,1)
                     </td>
                 </tr>            
             }

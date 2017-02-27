@@ -54,6 +54,11 @@ namespace VirtualFlowersMVC.Controllers
                             Program.GetTeamDetails(model.Team2Id);
                         model.Teams.Add(_dataWorker.GetTeamPeriodStatistics(model.Team2Id, model.PeriodSelection, model.ExpectedLineUp));
                     }
+
+                    if (model.Teams != null && model.Teams.Count > 0)
+                    {
+                        _dataWorker.GenerateSuggestedMaps(ref model);
+                    }
                 }
 
                 return View(model);

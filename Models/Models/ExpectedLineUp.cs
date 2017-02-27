@@ -12,6 +12,9 @@ namespace Models
     {
         public List<Player> Players { get; set; }
 
-
+        public ExpectedLineUp()
+        {
+            this.Players = new List<Player>();
+        }
     }
 }

@@ -39,11 +39,13 @@ namespace VirtualFlowersMVC.Models
     public class TeamStatisticModel
     {
         public string Period { get; set; }
+        public List<MapStatisticModel> SuggestedMaps { get; set; }
         public List<MapStatisticModel> Maps { get; set; }
 
         public TeamStatisticModel()
         {
             this.Maps = new List<MapStatisticModel>();
+            this.SuggestedMaps = new List<MapStatisticModel>();
         }
     }
 
@@ -62,5 +64,6 @@ namespace VirtualFlowersMVC.Models
         public double DifficultyRating { get; set; }
         public string DiffTitleGroupBy { get; set; }
         public Tuple<double,string> FullTeamRanking { get; set; }
+        public int SuggestedRank { get; set; }
     }
 }

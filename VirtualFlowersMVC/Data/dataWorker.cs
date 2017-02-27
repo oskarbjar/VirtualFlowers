@@ -325,6 +325,101 @@ namespace VirtualFlowersMVC.Data
             return result;
         }
 
+        public void GenerateSuggestedMaps(ref CompareStatisticModel model)
+        {
+            if (model.Teams.Count == 2)
+            {
+                foreach (var period in model.Teams[0].TeamStatistics)
+                {
+                    var PeriodName = period.Period;
+                    foreach (var map in period.Maps)
+                    {
+                        var resultMap = FindMatchingMaps(map, PeriodName, model.Teams[1]);
+                        if (resultMap != null)
+                            period.SuggestedMaps.Add(resultMap);
+                    }
+
+                    // Order by highest rank
+                    if (period.SuggestedMaps != null && period.SuggestedMaps.Count > 1)
+                        period.SuggestedMaps = period.SuggestedMaps.OrderByDescending(p => p.SuggestedRank).ToList();
+                }
+
+
+                foreach (var period in model.Teams[1].TeamStatistics)
+                {
+                    var PeriodName = period.Period;
+                    foreach (var map in period.Maps)
+                    {
+                        var resultMap = FindMatchingMaps(map, PeriodName, model.Teams[0]);
+                        if (resultMap != null)
+                            period.SuggestedMaps.Add(resultMap);
+                    }
+
+                    // Order by highest rank
+                    if (period.SuggestedMaps != null && period.SuggestedMaps.Count > 1)
+                        period.SuggestedMaps = period.SuggestedMaps.OrderByDescending(p => p.SuggestedRank).ToList();
+                }
+            }
+        }
+
+        public MapStatisticModel FindMatchingMaps(MapStatisticModel MapA, string PeriodName, TeamStatisticPeriodModel TeamB)
+        {
+            bool MapFound = false;
+
+            foreach (var period in TeamB.TeamStatistics)
+            {
+                // Find matching period
+                if (PeriodName == period.Period)
+                {
+                    // Try to find matching map
+                    foreach (var MapB in period.Maps)
+                    {
+                        if(MapA.Map == MapB.Map)
+                        {
+                            MapFound = true;
+                            // If found compare maps
+                            return CompareStats(MapA, MapB);
+                        }
+                    }
+                    if (MapFound == false)
+                    {
+                        // Compare with empty map
+                        return CompareStats(MapA, new MapStatisticModel());
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        private MapStatisticModel CompareStats(MapStatisticModel MapA, MapStatisticModel MapB)
+        {
+            MapStatisticModel result = null;
+            if (MapB.DifficultyRating == 0)
+                MapB.DifficultyRating = 0.5;
+            var valuePoint = (int)Math.Floor((MapA.WinPercent - MapB.WinPercent) / 20.0);
+
+            // if winPercent difference is less than 40%, we need MapA winpercent atleast 50%
+            if (valuePoint < 2 && MapA.WinPercent <= 50)
+                valuePoint = 0;
+            else if (valuePoint >= 5 && (MapA.TotalWins + MapA.TotalLosses) <= 2) // If extra few games, lower by 2
+                valuePoint -= 2;
+
+            var diffPoint = (int)Math.Floor(MapA.DifficultyRating - MapB.DifficultyRating);
+
+            if (valuePoint > 0)
+            {
+                result = new MapStatisticModel();
+
+                result.Map = MapA.Map;
+                result.SuggestedRank = valuePoint + diffPoint;
+                result.WinPercent = MapA.WinPercent - MapB.WinPercent;
+                result.DifficultyRating = MapA.DifficultyRating - MapB.DifficultyRating;
+            }
+
+            return result;
+        }
+
         #endregion
 
         #region RANKING

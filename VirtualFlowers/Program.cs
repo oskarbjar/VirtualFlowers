@@ -36,8 +36,8 @@ namespace VirtualFlowers
             {
 
                 var expectedLineUp = new ExpectedLineUp();
-                var lineUps = new ExpectedLineUp().Players;
-                var players = new List<Player>();
+                //var lineUps = new ExpectedLineUp().Players;
+                //var players = new List<Player>();
 
                 if (expectedLineUp.Players == null)
                 {
@@ -132,7 +132,9 @@ namespace VirtualFlowers
             catch (Exception)
             {
                 /*Logga niður villur*/
-                throw;
+                //throw;
+                // return empty list, to avoid crash
+                return new ExpectedLineUp();
             }
 
 
