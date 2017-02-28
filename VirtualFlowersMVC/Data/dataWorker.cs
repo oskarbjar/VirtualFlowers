@@ -413,8 +413,8 @@ namespace VirtualFlowersMVC.Data
 
                 result.Map = MapA.Map;
                 result.SuggestedRank = valuePoint + diffPoint;
-                result.WinPercent = MapA.WinPercent - MapB.WinPercent;
-                result.DifficultyRating = MapA.DifficultyRating - MapB.DifficultyRating;
+                result.WinPercent = Math.Round(MapA.WinPercent - MapB.WinPercent, 1);
+                result.DifficultyRating = Math.Round(MapA.DifficultyRating - MapB.DifficultyRating, 1);
             }
 
             return result;
