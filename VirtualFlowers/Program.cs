@@ -43,117 +43,88 @@ namespace VirtualFlowers
                 {
                     expectedLineUp.Players = new List<Player>();
                 }
-
-
-
-
-
+                
                 var teamIDs = GetTeamIdsFromUrl(matchUrls);
 
-                //*[@id="myTab"]
+                var url = matchUrls;
+                var matchHtml = HWeb.Load(url);
+                var firstDiv = true;
+                var secondDiv = false;
+                var thirdDiv = false;
 
-                int firstdivId = 0;
-                int secondDivId = 0;
-                bool finished = false;
-                string url = matchUrls;
-                HtmlDocument matchHtml = HWeb.Load(url);
-                bool changeDiv = false;
-
-                var matchIDHtml = "//*[@id='myTab']/li";
-
-                var matchID = matchHtml.DocumentNode.SelectNodes(matchIDHtml);
-                var team1string = "//*[@id='back']/div[3]/div[3]/div/div[1]/div[20]/div";
-                var matchOver = "//*[@id='back']/div[3]/div[3]/div/div[1]/div[3]";
-                var matchOverCheck = matchHtml.DocumentNode.SelectNodes(matchOver);
-                if (matchOverCheck[0].InnerText == "Match over")
-                {
-                    firstdivId = 19;
-                    secondDivId = 22;
-
-                }
-                else
-                {
-                    firstdivId = 16;
-                    secondDivId = 19;
-                }
+                var span1Name = new HtmlNodeCollection(HtmlNode.CreateNode(""));
+                var span2Name = new HtmlNodeCollection(HtmlNode.CreateNode(""));
 
                 for (int i = 1; i < 10; i++)
                 {
-                    //var span1  =$//*[@id="back"]/div[3]/div[3]/div/div[1]/div[19]/div[1]/div[1]/span/a
-                    var span1 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[{firstdivId}]/div[{i}]/div[1]/span/a";
-                    var span1Name = matchHtml.DocumentNode.SelectNodes(span1);
+                    string span1;
+                    string span2;
+                    if (firstDiv)
+                    {
+                         span1 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[16]/div[{i}]/div[1]/span/a";
+                         span1Name = matchHtml.DocumentNode.SelectNodes(span1);
+                         span2 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[19]/div[{i}]/div[1]/span/a";
+                         span2Name = matchHtml.DocumentNode.SelectNodes(span2);
 
-                    if (span1Name == null)
+                        if (span1Name == null)
+                        {
+                            secondDiv = true;
+                            firstDiv = false;
+                        }
+
+                    }
+
+                    if (secondDiv)
                     {
                         span1 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[19]/div[{i}]/div[1]/span/a";
                         span1Name = matchHtml.DocumentNode.SelectNodes(span1);
-                        changeDiv = true;
+                        span2 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[22]/div[{i}]/div[1]/span/a";
+                        span2Name = matchHtml.DocumentNode.SelectNodes(span2);
 
+                        if (span2Name == null)
+                        {
+                            secondDiv = false;
+                            thirdDiv = true;
+                        }
                     }
+
+                    if (thirdDiv)
+                    {
+                        span1 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[21]/div[{i}]/div[1]/span/a";
+                        span1Name = matchHtml.DocumentNode.SelectNodes(span1);
+                        span2 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[24]/div[{i}]/div[1]/span/a";
+                        span2Name = matchHtml.DocumentNode.SelectNodes(span2);
+                    }
+
                     var name = span1Name[0].InnerText;
-                    var ID = GetPlayerID(span1Name[0].OuterHtml);
-                    var Team1 = teamIDs.Item1;
+                    var id = GetPlayerID(span1Name[0].OuterHtml);
+                    var team1 = teamIDs.Item1;
 
                     var pl = new Player
                     {
-                        PlayerId = ID,
+                        PlayerId = id,
                         PlayerName = name,
-                        TeamID = Team1
+                        TeamID = team1
 
                     };
                     expectedLineUp.Players.Add(pl);
 
-
-
-
-
-                    /*Create new player*/
-                    //*[@id="back"]/div[3]/div[3]/div/div[1]/div[22]/div[1]/div[1]/span/a
-
-                    var span2 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[{secondDivId}]/div[{i}]/div[1]/span/a";
-                    var span2Name = matchHtml.DocumentNode.SelectNodes(span2);
-
-                    if (changeDiv)
-                    {
-                        span2 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[22]/div[{i}]/div[1]/span/a";
-                        span2Name = matchHtml.DocumentNode.SelectNodes(span2);
-
-                    }
                     var name2 = span2Name[0].InnerText;
-                    var ID2 = GetPlayerID(span2Name[0].OuterHtml);
-                    var team2ID = teamIDs.Item2;
+                    var id2 = GetPlayerID(span2Name[0].OuterHtml);
+                    var team2Id = teamIDs.Item2;
 
                     var pl2 = new Player
                     {
-                        PlayerId = ID2,
+                        PlayerId = id2,
                         PlayerName = name2,
-                        TeamID = team2ID
+                        TeamID = team2Id
 
                     };
-
                     expectedLineUp.Players.Add(pl2);
 
 
-                    /*Create new player*/
-
-
-
-                    //*[@id='back']/div[3]/div[3]/div/div[1]/div[16]/div[3]/div[1]/span
-                    //*[@id='back']/div[3]/div[3]/div/div[1]/div[16]/div[5]/div[1]/span
-                    //*[@id='back']/div[3]/div[3]/div/div[1]/div[16]/div[7]/div[1]/span
-                    //*[@id='back']/div[3]/div[3]/div/div[1]/div[16]/div[9]/div[1]/span
-
-
-                    /*Buin*/
-                    //*[@id="back"]/div[3]/div[3]/div/div[1]/div[{secondDivId}]
-
-                    /*Buin seinni*/
-                    //*[@id="back"]/div[3]/div[3]/div/div[1]/div[22]
-
                     i++;
                 }
-
-                //expectedLineUp.Players.Add(lineUps);
 
                 return expectedLineUp;
 
