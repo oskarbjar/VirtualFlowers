@@ -362,7 +362,7 @@ namespace VirtualFlowersMVC.Data
             }
         }
 
-        public MapStatisticModel FindMatchingMaps(MapStatisticModel MapA, string PeriodName, TeamStatisticPeriodModel TeamB)
+        public SuggestedMapModel FindMatchingMaps(MapStatisticModel MapA, string PeriodName, TeamStatisticPeriodModel TeamB)
         {
             bool MapFound = false;
 
@@ -392,27 +392,27 @@ namespace VirtualFlowersMVC.Data
             return null;
         }
 
-        private MapStatisticModel CompareStats(MapStatisticModel MapA, MapStatisticModel MapB)
+        private SuggestedMapModel CompareStats(MapStatisticModel MapA, MapStatisticModel MapB)
         {
-            MapStatisticModel result = null;
+            SuggestedMapModel result = null;
+
+            #region SPECIAL CASES
             if (MapB.DifficultyRating == 0)
                 MapB.DifficultyRating = 0.5;
-            var valuePoint = (int)Math.Floor((MapA.WinPercent - MapB.WinPercent) / 20.0);
+            #endregion 
 
-            // if winPercent difference is less than 40%, we need MapA winpercent atleast 50%
-            if (valuePoint < 2 && MapA.WinPercent <= 50)
-                valuePoint = 0;
-            else if (valuePoint >= 5 && (MapA.TotalWins + MapA.TotalLosses) <= 2) // If extra few games, lower by 2
-                valuePoint -= 2;
-
+            int WinLossRecord = (MapA.TotalWins - MapA.TotalLosses) - (MapB.TotalWins - MapB.TotalLosses);
+            var valuePoint = Math.Round((MapA.WinPercent - MapB.WinPercent) / 10.0);
+            
             var diffPoint = (int)Math.Floor(MapA.DifficultyRating - MapB.DifficultyRating);
 
-            if (valuePoint > 0)
+            if (WinLossRecord > 0 && valuePoint > 0 && MapA.WinPercent >= 50)
             {
-                result = new MapStatisticModel();
+                result = new SuggestedMapModel();
 
                 result.Map = MapA.Map;
                 result.SuggestedRank = valuePoint + diffPoint;
+                result.WinLossRecord = WinLossRecord;
                 result.WinPercent = Math.Round(MapA.WinPercent - MapB.WinPercent, 1);
                 result.DifficultyRating = Math.Round(MapA.DifficultyRating - MapB.DifficultyRating, 1);
             }
