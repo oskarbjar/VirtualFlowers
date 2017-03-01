@@ -7,6 +7,12 @@
 <h2>
     @Html.ActionLink("Compare", "Compare", new { }, new { style="text-decoration:none" })
 </h2>
+@if (Model != null && Model.ExpectedLineUp != null && Model.ExpectedLineUp.Players != null && Model.ExpectedLineUp.Players.Count != 10)
+{
+    <span style="color:red">Expected linup received @Model.ExpectedLineUp.Players.Count players 
+    (Team1: @Model.ExpectedLineUp.Players.Count(p => p.TeamID == Model.Team1Id) / 
+    Team2 @Model.ExpectedLineUp.Players.Count(p => p.TeamID == Model.Team2Id))</span>
+}
 <form action="Compare" method="post" class="form-inline">
     <div class="col-lg-3">
         <input type="text" style="width:80px" class="form-control" name="Team1Id" value="" placeholder="Team 1" />
