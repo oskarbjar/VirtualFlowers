@@ -7,60 +7,54 @@
 <h2>
     @Html.ActionLink("Compare", "Compare", new { }, new { style="text-decoration:none" })
 </h2>
-@if (Model != null && Model.ExpectedLineUp != null && Model.ExpectedLineUp.Players != null && Model.ExpectedLineUp.Players.Count != 10)
-{
-    <span style="color:red">Expected linup received @Model.ExpectedLineUp.Players.Count players 
-    (Team1: @Model.ExpectedLineUp.Players.Count(p => p.TeamID == Model.Team1Id) / 
-    Team2 @Model.ExpectedLineUp.Players.Count(p => p.TeamID == Model.Team2Id))</span>
-}
-<form action="Compare" method="post" class="form-inline">
-    <div class="col-lg-3">
-        <input type="text" style="width:80px" class="form-control" name="Team1Id" value="" placeholder="Team 1" />
-        <input type="text" style="width:80px" class="form-control" name="Team2Id" value="" placeholder="Team 2" />
-    </div>
-    <div class="col-lg-9">
-        <label for="MatchUrl">Or&nbsp;&nbsp;&nbsp;</label><input type="text" style="width: 800px" class="form-control" name="MatchUrl" value="" placeholder="MatchUrl" />
-        <input type="submit" class="btn btn-primary" id="CompareBtn" value="Compare" />
-    </div>
-    <div class="col-lg-3">
-        <label><input type="checkbox" name="Scrape" value="true" checked /> Scrape</label>
-    </div>
-    <div class="col-lg-9">
-        <label><input type="checkbox" name="PeriodSelection" value="3" checked /> 3 Month</label>
-        <label><input type="checkbox" name="PeriodSelection" value="6" checked /> 6 Month</label>
-        <label><input type="checkbox" name="PeriodSelection" value="12" /> 1 Year</label>
-    </div>
-</form>
-
-@*<div id="CompareSpinner" style="display: block; margin: auto; width: 35%;">@Html.Partial("Components/_WaitSpinnerPartial")</div>*@
-
-@if (Model != null)
-{
-    foreach (var Team in Model?.Teams)
+    @if (Model != null && Model.ExpectedLineUp != null && Model.ExpectedLineUp.Players != null && Model.ExpectedLineUp.Players.Count != 10)
     {
-        <div class="col-md-6">
-            @Html.Partial("Partials/_TeamStatistic", Team)
-        </div>
+        <span style="color:red">
+            Expected linup received @Model.ExpectedLineUp.Players.Count players
+            (Team1: @Model.ExpectedLineUp.Players.Count(p => p.TeamID == Model.Team1Id) /
+            Team2 @Model.ExpectedLineUp.Players.Count(p => p.TeamID == Model.Team2Id))
+        </span>
     }
-}
+    <form action="Compare" method="post" class="form-inline">
+        <div class="col-lg-3">
+            <input type="text" style="width:80px" class="form-control" name="Team1Id" value="" placeholder="Team 1" />
+            <input type="text" style="width:80px" class="form-control" name="Team2Id" value="" placeholder="Team 2" />
+        </div>
+        <div class="col-lg-9">
+            <label for="MatchUrl">Or&nbsp;&nbsp;&nbsp;</label><input type="text" style="width: 800px" class="form-control" name="MatchUrl" value="" placeholder="MatchUrl" />
+            <input type="submit" class="btn btn-primary" id="CompareBtn" value="Compare" />
+            <img class="loading" src="~/Content/ajax-loader.gif" alt="loader" style="display:none" />
+        </div>
+        <div class="col-lg-3">
+            <label><input type="checkbox" name="Scrape" value="true" checked /> Scrape</label>
+        </div>
+        <div class="col-lg-9">
+            <label><input type="checkbox" name="PeriodSelection" value="3" checked /> 3 Month</label>
+            <label><input type="checkbox" name="PeriodSelection" value="6" checked /> 6 Month</label>
+            <label><input type="checkbox" name="PeriodSelection" value="12" /> 1 Year</label>
+        </div>
+    </form>
+        
+
+    @if (Model != null)
+    {
+        foreach (var Team in Model?.Teams)
+        {
+            <div class="col-md-6">
+                @Html.Partial("Partials/_TeamStatistic", Team)
+            </div>
+        }
+    }
 
 
-<script>
-    $(document).ready(function () {
-        //$("#CompareSpinner").fadeIn();
+    <script>
+        $(document).ready(function () {
+            $('.loading').fadeOut('slow');
+            
+            $("#CompareBtn").click(function () {
+                // Loading spinner
+                $('.loading').fadeIn('fast');
+            });
 
-        //$("#CompareBtn")
-        //.click(function () {
-        //    // Loading spinner
-        //    $("#CompareSpinner").fadeIn();
-        //});
-
-        //$("#loading").fadeIn();
-
-        $("#CompareBtn").click(function () {
-            // Loading spinner
-            $("#loading").fadeIn();
         });
-
-    });
-</script>
+    </script>
