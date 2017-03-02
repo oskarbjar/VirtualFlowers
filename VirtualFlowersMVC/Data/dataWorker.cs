@@ -404,17 +404,17 @@ namespace VirtualFlowersMVC.Data
             int WinLossRecord = (MapA.TotalWins - MapA.TotalLosses) - (MapB.TotalWins - MapB.TotalLosses);
             var valuePoint = Math.Round((MapA.WinPercent - MapB.WinPercent) / 10.0);
             
-            var diffPoint = (int)Math.Floor(MapA.DifficultyRating - MapB.DifficultyRating);
+            var diffPoint = (int)Math.Floor((MapA.DifficultyRating - MapB.DifficultyRating) * 10);
 
             if (WinLossRecord > 0 && valuePoint > 0 && MapA.WinPercent >= 50)
             {
                 result = new SuggestedMapModel();
 
                 result.Map = MapA.Map;
-                result.SuggestedRank = valuePoint + diffPoint;
+                result.SuggestedRank = Math.Ceiling(((WinLossRecord + valuePoint) / 2.0) + diffPoint);
                 result.WinLossRecord = WinLossRecord;
                 result.WinPercent = Math.Round(MapA.WinPercent - MapB.WinPercent, 1);
-                result.DifficultyRating = Math.Round(MapA.DifficultyRating - MapB.DifficultyRating, 1);
+                result.DifficultyRating = Math.Round((MapA.DifficultyRating - MapB.DifficultyRating) * 10, 1);
             }
 
             return result;
