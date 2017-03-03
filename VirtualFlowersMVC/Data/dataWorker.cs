@@ -397,12 +397,15 @@ namespace VirtualFlowersMVC.Data
             SuggestedMapModel result = null;
 
             #region SPECIAL CASES
+            // Empty record, default 0.5 
             if (MapB.DifficultyRating == 0)
                 MapB.DifficultyRating = 0.5;
-            #endregion 
+            var WinPercentA = SetWinPercentSpecialCases(MapA);
+            var WinPercentB = SetWinPercentSpecialCases(MapB);
+            #endregion
 
             int WinLossRecord = (MapA.TotalWins - MapA.TotalLosses) - (MapB.TotalWins - MapB.TotalLosses);
-            var valuePoint = Math.Round((MapA.WinPercent - MapB.WinPercent) / 10.0);
+            var valuePoint = Math.Round((WinPercentA - WinPercentB) / 10.0);
             
             var diffPoint = (int)Math.Floor((MapA.DifficultyRating - MapB.DifficultyRating) * 10);
 
@@ -413,11 +416,27 @@ namespace VirtualFlowersMVC.Data
                 result.Map = MapA.Map;
                 result.SuggestedRank = Math.Ceiling(((WinLossRecord + valuePoint) / 2.0) + diffPoint);
                 result.WinLossRecord = WinLossRecord;
-                result.WinPercent = Math.Round(MapA.WinPercent - MapB.WinPercent, 1);
+                result.WinPercent = Math.Round(WinPercentA - WinPercentB, 1);
                 result.DifficultyRating = Math.Round((MapA.DifficultyRating - MapB.DifficultyRating) * 10, 1);
             }
 
             return result;
+        }
+
+        private double SetWinPercentSpecialCases(MapStatisticModel Map)
+        {
+            // If extra few matches, set winpercent manually
+            if (Map.TotalWins + Map.TotalLosses < 2)
+            {
+                if (Map.TotalWins + Map.TotalLosses == 0) // 50% if no games
+                    return 50;
+                else if (Map.TotalWins == 1) // 1-0 record 67%
+                    return 67;
+                else // 0-1 record 33%
+                    return 33;
+            }
+            else
+                return Map.WinPercent;
         }
 
         #endregion

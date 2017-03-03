@@ -12,7 +12,7 @@
         <span style="color:red">
             Expected linup received @Model.ExpectedLineUp.Players.Count players
             (Team1: @Model.ExpectedLineUp.Players.Count(p => p.TeamID == Model.Team1Id) /
-            Team2 @Model.ExpectedLineUp.Players.Count(p => p.TeamID == Model.Team2Id))
+            Team2: @Model.ExpectedLineUp.Players.Count(p => p.TeamID == Model.Team2Id))
         </span>
     }
     <form action="Compare" method="post" class="form-inline">
