@@ -34,8 +34,11 @@ namespace Models
         public int      ResultT2              { get; set; }
         public int      FirstRound1HWinTeamId { get; set; }
         public int      FirstRound2HWinTeamId { get; set; }
-        public string   FirstRound1HWinCtTerr { get; set; }
-        public string   FirstRound2HWinCtTerr { get; set; }
+        public bool     FirstRound1HWinCt      { get; set; }
+        public bool     FirstRound1HWinTerr { get; set; }
+        public bool FirstRound2HWinCT { get; set; }
+
+        public bool FirstRound2HWinTerr { get; set; }
 
         public int    Team1Id        { get; set; }
         public double Team1RankValue { get; set; }
@@ -54,5 +57,19 @@ namespace Models
         public int    T2Player3Id    { get; set; }
         public int    T2Player4Id    { get; set; }
         public int    T2Player5Id    { get; set; }
+    }
+
+    public class RoundHistory
+    {
+        public int ID { get; set; }
+        public bool Round1 { get; set; }
+        public bool Round16 { get; set; }
+        public int TeamId { get; set; }
+        public bool Terrorist { get; set; }
+
+        public bool  CounterTerrorist { get; set; }
+
+        [NotMapped]
+        public int round { get; set; }
     }
 }

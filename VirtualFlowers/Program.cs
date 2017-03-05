@@ -3,6 +3,7 @@ using System.Linq;
 using HtmlAgilityPack;
 using Models;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 using Match = Models.Match;
 
@@ -17,7 +18,7 @@ namespace VirtualFlowers
 
         static void Main(string[] args)
         {
-            //GetTeamDetails(4501);
+            GetTeamDetails(4501);
 
             //GetTeamIdsFromUrl("http://www.hltv.org/match/2307714-g2-flipsid3-iem-katowice-2017-eu-closed-qualifier");
             //Import url from mvc project
@@ -43,7 +44,7 @@ namespace VirtualFlowers
                 {
                     expectedLineUp.Players = new List<Player>();
                 }
-                
+
                 var teamIDs = GetTeamIdsFromUrl(matchUrls);
 
                 var url = matchUrls;
@@ -51,6 +52,7 @@ namespace VirtualFlowers
                 var firstDiv = true;
                 var secondDiv = false;
                 var thirdDiv = false;
+                var fourthDiv = false;
 
                 var span1Name = new HtmlNodeCollection(HtmlNode.CreateNode(""));
                 var span2Name = new HtmlNodeCollection(HtmlNode.CreateNode(""));
@@ -96,7 +98,27 @@ namespace VirtualFlowers
                             span1Name = matchHtml.DocumentNode.SelectNodes(span1);
                             span2 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[24]/div[{i}]/div[1]/span/a";
                             span2Name = matchHtml.DocumentNode.SelectNodes(span2);
+
+                            if (span1Name == null)
+                            {
+                                thirdDiv = false;
+                                fourthDiv = true;
+
+                            }
                         }
+
+                        if (fourthDiv)
+                        {
+                            span1 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[24]/div[{i}]/div[1]/span/a";
+                            span1Name = matchHtml.DocumentNode.SelectNodes(span1);
+                            span2 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[27]/div[{i}]/div[1]/span/a";
+                            span2Name = matchHtml.DocumentNode.SelectNodes(span2);
+
+                        }
+
+
+
+
 
                         var name = span1Name[0].InnerText;
                         var id = GetPlayerID(span1Name[0].OuterHtml);
@@ -126,7 +148,7 @@ namespace VirtualFlowers
 
 
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         // do nothing
                     }
@@ -353,6 +375,9 @@ namespace VirtualFlowers
                 var gameURL = $"http://www.hltv.org/?pageid=188&matchid={matchid}";
                 var Players = GetPlayers(gameURL, team1Id, team2Id);
 
+                var rounds = GetRounds(gameURL, matchid, team1Id, team2Id);
+
+
 
 
 
@@ -392,6 +417,34 @@ namespace VirtualFlowers
                      */
 
 
+                var firstRoundWin = rounds.FirstOrDefault(y => y.Round1);
+                bool firstRoundTerr = firstRoundWin.Terrorist;
+                bool firstRoundCt = !firstRoundTerr;
+                var secondRoundWin = rounds.FirstOrDefault(y => y.Round16);
+                bool secondRoundTerr = false;
+
+                if (secondRoundWin != null)
+                {
+                    secondRoundTerr = secondRoundWin.Terrorist;
+                }
+
+                var secondRoundCt = !secondRoundTerr;
+                var firstRound2HWinTeamId = 0;
+                var firstRound1HWinTeamId = 0;
+                var firstOrDefault = rounds.FirstOrDefault(x => x.Round16);
+                if (firstOrDefault != null)
+                {
+                    firstRound2HWinTeamId = firstOrDefault.TeamId;
+                }
+
+
+                var roundHistory = rounds.FirstOrDefault(x => x.Round1);
+                if (roundHistory != null)
+                {
+                    firstRound1HWinTeamId = roundHistory.TeamId;
+                }
+
+
 
                 var match = new Match
                 {
@@ -405,6 +458,13 @@ namespace VirtualFlowers
                     Team1RankValue = GetRankingValueForTeam(team1Id, dDate),
                     Team2Id = team2Id,
                     Team2RankValue = GetRankingValueForTeam(team2Id, dDate),
+                    FirstRound1HWinTeamId = firstRound1HWinTeamId,
+                    FirstRound1HWinTerr = firstRoundTerr,
+                    FirstRound1HWinCt = firstRoundCt,
+                    FirstRound2HWinTeamId = firstRound2HWinTeamId,
+                    FirstRound2HWinTerr = secondRoundTerr,
+                    FirstRound2HWinCT = secondRoundCt
+
                 };
 
                 var t1Players = Players.Where(x => x.TeamID == team1Id).ToArray();
@@ -418,7 +478,6 @@ namespace VirtualFlowers
                     match.T1Player4Id = t1Players[3].PlayerId;
                 if (t1Players.Length > 4)
                     match.T1Player5Id = t1Players[4].PlayerId;
-
 
                 var t2Players = Players.Where(x => x.TeamID == team2Id).ToArray();
                 if (t2Players.Length > 0)
@@ -437,9 +496,119 @@ namespace VirtualFlowers
 
 
                 db.Match.Add(match);
+
+
                 db.SaveChanges();
                 lCounter++;
             }
+        }
+
+
+        private static List<RoundHistory> GetRounds(string gameUrl, int team1Id, int team2Id)
+        {
+            var roundWinner = new List<RoundHistory>();
+            HtmlDocument gameHtml = HWeb.Load(gameUrl);
+
+            /*Þetta er fyrsta línan í rounds boxinu, rounds 1-15 (byrjar sem Counter terr )*/
+            var upperRow = $"//*[@id='back']/div[3]/div[3]/div/div[5]/div[2]/div/div[6]/div/div[1]/div/div[1]/div[1]/img[1]";
+            var upperRowResult = gameHtml.DocumentNode.SelectNodes(upperRow);
+            if (upperRowResult != null)
+            {
+                var rounds = new RoundHistory();
+                var score = getScore(upperRowResult[0].OuterHtml);
+                if (score.Item1 != int.MinValue)
+                {
+
+                    if (score.Item1 > score.Item2)
+                    {
+                        rounds.TeamId = team1Id;
+                        rounds.CounterTerrorist = true;
+                        rounds.Round1 = true;
+                        rounds.round = score.Item1 + score.Item2;
+                    }
+                    roundWinner.Add(rounds);
+
+
+                }
+            }
+            /*Þetta er fyrsta línan í rounds boxinu, rounds 16-31 (terr ) - Sama á við um lower línuna*/
+            upperRow = $"//*[@id='back']/div[3]/div[3]/div/div[5]/div[2]/div/div[6]/div/div[1]/div/div[3]/div[1]/img[1]";
+
+
+
+            upperRowResult = gameHtml.DocumentNode.SelectNodes(upperRow);
+            if (upperRowResult != null)
+            {
+                var rounds = new RoundHistory();
+                var score = getScore(upperRowResult[0].OuterHtml);
+                if (score.Item1 != int.MinValue)
+                {
+
+                    rounds.TeamId = team1Id;
+                    rounds.Terrorist = true;
+                    rounds.Round16 = true;
+                    roundWinner.Add(rounds);
+                }
+
+
+            }
+
+            var lowerRow =
+                $"//*[@id='back']/div[3]/div[3]/div/div[5]/div[2]/div/div[6]/div/div[1]/div/div[1]/div[2]/img[1]";
+            var lowerRowResult = gameHtml.DocumentNode.SelectNodes(lowerRow);
+            if (lowerRowResult != null)
+            {
+                var rounds = new RoundHistory();
+                var score = getScore(lowerRowResult[0].OuterHtml);
+
+                if (score.Item1 != int.MinValue)
+                {
+                    rounds.TeamId = team2Id;
+                    rounds.Terrorist = true;
+                    rounds.Round1 = true;
+                    rounds.round = score.Item1 + score.Item2;
+                    roundWinner.Add(rounds);
+                }
+
+            }
+
+            lowerRow =
+               $"//*[@id='back']/div[3]/div[3]/div/div[5]/div[2]/div/div[6]/div/div[1]/div/div[3]/div[2]/img[1]";
+            lowerRowResult = gameHtml.DocumentNode.SelectNodes(lowerRow);
+            if (lowerRowResult != null)
+            {
+                var score = getScore(lowerRowResult[0].OuterHtml);
+                if (score.Item1 != int.MinValue)
+                {
+                    var rounds = new RoundHistory
+                    {
+                        TeamId = team2Id,
+                        CounterTerrorist = true,
+                        Round16 = true,
+                        round = score.Item1 + score.Item2
+                    };
+                    roundWinner.Add(rounds);
+                }
+            }
+            
+            return roundWinner;
+        }
+        private static Tuple<int, int> getScore(string outerHtml)
+        {
+            string[] stringSeperators = { "style=" };
+            var returnvalue = new Tuple<int, int>(int.MinValue, int.MinValue);
+            var result = outerHtml.Split(stringSeperators, StringSplitOptions.None);
+            var result2 = result[0].Substring(12, result[0].Length - 12);
+            var res3 = result2.Remove(result2.Length - 1);
+            var rounds = res3.Remove(res3.Length - 1, 1);
+
+            if (rounds == "") return returnvalue;
+            string[] roundsSeperator = { ":" };
+            var splitrounds = rounds.Split(roundsSeperator, StringSplitOptions.None);
+            returnvalue = new Tuple<int, int>(Convert.ToInt32(splitrounds[0]), Convert.ToInt32(splitrounds[1]));
+
+
+            return returnvalue;
         }
 
         private static List<Player> GetPlayers(string gameURl, int team1ID, int team2ID)
@@ -463,9 +632,6 @@ namespace VirtualFlowers
                     var html = GameHtml.DocumentNode.SelectNodes(playerNameHtml);
                     var playerID = GetPlayerID(html[0].InnerHtml);
                     var playerName = html[0].InnerText;
-                    var teamNameResult = GameHtml.DocumentNode.SelectNodes(teamNameHtml);
-                    var Teamname = teamNameResult[0].InnerHtml;
-
                     var teamIDResult = GameHtml.DocumentNode.SelectNodes(teamNameIDhtml);
 
                     var teamID = 0;

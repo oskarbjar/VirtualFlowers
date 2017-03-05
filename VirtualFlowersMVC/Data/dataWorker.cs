@@ -303,9 +303,11 @@ namespace VirtualFlowersMVC.Data
                 ResultT1 = n.Team1Id == TeamId ? n.ResultT1 : n.ResultT2, // 
                 ResultT2 = n.Team1Id == TeamId ? n.ResultT2 : n.ResultT1,
                 FirstRound1HWinTeamId = n.FirstRound1HWinTeamId,
-                FirstRound1HWinCtTerr = n.FirstRound1HWinCtTerr,
+                FirstRound1HWinCt = n.FirstRound1HWinCt,
+                FirstRound1HWinTerr =  n.FirstRound1HWinTerr,
                 FirstRound2HWinTeamId = n.FirstRound2HWinTeamId,
-                FirstRound2HWinCtTerr = n.FirstRound2HWinCtTerr,
+                FirstRound2HWinTerr = n.FirstRound2HWinTerr,
+                FirstRound2HWinCT = n.FirstRound2HWinCT,
                 Team1Id = n.Team1Id == TeamId ? n.Team1Id : n.Team2Id,
                 Team1RankValue = n.Team1Id == TeamId ? n.Team1RankValue : n.Team2RankValue,
                 T1Player1Id = n.Team1Id == TeamId ? n.T1Player1Id : n.T2Player1Id,

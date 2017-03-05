@@ -54,6 +54,18 @@
     <Compile Include="Migrations\201702211557216_InitialDatabase.Designer.cs">
       <DependentUpon>201702211557216_InitialDatabase.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201703042202353_RoundHistory.cs" />
+    <Compile Include="Migrations\201703042202353_RoundHistory.Designer.cs">
+      <DependentUpon>201703042202353_RoundHistory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201703051307349_RoundHistory1.cs" />
+    <Compile Include="Migrations\201703051307349_RoundHistory1.Designer.cs">
+      <DependentUpon>201703051307349_RoundHistory1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201703051934311_RoundHistory2.cs" />
+    <Compile Include="Migrations\201703051934311_RoundHistory2.Designer.cs">
+      <DependentUpon>201703051934311_RoundHistory2.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\ExpectedLineUp.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ErrorLogger.cs" />
@@ -74,6 +86,15 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201702211557216_InitialDatabase.resx">
       <DependentUpon>201702211557216_InitialDatabase.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201703042202353_RoundHistory.resx">
+      <DependentUpon>201703042202353_RoundHistory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201703051307349_RoundHistory1.resx">
+      <DependentUpon>201703051307349_RoundHistory1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201703051934311_RoundHistory2.resx">
+      <DependentUpon>201703051934311_RoundHistory2.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
