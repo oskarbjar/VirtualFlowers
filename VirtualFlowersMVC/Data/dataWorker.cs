@@ -183,7 +183,9 @@ namespace VirtualFlowersMVC.Data
                     (double)n.Count(p => p.ResultT1 < p.ResultT2), 1), // Divided total games we lost
                 DifficultyRating = Math.Round(n.Sum(p => p.Team2RankValue) / (double)n.Count(),2),
                 DiffTitleGroupBy = GetDiffTitleGroupBy(n.ToList()),
-                FullTeamRanking = GetFullTeamPercent(TeamId, n.ToList(), expectedLinup)
+                FullTeamRanking = GetFullTeamPercent(TeamId, n.ToList(), expectedLinup),
+                FirstRound1HWinPercent = Math.Round(n.Count(p => p.FirstRound1HWinTeamId == TeamId) / (double)n.Count() * 100, 0),
+                FirstRound2HWinPercent = Math.Round(n.Count(p => p.FirstRound2HWinTeamId == TeamId) / (double)n.Count() * 100, 0)
             }).OrderByDescending(n => n.WinPercent).ToList();
 
             return result;
