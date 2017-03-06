@@ -375,7 +375,7 @@ namespace VirtualFlowers
                 var gameURL = $"http://www.hltv.org/?pageid=188&matchid={matchid}";
                 var Players = GetPlayers(gameURL, team1Id, team2Id);
 
-                var rounds = GetRounds(gameURL, matchid, team1Id, team2Id);
+                var rounds = GetRounds(gameURL, team1Id, team2Id);
 
 
 
