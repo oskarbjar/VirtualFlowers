@@ -13,7 +13,7 @@
         {
             foreach (var suggestedMap in period.SuggestedMaps)
             {
-                if (suggestedMap.SuggestedRank == 1)
+                if (suggestedMap.SuggestedRank < 2)
                 {
                     <i class="fi-die-one"></i>
                 }
@@ -37,7 +37,7 @@
                 {
                     <i class="fi-die-six"></i>
                 }
-                <span> @suggestedMap.Map: +@suggestedMap.WinLossRecord wins - Win: @suggestedMap.WinPercent% - Diff.R: @suggestedMap.DifficultyRating</span><br />
+                <span> @suggestedMap.Map: +@suggestedMap.WinLossRecord wins - Win: @suggestedMap.WinPercent% - Diff.R: @suggestedMap.DifficultyRating - TFR: @suggestedMap.TFRating</span><br />
             };
         }
         <h3>@period.Period</h3>

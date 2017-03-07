@@ -75,6 +75,7 @@ namespace VirtualFlowersMVC.Models
         public string Map { get; set; }
         public double WinPercent { get; set; }
         public double DifficultyRating { get; set; }
+        public double TFRating { get; set; }
         public int WinLossRecord { get; set; }
         public double SuggestedRank { get; set; }
     }

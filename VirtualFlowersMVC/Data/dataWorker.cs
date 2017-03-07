@@ -399,6 +399,7 @@ namespace VirtualFlowersMVC.Data
         private SuggestedMapModel CompareStats(MapStatisticModel MapA, MapStatisticModel MapB)
         {
             SuggestedMapModel result = null;
+            double TFRPoints = 0.0;
 
             #region SPECIAL CASES
             // Empty record, default 0.5 
@@ -412,16 +413,19 @@ namespace VirtualFlowersMVC.Data
             var valuePoint = Math.Round((WinPercentA - WinPercentB) / 10.0);
             
             var diffPoint = (int)Math.Floor((MapA.DifficultyRating - MapB.DifficultyRating) * 10);
-
+            if (MapB.FullTeamRanking != null)
+                TFRPoints = MapA.FullTeamRanking.Item1 -  MapB.FullTeamRanking.Item1;
+            
             if (WinLossRecord > 0 && valuePoint > 0 && MapA.WinPercent >= 50)
             {
                 result = new SuggestedMapModel();
 
                 result.Map = MapA.Map;
-                result.SuggestedRank = Math.Ceiling(((WinLossRecord + valuePoint) / 2.0) + diffPoint);
+                result.SuggestedRank = Math.Ceiling((((WinLossRecord + valuePoint) / 2.0) + diffPoint ) * (MapA.FullTeamRanking.Item1 * 0.2));
                 result.WinLossRecord = WinLossRecord;
                 result.WinPercent = Math.Round(WinPercentA - WinPercentB, 1);
                 result.DifficultyRating = Math.Round((MapA.DifficultyRating - MapB.DifficultyRating) * 10, 1);
+                result.TFRating = Math.Round(TFRPoints, 1);
             }
 
             return result;
