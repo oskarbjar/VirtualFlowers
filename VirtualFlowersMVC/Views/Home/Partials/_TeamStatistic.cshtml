@@ -55,17 +55,17 @@
                 <th title="Average rounds">
                     Av. rounds
                 </th>
+                <th>
+                    1st
+                </th>
+                <th>
+                    16th
+                </th>
                 <th title="Difficulty Rating">
                     Diff.R
                 </th>
                 <th title="Full Team Ranking">
                     FTR
-                </th>
-                <th>
-                    1st R.Win%
-                </th>
-                <th>
-                    16th R.Win%
                 </th>
             </tr>
             @foreach (var map in period.Maps)
@@ -83,17 +83,17 @@
                     <td style="cursor: help" title="Av.(win): @map.AverageWinRoundsWhenWin / @map.AverageLossRoundsWhenWin &#010;Av.(loss): @map.AverageWinRoundsWhenLoss / @map.AverageLossRoundsWhenLoss &#010;">
                         @map.AverageWinRounds / @map.AverageLossRounds
                     </td>
-                    <td style="cursor: help" title="@Html.Raw(@map.DiffTitleGroupBy)">
-                        @map.DifficultyRating
-                    </td>
-                    <td style="cursor: help" title="@Html.Raw(@map.FullTeamRanking.Item2)">
-                        @Math.Round(@map.FullTeamRanking.Item1,1)
-                    </td>
                     <td>
                         @map.FirstRound1HWinPercent%
                     </td>
                     <td>
                         @map.FirstRound2HWinPercent%
+                    </td>
+                    <td style="cursor: help" title="@Html.Raw(@map.DiffTitleGroupBy)">
+                        @map.DifficultyRating
+                    </td>
+                    <td style="cursor: help" title="@Html.Raw(@map.FullTeamRanking.Item2)">
+                        @Math.Round(@map.FullTeamRanking.Item1,1)
                     </td>
                 </tr>            
             }
