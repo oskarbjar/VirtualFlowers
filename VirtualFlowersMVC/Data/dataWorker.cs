@@ -184,12 +184,46 @@ namespace VirtualFlowersMVC.Data
                 DifficultyRating = Math.Round(n.Sum(p => p.Team2RankValue) / (double)n.Count(),2),
                 DiffTitleGroupBy = GetDiffTitleGroupBy(n.ToList()),
                 FullTeamRanking = GetFullTeamPercent(TeamId, n.ToList(), expectedLinup),
-                FirstRound1HWinPercent = Math.Round(n.Count(p => p.FirstRound1HWinTeamId == TeamId) / (double)n.Count() * 100, 0),
-                FirstRound2HWinPercent = Math.Round(n.Count(p => p.FirstRound2HWinTeamId == TeamId) / (double)n.Count() * 100, 0)
+                FirstRound1HWinPercent = GetFirstRoundStats(TeamId, n.ToList(), true),
+                FirstRound2HWinPercent = GetFirstRoundStats(TeamId, n.ToList(), false)
             }).OrderByDescending(n => n.WinPercent).ToList();
 
             return result;
         }
+
+        private Tuple<double, string> GetFirstRoundStats(int TeamId, List<Match> Map, bool bFirstHalf)
+        {
+            Tuple<double, string> result = new Tuple<double, string>(0, "");
+
+            double WinPercent = 0.0;
+            int WinCt = 0;
+            int LossCt = 0;
+            int WinTerr = 0;
+            int LossTerr = 0;
+            if (bFirstHalf)
+            {
+                WinPercent = Math.Round(Map.Count(p => p.FirstRound1HWinTeamId == TeamId) / (double)Map.Count() * 100, 0);
+                WinCt = Map.Count(p => p.FirstRound1HWinCt == true && p.FirstRound1HWinTeamId == TeamId);
+                LossCt = Map.Count(p => p.FirstRound1HWinCt == false && p.FirstRound1HWinTeamId != TeamId);
+                WinTerr = Map.Count(p => p.FirstRound1HWinTerr == true && p.FirstRound1HWinTeamId == TeamId);
+                LossTerr = Map.Count(p => p.FirstRound1HWinTerr == false && p.FirstRound1HWinTeamId != TeamId);
+            }
+            else
+            {
+                WinPercent = Math.Round(Map.Count(p => p.FirstRound2HWinTeamId == TeamId) / (double)Map.Count() * 100, 0);
+                WinCt = Map.Count(p => p.FirstRound2HWinCT == true && p.FirstRound2HWinTeamId == TeamId);
+                LossCt = Map.Count(p => p.FirstRound2HWinCT == false && p.FirstRound2HWinTeamId != TeamId);
+                WinTerr = Map.Count(p => p.FirstRound2HWinTerr == true && p.FirstRound2HWinTeamId == TeamId);
+                LossTerr = Map.Count(p => p.FirstRound2HWinTerr == false && p.FirstRound2HWinTeamId != TeamId);
+            }
+            
+            var returnSymbol = "&#010;";
+            var Title = $"CT: {WinCt} / {LossCt}{returnSymbol}Terr: {WinTerr} / {LossTerr}";
+            
+            result = new Tuple<double, string>(WinPercent, Title);
+            return result;
+        }
+
 
         private Tuple<double,string> GetFullTeamPercent(int TeamId, List<Match> Map, ExpectedLineUp expectedLinup)
         {

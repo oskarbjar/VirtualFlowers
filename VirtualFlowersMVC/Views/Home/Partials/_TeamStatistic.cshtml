@@ -83,11 +83,11 @@
                     <td style="cursor: help" title="Av.(win): @map.AverageWinRoundsWhenWin / @map.AverageLossRoundsWhenWin &#010;Av.(loss): @map.AverageWinRoundsWhenLoss / @map.AverageLossRoundsWhenLoss &#010;">
                         @map.AverageWinRounds / @map.AverageLossRounds
                     </td>
-                    <td>
-                        @map.FirstRound1HWinPercent%
+                    <td style="cursor: help" title="@Html.Raw(@map.FirstRound1HWinPercent.Item2)">
+                        @map.FirstRound1HWinPercent.Item1%
                     </td>
-                    <td>
-                        @map.FirstRound2HWinPercent%
+                    <td style="cursor: help" title="@Html.Raw(@map.FirstRound2HWinPercent.Item2)">
+                        @map.FirstRound2HWinPercent.Item1%
                     </td>
                     <td style="cursor: help" title="@Html.Raw(@map.DiffTitleGroupBy)">
                         @map.DifficultyRating

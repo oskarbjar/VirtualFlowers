@@ -7,6 +7,7 @@ using System.Web;
 using System.Web.Mvc;
 using VirtualFlowers;
 using VirtualFlowersMVC.Utility;
+using Models;
 
 namespace VirtualFlowersMVC.Controllers
 {
@@ -42,6 +43,8 @@ namespace VirtualFlowersMVC.Controllers
                         model.Team1Id = result.Item1;
                         model.Team2Id = result.Item2;
                     }
+                    else
+                        model.ExpectedLineUp = new ExpectedLineUp();
                     if (model.Team1Id > 0)
                     {
                         if(model.Scrape)
