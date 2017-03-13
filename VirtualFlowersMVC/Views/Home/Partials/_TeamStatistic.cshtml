@@ -41,7 +41,7 @@
             };
         }
         <h3>@period.Period</h3>
-        <table class="table .table-condensed">
+        <table class="table table-condensed table-hover">
             <tr>
                 <th>
                     Map
@@ -70,7 +70,7 @@
             </tr>
             @foreach (var map in period.Maps)
             {
-                <tr>
+                <tr class="@map.Map">
                     <td>
                         @map.Map
                     </td>
