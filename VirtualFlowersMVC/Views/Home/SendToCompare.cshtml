@@ -1,0 +1,17 @@
+﻿@using VirtualFlowersMVC.Models
+@model CompareStatisticModel
+@{
+    ViewBag.Title = "Compare";
+}
+
+
+
+@if (Model != null)
+{
+    foreach (var Team in Model?.Teams)
+    {
+        <div class="col-md-6">
+            @Html.Partial("Partials/_TeamStatistic", Team)
+        </div>
+    }
+}

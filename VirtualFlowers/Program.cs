@@ -18,7 +18,7 @@ namespace VirtualFlowers
 
         static void Main(string[] args)
         {
-            GetTeamDetails(4501);
+            //GetTeamDetails(4501);
 
             //GetTeamIdsFromUrl("http://www.hltv.org/match/2307714-g2-flipsid3-iem-katowice-2017-eu-closed-qualifier");
             //Import url from mvc project
@@ -27,7 +27,61 @@ namespace VirtualFlowers
 
             //GetTeamLineup("http://www.hltv.org/match/2308074-godsent-endpoint-esea-premier-season-24-europe");
 
+          // var stringList = GetMatches("http://www.hltv.org/matches");
 
+
+        }
+
+        public static List<string> GetMatches()
+        {
+            string url = "http://www.hltv.org/matches";
+            List<string> urlsList = new List<string>();
+          
+            for (int i = 1; i < 50; i++)
+            {
+                var htmlString = $"//*[@id='back']/div[3]/div[3]//div/div[{i}]/div[1]";
+                var matchesHtml = HWeb.Load(url);
+                var selection = matchesHtml.DocumentNode.SelectNodes(htmlString);
+
+
+                //var team1 = $"//*[@id='back']/div[3]/div[3]/div/div[{i}]/div[1]/div[4]"/*Team2*/;
+
+                //var team1Selections = matchesHtml.DocumentNode.SelectNodes(team1);
+                //var team2 = $"//*[@id='back']/div[3]/div[3]/div/div[{i}]/div[1]/div[2]"/*Team1*/;
+                //var team2Selections = matchesHtml.DocumentNode.SelectNodes(team2);
+                var detaild =  $"//*[@id='back']/div[3]/div[3]/div/div[{i}]/div[1]/div[5]" /*Url*/;
+
+
+                var urls = matchesHtml.DocumentNode.SelectNodes(detaild);
+
+
+                if (urls != null)
+                { 
+                var urlString = GetMatchHref(urls[0].InnerHtml);
+
+                var urlstring = urlString.Remove(0,1);
+                urlstring = urlstring.Remove(urlstring.Length-1);
+
+                urlsList.Add(urlstring);
+                }
+
+            }
+
+            return urlsList;
+
+         
+        }
+
+        private static string GetMatchHref(string innerHtml)
+        {
+            string[] stringSeperator = { "<a href=" };
+            string[] secondSplit = { ">" };
+
+            var result1 = innerHtml.Split(stringSeperator, StringSplitOptions.None);
+            var result2 = result1[1].Split(secondSplit, StringSplitOptions.None);
+
+            return result2[0];
+            
         }
 
         public static ExpectedLineUp GetTeamLineup(string matchUrls)

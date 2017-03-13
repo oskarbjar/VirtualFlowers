@@ -38,4 +38,11 @@ namespace VirtualFlowersMVC.Models
         public string T2Player4Name { get; set; }
         public string T2Player5Name { get; set; }
     }
+
+
+    public class OverViewViewModel
+    {   [Key]
+        public int Id { get; set; } 
+        public string Url { get; set; }
+    }
 }

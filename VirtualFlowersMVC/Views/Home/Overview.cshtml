@@ -1,0 +1,32 @@
+﻿@model IEnumerable<VirtualFlowersMVC.Models.OverViewViewModel>
+
+@{
+    ViewBag.Title = "Overview";
+}
+
+<h2>Overview</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Url)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+           @* @Html.DisplayFor(modelItem => item.Url)*@
+
+          <a href="@item.Url">@item.Url</a>
+        </td>
+        <td>
+            @*@Html.ActionLink("Edit", "Edit", new { id=item.Id }) |*@
+            @Html.ActionLink("Scrape", "SendToCompare", new { url=item.Url })
+           @* @Html.ActionLink("Delete", "Delete", new { id=item.Id })*@
+        </td>
+    </tr>
+}
+
+</table>

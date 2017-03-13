@@ -23,10 +23,10 @@ namespace VirtualFlowersMVC.Controllers
 
         // GET: Home/Compare
         public ActionResult Compare()
-        {            
+        {
             return View();
         }
-        
+
         //
         // POST: /Home/Compare
         [HttpPost]
@@ -47,7 +47,7 @@ namespace VirtualFlowersMVC.Controllers
                         model.ExpectedLineUp = new ExpectedLineUp();
                     if (model.Team1Id > 0)
                     {
-                        if(model.Scrape)
+                        if (model.Scrape)
                             Program.GetTeamDetails(model.Team1Id);
                         model.Teams.Add(_dataWorker.GetTeamPeriodStatistics(model.Team1Id, model.PeriodSelection, model.ExpectedLineUp));
                     }
@@ -86,6 +86,85 @@ namespace VirtualFlowersMVC.Controllers
             ViewBag.Message = "Your contact page.";
 
             return View();
+        }
+
+        public List<string> overviewurls = new List<string>();
+        public ActionResult Overview()
+        {
+
+            var OverViewList = new List<OverViewViewModel>();
+
+            var result = VirtualFlowers.Program.GetMatches();
+
+            foreach (var item in result)
+            {
+                var overview = new OverViewViewModel();
+
+                overview.Url = "http://www.hltv.org/" + item;
+                OverViewList.Add(overview);
+                overviewurls.Add(item);
+            }
+            TempData["UrlList"] = overviewurls;
+            return View(OverViewList);
+
+        }
+
+        public ActionResult SendToCompare(string url)
+        {          
+
+            var PeriodSelection = new List<string>();
+            PeriodSelection.Add("3");
+            var model = new CompareStatisticModel();
+            model.MatchUrl = "http://www.hltv.org/" + url;
+            model.Scrape = true;
+            model.PeriodSelection = PeriodSelection;
+
+            if (url.Length > 0)
+            {
+                var result = Program.GetTeamIdsFromUrl(url);
+                model.ExpectedLineUp = Program.GetTeamLineup(model.MatchUrl);
+                model.Team1Id = result.Item1;
+                model.Team2Id = result.Item2;
+            }
+            
+            #region "Hægt að nota svona til að scrapa allt"
+            
+            /*
+            foreach (var item in str.Take(3))
+            {
+                List<string> str = TempData["UrlList"] as List<string>;
+                var model = new CompareStatisticModel();
+                model.MatchUrl = "http://www.hltv.org/" + item;
+                model.Scrape = true;
+                model.PeriodSelection = PeriodSelection;
+
+                var result = Program.GetTeamIdsFromUrl(url);
+                model.ExpectedLineUp = Program.GetTeamLineup(model.MatchUrl);
+                model.Team1Id = result.Item1;
+                model.Team2Id = result.Item2;
+            }*/
+            #endregion
+            
+            if (model.Team1Id > 0)
+                {
+                    if (model.Scrape)
+                        Program.GetTeamDetails(model.Team1Id);
+                    model.Teams.Add(_dataWorker.GetTeamPeriodStatistics(model.Team1Id, model.PeriodSelection, model.ExpectedLineUp));
+                }
+                if (model.Team2Id > 0)
+                {
+                    if (model.Scrape)
+                        Program.GetTeamDetails(model.Team2Id);
+                    model.Teams.Add(_dataWorker.GetTeamPeriodStatistics(model.Team2Id, model.PeriodSelection, model.ExpectedLineUp));
+                }
+
+            if (model.Teams != null && model.Teams.Count > 0)
+            {
+                _dataWorker.GenerateSuggestedMaps(ref model);
+            }
+
+            return View(model);
+  
         }
     }
 }

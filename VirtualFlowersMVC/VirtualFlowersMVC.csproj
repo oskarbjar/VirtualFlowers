@@ -294,6 +294,8 @@
     <Content Include="Views\Shared\Components\_WaitSpinnerPartial.cshtml" />
     <Content Include="Views\Ranks\TransferHistory.cshtml" />
     <Content Include="Views\Ranks\CreateTransfer.cshtml" />
+    <Content Include="Views\Home\Overview.cshtml" />
+    <Content Include="Views\Home\SendToCompare.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -336,7 +338,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>65102</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:65102/</IISUrl>
+          <IISUrl>http://localhost:65110/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

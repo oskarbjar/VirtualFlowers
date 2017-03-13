@@ -28,5 +28,7 @@ namespace Models
         public DbSet<ErrorLogger> ErrorLoggers { get; set; }
 
         public DbSet<RoundHistory> RoundHistories { get; set; }
+
+        
     }
 }
