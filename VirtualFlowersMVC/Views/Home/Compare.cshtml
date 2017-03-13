@@ -56,5 +56,15 @@
                 $('.loading').fadeIn('fast');
             });
 
+            $("tr").hover(function () {
+                var trClass = this.className;
+                $("." + trClass).css("background-color", "#f5f5f5");
+            });
+
+            $("tr").mouseleave(function () {
+                var trClass = this.className;
+                $("." + trClass).css("background-color", "white");
+            });
+
         });
     </script>
