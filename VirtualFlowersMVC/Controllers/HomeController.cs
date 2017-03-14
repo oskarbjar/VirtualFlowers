@@ -8,6 +8,7 @@ using System.Web.Mvc;
 using VirtualFlowers;
 using VirtualFlowersMVC.Utility;
 using Models;
+using MemoryCache;
 
 namespace VirtualFlowersMVC.Controllers
 {
@@ -36,32 +37,33 @@ namespace VirtualFlowersMVC.Controllers
             {
                 if (model != null)
                 {
-                    if (!string.IsNullOrEmpty(model.MatchUrl))
-                    {
-                        var result = Program.GetTeamIdsFromUrl(model.MatchUrl);
-                        model.ExpectedLineUp = Program.GetTeamLineup(model.MatchUrl);
-                        model.Team1Id = result.Item1;
-                        model.Team2Id = result.Item2;
-                    }
-                    else
-                        model.ExpectedLineUp = new ExpectedLineUp();
-                    if (model.Team1Id > 0)
-                    {
-                        if (model.Scrape)
-                            Program.GetTeamDetails(model.Team1Id);
-                        model.Teams.Add(_dataWorker.GetTeamPeriodStatistics(model.Team1Id, model.PeriodSelection, model.ExpectedLineUp));
-                    }
-                    if (model.Team2Id > 0)
-                    {
-                        if (model.Scrape)
-                            Program.GetTeamDetails(model.Team2Id);
-                        model.Teams.Add(_dataWorker.GetTeamPeriodStatistics(model.Team2Id, model.PeriodSelection, model.ExpectedLineUp));
-                    }
+                    model = runCompare(model);
+                    //if (!string.IsNullOrEmpty(model.MatchUrl))
+                    //{
+                    //    var result = Program.GetTeamIdsFromUrl(model.MatchUrl);
+                    //    model.ExpectedLineUp = Program.GetTeamLineup(model.MatchUrl);
+                    //    model.Team1Id = result.Item1;
+                    //    model.Team2Id = result.Item2;
+                    //}
+                    //else
+                    //    model.ExpectedLineUp = new ExpectedLineUp();
+                    //if (model.Team1Id > 0)
+                    //{
+                    //    if (model.Scrape)
+                    //        Program.GetTeamDetails(model.Team1Id);
+                    //    model.Teams.Add(_dataWorker.GetTeamPeriodStatistics(model.Team1Id, model.PeriodSelection, model.ExpectedLineUp));
+                    //}
+                    //if (model.Team2Id > 0)
+                    //{
+                    //    if (model.Scrape)
+                    //        Program.GetTeamDetails(model.Team2Id);
+                    //    model.Teams.Add(_dataWorker.GetTeamPeriodStatistics(model.Team2Id, model.PeriodSelection, model.ExpectedLineUp));
+                    //}
 
-                    if (model.Teams != null && model.Teams.Count > 0)
-                    {
-                        _dataWorker.GenerateSuggestedMaps(ref model);
-                    }
+                    //if (model.Teams != null && model.Teams.Count > 0)
+                    //{
+                    //    _dataWorker.GenerateSuggestedMaps(ref model);
+                    //}
                 }
 
                 return View(model);
@@ -101,12 +103,32 @@ namespace VirtualFlowersMVC.Controllers
                 var overview = new OverViewViewModel();
 
                 overview.Url = "http://www.hltv.org/" + item;
+                overview.Cached = Cache.Exists(overview.Url);
                 OverViewList.Add(overview);
                 overviewurls.Add(item);
             }
             TempData["UrlList"] = overviewurls;
             return View(OverViewList);
 
+        }
+
+        [HttpPost]
+        public ActionResult Overview(List<OverViewViewModel> model)
+        {
+            var result = VirtualFlowers.Program.GetMatches();
+            var PeriodSelection = new List<string>();
+            PeriodSelection.Add("3");
+            PeriodSelection.Add("6");
+
+            foreach (var item in result)
+            {
+                var statsModel = new CompareStatisticModel();
+                statsModel.MatchUrl = "http://www.hltv.org" + item;
+                statsModel.Scrape = true;
+                statsModel.PeriodSelection = PeriodSelection;
+                runCompare(statsModel);
+            }
+            return View(model);
         }
 
         public ActionResult SendToCompare(string url)
@@ -165,6 +187,65 @@ namespace VirtualFlowersMVC.Controllers
 
             return View(model);
   
+        }
+
+        public CompareStatisticModel runCompare(CompareStatisticModel model, bool BypassCache = false)
+        {
+            try
+            {
+                var CACHEKEY = "";
+                if (model != null)
+                {
+                    if (!string.IsNullOrEmpty(model.MatchUrl) || model.Team1Id > 0 || model.Team2Id > 0)
+                    {
+                        if (!string.IsNullOrEmpty(model.MatchUrl))
+                        {
+                            // Create Cachekey from parameters
+                            CACHEKEY = "cacheKey:MatchUrl=" + model.MatchUrl;
+                            
+                            // If we have object in cache, return it
+                            if (!BypassCache && Cache.Exists(CACHEKEY))
+                                return (CompareStatisticModel)Cache.Get(CACHEKEY);
+
+                            // If we dont have in cache, we continue
+                            var result = Program.GetTeamIdsFromUrl(model.MatchUrl);
+                            model.ExpectedLineUp = Program.GetTeamLineup(model.MatchUrl);
+                            model.Team1Id = result.Item1;
+                            model.Team2Id = result.Item2;
+                        }
+                        else
+                            model.ExpectedLineUp = new ExpectedLineUp();
+                        if (model.Team1Id > 0)
+                        {
+                            if (model.Scrape)
+                                Program.GetTeamDetails(model.Team1Id);
+                            model.Teams.Add(_dataWorker.GetTeamPeriodStatistics(model.Team1Id, model.PeriodSelection, model.ExpectedLineUp));
+                        }
+                        if (model.Team2Id > 0)
+                        {
+                            if (model.Scrape)
+                                Program.GetTeamDetails(model.Team2Id);
+                            model.Teams.Add(_dataWorker.GetTeamPeriodStatistics(model.Team2Id, model.PeriodSelection, model.ExpectedLineUp));
+                        }
+
+                        if (model.Teams != null && model.Teams.Count > 0)
+                        {
+                            _dataWorker.GenerateSuggestedMaps(ref model);
+                        }
+
+                        if(!string.IsNullOrEmpty(CACHEKEY))
+                            Cache.Store(CACHEKEY, model, (1000 * 3600 * 24 * 2)); // store 2 days
+                    }
+                }
+
+                return model;
+            }
+            catch (Exception ex)
+            {
+                // just redisplay the form if something failed.
+                ModelState.AddModelError("", ex.Message);
+                return new CompareStatisticModel();
+            }
         }
     }
 }

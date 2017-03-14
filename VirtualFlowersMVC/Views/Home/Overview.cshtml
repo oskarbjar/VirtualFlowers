@@ -5,9 +5,16 @@
 }
 
 <h2>Overview</h2>
+<form action="Overview" method="post" class="form-inline">
+    <input type="submit" class="btn btn-primary" id="CompareBtn" value="Scrape All" />
+    <img class="loading" src="~/Content/ajax-loader.gif" alt="loader" style="display:none" />
+</form>
 
 <table class="table">
     <tr>
+        <th>
+            Cached
+        </th>
         <th>
             @Html.DisplayNameFor(model => model.Url)
         </th>
@@ -17,8 +24,9 @@
 @foreach (var item in Model) {
     <tr>
         <td>
-           @* @Html.DisplayFor(modelItem => item.Url)*@
-
+           @Html.DisplayFor(modelItem => item.Cached)
+        </td>
+        <td>
           <a href="@item.Url">@item.Url</a>
         </td>
         <td>
