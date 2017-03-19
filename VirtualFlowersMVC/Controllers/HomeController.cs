@@ -137,7 +137,17 @@ namespace VirtualFlowersMVC.Controllers
             var PeriodSelection = new List<string>();
             PeriodSelection.Add("3");
             var model = new CompareStatisticModel();
-            model.MatchUrl = "http://www.hltv.org/" + url;
+
+            if (!url.Contains("http://www.hltv.org/"))
+            {
+                model.MatchUrl = "http://www.hltv.org/" + url;
+            }
+            else
+            {
+                model.MatchUrl = url;
+            }
+            
+          
             model.Scrape = true;
             model.PeriodSelection = PeriodSelection;
 

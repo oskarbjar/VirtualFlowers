@@ -243,3 +243,7 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+
+app.config
+Web.config
+/VirtualFlowersMVC/Properties/PublishProfiles

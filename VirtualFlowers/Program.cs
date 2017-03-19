@@ -446,7 +446,10 @@ namespace VirtualFlowers
                 var dateString = nodes[0].InnerText; //date
                 var mapString = nodes[3].InnerText; //map
                 var eventString = nodes[4].InnerText; //event
-                var dDate = Convert.ToDateTime(dateString);
+
+                var newData = NewDate(dateString);
+               
+                var dDate = newData;
 
                 // If we have moved past last scraped date, or year old data
                 if (dDate < lastScraped.AddDays(-1) || dDate < DateTime.Now.AddYears(-1))
@@ -557,6 +560,21 @@ namespace VirtualFlowers
             }
         }
 
+        private static DateTime NewDate(string dateString)
+        {
+            string[] stringSeperators = { "/" };
+            string[] stringSeperators1 = { " " };
+
+            var result = dateString.Split(stringSeperators, StringSplitOptions.None);
+            var result1 = result[1].Split(stringSeperators1, StringSplitOptions.None);
+            var date = Convert.ToInt32(result[0]);
+            var month = Convert.ToInt32(result1[0]);
+            var year = 2000 + Convert.ToInt32(result1[1]);
+           var newdatetime = new DateTime(year,month,date);
+
+
+            return newdatetime;
+        }
 
         private static List<RoundHistory> GetRounds(string gameUrl, int team1Id, int team2Id)
         {
