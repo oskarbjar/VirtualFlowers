@@ -37,7 +37,7 @@ namespace VirtualFlowersMVC.Controllers
             {
                 if (model != null)
                 {
-                    model = runCompare(model);
+                    model = runCompare(model, model.NoCache);
                     //if (!string.IsNullOrEmpty(model.MatchUrl))
                     //{
                     //    var result = Program.GetTeamIdsFromUrl(model.MatchUrl);
