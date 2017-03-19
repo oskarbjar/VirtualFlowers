@@ -247,3 +247,5 @@ ModelManifest.xml
 app.config
 Web.config
 /VirtualFlowersMVC/Properties/PublishProfiles
+Web.Debug.config
+Web.Release.config
