@@ -12,7 +12,7 @@ namespace Models
     {
 
         public DatabaseContext()
-           : base("CsDatabase")
+           : base("DefaultConnection")
         {
 
         }

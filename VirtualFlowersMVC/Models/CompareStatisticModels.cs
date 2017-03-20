@@ -13,6 +13,7 @@ namespace VirtualFlowersMVC.Models
         public string MatchUrl { get; set; }
         public List<string> PeriodSelection { get; set; }
         public bool Scrape { get; set; }
+        public bool NoCache { get; set; }
         public List<TeamStatisticPeriodModel> Teams { get; set; }
         public ExpectedLineUp ExpectedLineUp { get; set; }
 
