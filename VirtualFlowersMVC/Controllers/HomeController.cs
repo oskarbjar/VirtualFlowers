@@ -233,8 +233,12 @@ namespace VirtualFlowersMVC.Controllers
                             _dataWorker.GenerateSuggestedMaps(ref model);
                         }
 
-                        if(!string.IsNullOrEmpty(CACHEKEY))
-                            Cache.Store(CACHEKEY, model, (1000 * 3600 * 24 * 2)); // store 2 days
+                        if (!string.IsNullOrEmpty(CACHEKEY)) {
+                            if (!Cache.Exists(CACHEKEY))
+                                Cache.Store(CACHEKEY, model, (1000 * 3600 * 24 * 2)); // store 2 days
+                            else
+                                Cache.Update(CACHEKEY, model);
+                        }
                     }
                 }
 
