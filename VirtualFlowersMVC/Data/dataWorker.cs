@@ -38,7 +38,7 @@ namespace VirtualFlowersMVC.Data
                                Team1Name = _db.Team.FirstOrDefault(k => k.TeamId == p.Team1Id).TeamName,
                                Team2Id = p.Team2Id,
                                Team2Name = _db.Team.FirstOrDefault(k => k.TeamId == p.Team2Id).TeamName
-                           }).ToList();
+                           }).OrderByDescending(p => p.MatchId).ToList();
 
             return matches;
         }
@@ -56,7 +56,7 @@ namespace VirtualFlowersMVC.Data
 
         public List<Team> GetTeamsList()
         {
-            var result = _db.Team.ToList();
+            var result = _db.Team.OrderBy(p => p.TeamName).ToList();
 
             return result;
         }

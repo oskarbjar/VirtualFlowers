@@ -9,26 +9,42 @@
 </div>
 
 <div class="row">
-    <div class="col-md-3">
-        <h2>Team Compare</h2>
-        <p>
-            Compare cs:go teams statistics.  To make educational bets!  Or even better profittable!.
-        </p>
-        <p><a class="btn btn-default" href="Home/Compare">Compare &raquo;</a></p>
-    </div>
-    <div class="col-md-3">
-        <h2>Teams</h2>
-        <p>Find your team!  You have a team?  Well what are you waiting for find it!.</p>
-        <p><a class="btn btn-default" href="~/Teams/Index">Teams &raquo;</a></p>
-    </div>
-    <div class="col-md-3">
-        <h2>Ranking</h2>
-        <p>Here is all the ranking you would ever want!  Who was top side, start of march 2016?  We know! We care! lets find out.</p>
-        <p><a class="btn btn-default" href="~/Ranks/Index">Ranking &raquo;</a></p>
-    </div>
-    <div class="col-md-3">
-        <h2>Transfers</h2>
-        <p>Here is all the transfers you would ever want!  New transfer?  Add it here!!!!</p>
-        <p><a class="btn btn-default" href="~/Ranks/TransferHistory">Transfers &raquo;</a></p>
-    </div>
+    @if (User.Identity.IsAuthenticated)
+    {
+        if (User.IsInRole("Admin"))
+        {
+            <div class="col-md-3">
+                <h2>Team Compare</h2>
+                <p>
+                    Compare cs:go teams statistics.  <br />To make educational bets!  <br />Or even better... profittable!.
+                </p>
+                <p><a class="btn btn-default" href="Home/Compare">Compare &raquo;</a></p>
+            </div>
+            <div class="col-md-3">
+                <h2>Teams</h2>
+                <p>Find your team!  You have a team?  Well what are you waiting for find it!.</p>
+                <p><a class="btn btn-default" href="~/Teams/Index">Teams &raquo;</a></p>
+            </div>
+            <div class="col-md-3">
+                <h2>Ranking</h2>
+                <p>Here is all the ranking you would ever want!  Who was top side, start of march 2016?  We know! We care! lets find out.</p>
+                <p><a class="btn btn-default" href="~/Ranks/Index">Ranking &raquo;</a></p>
+            </div>
+            <div class="col-md-3">
+                <h2>Transfers</h2>
+                <p>Here is all the transfers you would ever want!  New transfer?  Add it here!!!!</p>
+                <p><a class="btn btn-default" href="~/Ranks/TransferHistory">Transfers &raquo;</a></p>
+            </div>
+        }
+        else
+        {
+            <div class="col-md-6">
+                <h2>Team Compare</h2>
+                <p>
+                    Compare cs:go teams statistics.  <br />To make educational bets!  <br />Or even better... profittable!.
+                </p>
+                <p><a class="btn btn-default" href="Home/Compare">Compare &raquo;</a></p>
+            </div>
+        }
+    }
 </div>

@@ -23,6 +23,7 @@ namespace VirtualFlowersMVC.Controllers
 
 
         // GET: Home/Compare
+        [Authorize]
         public ActionResult Compare()
         {
             return View();
@@ -30,6 +31,7 @@ namespace VirtualFlowersMVC.Controllers
 
         //
         // POST: /Home/Compare
+        [Authorize]
         [HttpPost]
         public ActionResult Compare(CompareStatisticModel model)
         {
@@ -38,32 +40,6 @@ namespace VirtualFlowersMVC.Controllers
                 if (model != null)
                 {
                     model = runCompare(model, model.NoCache);
-                    //if (!string.IsNullOrEmpty(model.MatchUrl))
-                    //{
-                    //    var result = Program.GetTeamIdsFromUrl(model.MatchUrl);
-                    //    model.ExpectedLineUp = Program.GetTeamLineup(model.MatchUrl);
-                    //    model.Team1Id = result.Item1;
-                    //    model.Team2Id = result.Item2;
-                    //}
-                    //else
-                    //    model.ExpectedLineUp = new ExpectedLineUp();
-                    //if (model.Team1Id > 0)
-                    //{
-                    //    if (model.Scrape)
-                    //        Program.GetTeamDetails(model.Team1Id);
-                    //    model.Teams.Add(_dataWorker.GetTeamPeriodStatistics(model.Team1Id, model.PeriodSelection, model.ExpectedLineUp));
-                    //}
-                    //if (model.Team2Id > 0)
-                    //{
-                    //    if (model.Scrape)
-                    //        Program.GetTeamDetails(model.Team2Id);
-                    //    model.Teams.Add(_dataWorker.GetTeamPeriodStatistics(model.Team2Id, model.PeriodSelection, model.ExpectedLineUp));
-                    //}
-
-                    //if (model.Teams != null && model.Teams.Count > 0)
-                    //{
-                    //    _dataWorker.GenerateSuggestedMaps(ref model);
-                    //}
                 }
 
                 return View(model);
@@ -89,8 +65,9 @@ namespace VirtualFlowersMVC.Controllers
 
             return View();
         }
-
+        
         public List<string> overviewurls = new List<string>();
+        [Authorize(Roles = "Admin")]
         public ActionResult Overview()
         {
 
@@ -112,6 +89,7 @@ namespace VirtualFlowersMVC.Controllers
 
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public ActionResult Overview(List<OverViewViewModel> model)
         {
@@ -131,6 +109,7 @@ namespace VirtualFlowersMVC.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = "Admin")]
         public ActionResult SendToCompare(string url)
         {          
 

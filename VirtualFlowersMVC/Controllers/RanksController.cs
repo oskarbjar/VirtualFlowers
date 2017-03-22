@@ -9,6 +9,7 @@ using VirtualFlowers;
 
 namespace VirtualFlowersMVC.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class RanksController : Controller
     {
         private DatabaseContext _db = new DatabaseContext();

@@ -10,6 +10,7 @@ using VirtualFlowersMVC.Data;
 
 namespace VirtualFlowersMVC.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class TeamsController : Controller
     {
         private dataWorker _dataWorker = new dataWorker();

@@ -21,19 +21,18 @@
             <input type="text" style="width:80px" class="form-control" name="Team2Id" value="" placeholder="Team 2" />
         </div>
         <div class="col-lg-9">
-            <label for="MatchUrl">Or&nbsp;&nbsp;&nbsp;</label><input type="text" style="width: 800px" class="form-control" name="MatchUrl" value="" placeholder="MatchUrl1" />
+            <label for="MatchUrl">Or&nbsp;&nbsp;&nbsp;</label><input type="text" style="width: 800px" class="form-control" name="MatchUrl" value="" placeholder="MatchUrl" />
             <input type="submit" class="btn btn-primary" id="CompareBtn" value="Compare" />
             <img class="loading" src="~/Content/ajax-loader.gif" alt="loader" style="display:none" />
         </div>
-        <div class="col-lg-3">
-            <label><input type="checkbox" name="Scrape" value="true" checked /> Scrape</label>
-            <label><input type="checkbox" name="NoCache" value="true" /> No cache</label>
-        </div>
-        <div class="col-lg-9">
-            <label><input type="checkbox" name="PeriodSelection" value="3" checked /> 3 Month</label>
-            <label><input type="checkbox" name="PeriodSelection" value="6" checked /> 6 Month</label>
-            <label><input type="checkbox" name="PeriodSelection" value="12" /> 1 Year</label>
-        </div>
+            <div class="col-lg-3">
+                <label style="cursor: help" title="Automaticly scraped once a day, but if you want check again." ><input type="checkbox" name="Scrape" value="true" checked /> Scrape</label>
+                <label style="cursor: help" title="Don't use stats from memory, get all new! (will take 0.5-3 min)" ><input type="checkbox" name="NoCache" value="true" /> No cache</label>
+            </div>
+            <div class="col-lg-9">
+                <label style="cursor: help" title="Get history 3 months back"><input type="checkbox" name="PeriodSelection" value="3" checked /> 3 Month</label>
+                <label style="cursor: help" title="Get history 6 months back" ><input type="checkbox" name="PeriodSelection" value="6" checked /> 6 Month</label>
+            </div>
     </form>
         
 

@@ -13,6 +13,7 @@ using VirtualFlowers;
 
 namespace VirtualFlowersMVC.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class MatchesController : Controller
     {
         private dataWorker _dataWorker = new dataWorker();
