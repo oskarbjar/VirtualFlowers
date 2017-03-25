@@ -424,8 +424,8 @@ namespace VirtualFlowers
                 var matchid = GetMatchId(teamhtml, matchIdHtmlString);
                 if (db.Match.Any(s => s.MatchId == matchid)) continue;
                 // If matchId had been previously saved, we skip
-                team1Id = GetTeamId(teamhtml, team1IdHtmlString);
-                team2Id = GetTeamId(teamhtml, team2IdHtmlString);
+                var team1Id = GetTeamId(teamhtml, team1IdHtmlString);
+                var team2Id = GetTeamId(teamhtml, team2IdHtmlString);
 
 
                 // Get Team Name and result
