@@ -130,6 +130,8 @@ namespace VirtualFlowers
                                 firstDiv = false;
                             }
 
+
+
                         }
 
                         if (secondDiv)
@@ -166,6 +168,7 @@ namespace VirtualFlowers
                             span1 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[24]/div[{i}]/div[1]/span/a";
                             span1Name = matchHtml.DocumentNode.SelectNodes(span1);
                             span2 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[27]/div[{i}]/div[1]/span/a";
+
                             span2Name = matchHtml.DocumentNode.SelectNodes(span2);
 
                         }
@@ -384,8 +387,6 @@ namespace VirtualFlowers
 
         public static void GetTeamDetails(int TeamId)
         {
-
-
             DateTime lastScraped = new DateTime(1900, 1, 1);
             // Get ScrapeHistoryTeams record for latest scrape info for this team
             var history = db.ScrapeHistoryTeams.Where(p => p.TeamId == TeamId).OrderByDescending(k => k.LastDayScraped).ToList();
@@ -398,10 +399,6 @@ namespace VirtualFlowers
 
             bool bHasCreatedCurrentTeam = false;
             HtmlDocument teamhtml = HWeb.Load(url);
-
-            var playersHtmlString = "//*[@id='back']/div[3]/div[3]/div/div[8]/div[2]";
-
-
             for (int i = 5; i < 2074; i++)
             {
 
@@ -413,14 +410,23 @@ namespace VirtualFlowers
                 var team1IdHtmlString = htmlstring + "/a[2]";
                 var team2IdHtmlString = htmlstring + "/a[3]";
                 var nodes = htmlSectionss?[0].SelectNodes(".//div");
+               
 
-                if (nodes?.Count() != 8) continue;
+                if (nodes?.Count() != 8)
+                {
+                    string TeamNameUrl = $"http://www.hltv.org/?pageid=179&teamid={TeamId}";
+                    HtmlDocument teamNameHtml = HWeb.Load(TeamNameUrl);
+                    var nameHtml = "//*[@id='back']/div[3]/div[3]/div/div[2]/div[2]/div[1]/div[2]";
+                    var name = teamNameHtml.DocumentNode.SelectNodes(nameHtml);
+                    CheckIfNeedToCreateTeam(TeamId, name[0].InnerText);
+                    continue;
+                } 
                 var matchid = GetMatchId(teamhtml, matchIdHtmlString);
                 if (db.Match.Any(s => s.MatchId == matchid)) continue;
                 // If matchId had been previously saved, we skip
+                team1Id = GetTeamId(teamhtml, team1IdHtmlString);
+                team2Id = GetTeamId(teamhtml, team2IdHtmlString);
 
-                var team1Id = GetTeamId(teamhtml, team1IdHtmlString);
-                var team2Id = GetTeamId(teamhtml, team2IdHtmlString);
 
                 // Get Team Name and result
                 var team1Name = GetTeamNameAndResult(nodes[1].InnerText);
@@ -430,10 +436,7 @@ namespace VirtualFlowers
                 var Players = GetPlayers(gameURL, team1Id, team2Id);
 
                 var rounds = GetRounds(gameURL, team1Id, team2Id);
-
-
-
-
+                
 
                 // Create team if needed, no need after that.
                 if (!bHasCreatedCurrentTeam)
