@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using Models;
 using VirtualFlowersMVC.Data;
 using VirtualFlowers;
+using System.Threading.Tasks;
 
 namespace VirtualFlowersMVC.Controllers
 {
@@ -14,6 +15,7 @@ namespace VirtualFlowersMVC.Controllers
     {
         private DatabaseContext _db = new DatabaseContext();
         private dataWorker _dataWorker = new dataWorker();
+        private Program _program = new Program();
 
         // GET: Ranks
         public ActionResult Index()
@@ -31,9 +33,9 @@ namespace VirtualFlowersMVC.Controllers
         {
             // Add to Xml file
             Utility.Utility.AddToRankingListsXml(url);
-            
+
             // And scrape it
-            Program.GetRankingList(url);
+            _program.GetRankingList(url);
 
             return RedirectToAction("Index");
         }
@@ -43,7 +45,7 @@ namespace VirtualFlowersMVC.Controllers
             var RankingList = Utility.Utility.GetRankingListsFromXml();
             foreach (var url in RankingList.Url)
             {
-                Program.GetRankingList(url);
+                _program.GetRankingList(url);
             }
             
             return RedirectToAction("Index");
@@ -112,13 +114,13 @@ namespace VirtualFlowersMVC.Controllers
 
         // GET: TransferHistory
         [HttpPost]
-        public ActionResult CreateTransfer(TransferHistory model)
+        public async Task<ActionResult> CreateTransfer(TransferHistory model)
         {
             if(ModelState.IsValid)
             {
                 // Scrape matches from both teams.
-                Program.GetTeamDetails(model.NewTeamId);
-                Program.GetTeamDetails(model.OldTeamId);
+                await _program.GetTeamDetails(model.NewTeamId);
+                await _program.GetTeamDetails(model.OldTeamId);
 
                 model.NewTeamName = _db.Team.FirstOrDefault(k => k.TeamId == model.NewTeamId).TeamName;
                 model.OldTeamName = _db.Team.FirstOrDefault(k => k.TeamId == model.OldTeamId).TeamName;

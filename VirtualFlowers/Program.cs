@@ -6,15 +6,15 @@ using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 using Match = Models.Match;
+using System.Threading.Tasks;
 
 namespace VirtualFlowers
 {
     public class Program
     {
         static readonly HtmlWeb HWeb = new HtmlAgilityPack.HtmlWeb();
-        private static readonly DatabaseContext db = new DatabaseContext();
+        private readonly DatabaseContext db = new DatabaseContext();
         private static bool quitTeamDetails;
-        private static bool quit;
 
         static void Main(string[] args)
         {
@@ -32,7 +32,7 @@ namespace VirtualFlowers
 
         }
 
-        public static List<string> GetMatches()
+        public List<string> GetMatches()
         {
             string url = "http://www.hltv.org/matches";
             List<string> urlsList = new List<string>();
@@ -84,7 +84,7 @@ namespace VirtualFlowers
             
         }
 
-        public static ExpectedLineUp GetTeamLineup(string matchUrls)
+        public ExpectedLineUp GetTeamLineup(string matchUrls)
         {
 
             try
@@ -207,7 +207,7 @@ namespace VirtualFlowers
                     }
                     catch (Exception ex)
                     {
-                        // do nothing
+                        var nothing = ex;
                     }
                     i++;
                 }
@@ -227,7 +227,7 @@ namespace VirtualFlowers
         }
 
 
-        private static int GetPlayerID(string outerHtml)
+        private int GetPlayerID(string outerHtml)
         {
             bool first = false;
             string wordToFind = "/player/";
@@ -273,7 +273,7 @@ namespace VirtualFlowers
 
             return final;
         }
-        private static void GetTeamDetails()
+        private void GetTeamDetails()
         {
 
             while (!quitTeamDetails)
@@ -385,7 +385,7 @@ namespace VirtualFlowers
             }
         }
 
-        public static void GetTeamDetails(int TeamId)
+        public Task GetTeamDetails(int TeamId)
         {
             DateTime lastScraped = new DateTime(1900, 1, 1);
             // Get ScrapeHistoryTeams record for latest scrape info for this team
@@ -466,17 +466,9 @@ namespace VirtualFlowers
                     }
 
                     // And quit scraping
-                    return;
+                    return Task.FromResult(0);
                 }
-
-                /*****GET MORE INFO******
-                     * All players
-                     * Create player if he does not exist
-                     * 1st round winner - and if ct or terr
-                     * 16th round winner - and if ct or terr 
-                     */
-
-
+                
                 var firstRoundWin = rounds.FirstOrDefault(y => y.Round1);
                 bool firstRoundTerr = firstRoundWin.Terrorist;
                 bool firstRoundCt = !firstRoundTerr;
@@ -550,20 +542,16 @@ namespace VirtualFlowers
                     match.T2Player4Id = t2Players[3].PlayerId;
                 if (t2Players.Length > 4)
                     match.T2Player5Id = t2Players[4].PlayerId;
-
-
-
-
-
+                
                 db.Match.Add(match);
-
-
+                
                 db.SaveChanges();
                 lCounter++;
             }
+            return Task.FromResult(0);
         }
 
-        private static DateTime NewDate(string dateString)
+        private DateTime NewDate(string dateString)
         {
             string[] stringSeperators = { "/" };
             string[] stringSeperators1 = { " " };
@@ -579,7 +567,7 @@ namespace VirtualFlowers
             return newdatetime;
         }
 
-        private static List<RoundHistory> GetRounds(string gameUrl, int team1Id, int team2Id)
+        private List<RoundHistory> GetRounds(string gameUrl, int team1Id, int team2Id)
         {
             var roundWinner = new List<RoundHistory>();
             HtmlDocument gameHtml = HWeb.Load(gameUrl);
@@ -668,7 +656,7 @@ namespace VirtualFlowers
             
             return roundWinner;
         }
-        private static Tuple<int, int> getScore(string outerHtml)
+        private Tuple<int, int> getScore(string outerHtml)
         {
             string[] stringSeperators = { "style=" };
             var returnvalue = new Tuple<int, int>(int.MinValue, int.MinValue);
@@ -686,7 +674,7 @@ namespace VirtualFlowers
             return returnvalue;
         }
 
-        private static List<Player> GetPlayers(string gameURl, int team1ID, int team2ID)
+        private List<Player> GetPlayers(string gameURl, int team1ID, int team2ID)
         {
             List<Player> players = new List<Player>();
 
@@ -755,7 +743,7 @@ namespace VirtualFlowers
             return players;
         }
 
-        public static double GetRankingValueForTeam(int TeamId, DateTime dDate)
+        public double GetRankingValueForTeam(int TeamId, DateTime dDate)
         {
             var result = 0.5;
             var dDateFrom = dDate.AddDays(-8);
@@ -788,7 +776,7 @@ namespace VirtualFlowers
             return result;
         }
 
-        public static void GetRankingList(string rankingUrl)
+        public void GetRankingList(string rankingUrl)
         {
             //string RankingUrl = "http://www.hltv.org/ranking/teams/2017/january/2/";
             //string RankingUrl = "http://www.hltv.org/ranking/teams/2017/january/9/";
@@ -838,7 +826,7 @@ namespace VirtualFlowers
 
             }
         }
-        private static DateTime GetDateTime(string rankingUrl)
+        private DateTime GetDateTime(string rankingUrl)
         {
             string[] stringSeperators = { "/teams/" };
             var result = rankingUrl.Split(stringSeperators, StringSplitOptions.None);
@@ -852,7 +840,7 @@ namespace VirtualFlowers
 
         }
 
-        private static void CheckIfNeedToCreateTeam(int TeamId, string TeamName)
+        private void CheckIfNeedToCreateTeam(int TeamId, string TeamName)
         {
             if (!db.Team.Any(s => s.TeamId == TeamId))
             {
@@ -862,7 +850,7 @@ namespace VirtualFlowers
             }
         }
 
-        private static Tuple<string, int> GetTeamNameAndResult(string innerText)
+        private Tuple<string, int> GetTeamNameAndResult(string innerText)
         {
             string[] stringSeperators = { "(" };
 
@@ -873,7 +861,7 @@ namespace VirtualFlowers
 
         }
 
-        private static int GetTeamId(HtmlDocument teamhtml, string htmlstring)
+        private int GetTeamId(HtmlDocument teamhtml, string htmlstring)
         {
             int lTeamID = 0;
             string[] stringSeparators = new string[] { "&amp;" };
@@ -887,7 +875,7 @@ namespace VirtualFlowers
             return lTeamID;
         }
 
-        private static int GetMatchId(HtmlDocument teamhtml, string htmlstring)
+        private int GetMatchId(HtmlDocument teamhtml, string htmlstring)
         {
             int lMatchID = 0;
             string[] stringSeparators = new string[] { "&amp;" };
@@ -906,14 +894,11 @@ namespace VirtualFlowers
             {
                 lMatchID = 0;
             }
-
-
-
-
+            
             return lMatchID;
         }
 
-        private static Tuple<string, int> GetTeamRanking(string innerText)
+        private Tuple<string, int> GetTeamRanking(string innerText)
         {
             string[] stringSeperators = { "(" };
             var newstring = "";
@@ -926,7 +911,7 @@ namespace VirtualFlowers
 
         }
 
-        public static Tuple<int, int> GetTeamIdsFromUrl(string matchUrls)
+        public Tuple<int, int> GetTeamIdsFromUrl(string matchUrls)
         {
             string url = matchUrls;
             HtmlDocument matchHtml = HWeb.Load(url);

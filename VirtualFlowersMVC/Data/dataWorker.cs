@@ -5,12 +5,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using VirtualFlowers;
+using System.Threading.Tasks;
 
 namespace VirtualFlowersMVC.Data
 {
     public class dataWorker
     {
         private DatabaseContext _db;
+        private Program _program = new Program();
 
         public dataWorker()
         {
@@ -81,15 +83,15 @@ namespace VirtualFlowersMVC.Data
 
         #region COMPARE
 
-        public TeamStatisticPeriodModel GetTeamPeriodStatistics(int TeamId, List<string> PeriodSelection, ExpectedLineUp expectedLinup)
+        public async Task<TeamStatisticPeriodModel> GetTeamPeriodStatistics(int TeamId, List<string> PeriodSelection, ExpectedLineUp expectedLinup)
         {
             var result = new TeamStatisticPeriodModel();
             result.TeamId = TeamId;
             result.TeamName = GetTeamName(TeamId);
-            result.TeamDifficultyRating = Program.GetRankingValueForTeam(TeamId, DateTime.Now);
+            result.TeamDifficultyRating = _program.GetRankingValueForTeam(TeamId, DateTime.Now);
             foreach (var period in PeriodSelection)
             {
-                result.TeamStatistics.Add(GetTeamPeriodStatistics(TeamId, (PeriodEnum)int.Parse(period), expectedLinup));
+                await Task.Run(() => result.TeamStatistics.Add(GetTeamPeriodStatistics(TeamId, (PeriodEnum)int.Parse(period), expectedLinup))).ConfigureAwait(false);
             }
 
             return result;

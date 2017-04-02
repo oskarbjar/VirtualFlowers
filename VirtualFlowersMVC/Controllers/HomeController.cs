@@ -9,12 +9,14 @@ using VirtualFlowers;
 using VirtualFlowersMVC.Utility;
 using Models;
 using MemoryCache;
+using System.Threading.Tasks;
 
 namespace VirtualFlowersMVC.Controllers
 {
     public class HomeController : Controller
     {
         private dataWorker _dataWorker = new dataWorker();
+        private Program _program = new Program();
 
         public ActionResult Index()
         {
@@ -33,13 +35,13 @@ namespace VirtualFlowersMVC.Controllers
         // POST: /Home/Compare
         [Authorize]
         [HttpPost]
-        public ActionResult Compare(CompareStatisticModel model)
+        public async Task<ActionResult> Compare(CompareStatisticModel model)
         {
             try
             {
                 if (model != null)
                 {
-                    model = runCompare(model, model.NoCache);
+                    model = await runCompare(model, model.NoCache);
                 }
 
                 return View(model);
@@ -73,7 +75,7 @@ namespace VirtualFlowersMVC.Controllers
 
             var OverViewList = new List<OverViewViewModel>();
 
-            var result = VirtualFlowers.Program.GetMatches();
+            var result = _program.GetMatches();
 
             foreach (var item in result)
             {
@@ -91,9 +93,9 @@ namespace VirtualFlowersMVC.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public ActionResult Overview(List<OverViewViewModel> model)
+        public async Task<ActionResult> Overview(List<OverViewViewModel> model)
         {
-            var result = VirtualFlowers.Program.GetMatches();
+            var result = _program.GetMatches();
             var PeriodSelection = new List<string>();
             PeriodSelection.Add("3");
             PeriodSelection.Add("6");
@@ -104,13 +106,13 @@ namespace VirtualFlowersMVC.Controllers
                 statsModel.MatchUrl = "http://www.hltv.org" + item;
                 statsModel.Scrape = true;
                 statsModel.PeriodSelection = PeriodSelection;
-                runCompare(statsModel);
+                await runCompare(statsModel);
             }
             return View(model);
         }
 
         [Authorize(Roles = "Admin")]
-        public ActionResult SendToCompare(string url)
+        public async Task<ActionResult> SendToCompare(string url)
         {          
 
             var PeriodSelection = new List<string>();
@@ -132,8 +134,8 @@ namespace VirtualFlowersMVC.Controllers
 
             if (url.Length > 0)
             {
-                var result = Program.GetTeamIdsFromUrl(url);
-                model.ExpectedLineUp = Program.GetTeamLineup(model.MatchUrl);
+                var result = _program.GetTeamIdsFromUrl(url);
+                model.ExpectedLineUp = _program.GetTeamLineup(model.MatchUrl);
                 model.Team1Id = result.Item1;
                 model.Team2Id = result.Item2;
             }
@@ -159,14 +161,14 @@ namespace VirtualFlowersMVC.Controllers
             if (model.Team1Id > 0)
                 {
                     if (model.Scrape)
-                        Program.GetTeamDetails(model.Team1Id);
-                    model.Teams.Add(_dataWorker.GetTeamPeriodStatistics(model.Team1Id, model.PeriodSelection, model.ExpectedLineUp));
+                        await _program.GetTeamDetails(model.Team1Id);
+                    model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team1Id, model.PeriodSelection, model.ExpectedLineUp));
                 }
                 if (model.Team2Id > 0)
                 {
                     if (model.Scrape)
-                        Program.GetTeamDetails(model.Team2Id);
-                    model.Teams.Add(_dataWorker.GetTeamPeriodStatistics(model.Team2Id, model.PeriodSelection, model.ExpectedLineUp));
+                        await _program.GetTeamDetails(model.Team2Id);
+                    model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team2Id, model.PeriodSelection, model.ExpectedLineUp));
                 }
 
             if (model.Teams != null && model.Teams.Count > 0)
@@ -178,7 +180,7 @@ namespace VirtualFlowersMVC.Controllers
   
         }
 
-        public CompareStatisticModel runCompare(CompareStatisticModel model, bool BypassCache = false)
+        public async Task<CompareStatisticModel> runCompare(CompareStatisticModel model, bool BypassCache = false)
         {
             try
             {
@@ -197,8 +199,8 @@ namespace VirtualFlowersMVC.Controllers
                                 return (CompareStatisticModel)Cache.Get(CACHEKEY);
 
                             // If we dont have in cache, we continue
-                            var result = Program.GetTeamIdsFromUrl(model.MatchUrl);
-                            model.ExpectedLineUp = Program.GetTeamLineup(model.MatchUrl);
+                            var result = _program.GetTeamIdsFromUrl(model.MatchUrl);
+                            model.ExpectedLineUp = _program.GetTeamLineup(model.MatchUrl);
                             model.Team1Id = result.Item1;
                             model.Team2Id = result.Item2;
                         }
@@ -207,14 +209,14 @@ namespace VirtualFlowersMVC.Controllers
                         if (model.Team1Id > 0)
                         {
                             if (model.Scrape)
-                                Program.GetTeamDetails(model.Team1Id);
-                            model.Teams.Add(_dataWorker.GetTeamPeriodStatistics(model.Team1Id, model.PeriodSelection, model.ExpectedLineUp));
+                                await _program.GetTeamDetails(model.Team1Id);
+                            model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team1Id, model.PeriodSelection, model.ExpectedLineUp));
                         }
                         if (model.Team2Id > 0)
                         {
                             if (model.Scrape)
-                                Program.GetTeamDetails(model.Team2Id);
-                            model.Teams.Add(_dataWorker.GetTeamPeriodStatistics(model.Team2Id, model.PeriodSelection, model.ExpectedLineUp));
+                                await _program.GetTeamDetails(model.Team2Id);
+                            model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team2Id, model.PeriodSelection, model.ExpectedLineUp));
                         }
 
                         if (model.Teams != null && model.Teams.Count > 0)
