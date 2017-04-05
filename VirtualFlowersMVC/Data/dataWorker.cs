@@ -185,7 +185,7 @@ namespace VirtualFlowersMVC.Data
                     (double)n.Count(p => p.ResultT1 < p.ResultT2), 1), // Divided total games we lost
                 DifficultyRating = Math.Round(n.Sum(p => p.Team2RankValue) / (double)n.Count(),2),
                 DiffTitleGroupBy = GetDiffTitleGroupBy(n.ToList()),
-                FullTeamRanking = GetFullTeamPercent(TeamId, n.ToList(), expectedLinup),
+                FullTeamRanking = GetFullTeamPercent(TeamId, n.ToList(), expectedLinup, secondaryTeamId),
                 FirstRound1HWinPercent = GetFirstRoundStats(TeamId, n.ToList(), true),
                 FirstRound2HWinPercent = GetFirstRoundStats(TeamId, n.ToList(), false)
             }).OrderByDescending(n => n.WinPercent).ToList();
@@ -227,7 +227,7 @@ namespace VirtualFlowersMVC.Data
         }
 
 
-        private Tuple<double,string> GetFullTeamPercent(int TeamId, List<Match> Map, ExpectedLineUp expectedLinup)
+        private Tuple<double,string> GetFullTeamPercent(int TeamId, List<Match> Map, ExpectedLineUp expectedLinup, int secondaryTeamId)
         {
             Tuple<double, string> result = new Tuple<double, string>(0, "");
             double Accumulator = 0;
@@ -239,16 +239,32 @@ namespace VirtualFlowersMVC.Data
                 int FTRank = 0;
                 if (match.Team1Id == TeamId && expectedLinup != null)
                 {
-                    if (expectedLinup.Players.Where(p => p.TeamID == TeamId && p.PlayerId == match.T1Player1Id).Any())
-                        FTRank += 1;
-                    if (expectedLinup.Players.Where(p => p.TeamID == TeamId && p.PlayerId == match.T1Player2Id).Any())
-                        FTRank += 1;
-                    if (expectedLinup.Players.Where(p => p.TeamID == TeamId && p.PlayerId == match.T1Player3Id).Any())
-                        FTRank += 1;
-                    if (expectedLinup.Players.Where(p => p.TeamID == TeamId && p.PlayerId == match.T1Player4Id).Any())
-                        FTRank += 1;
-                    if (expectedLinup.Players.Where(p => p.TeamID == TeamId && p.PlayerId == match.T1Player5Id).Any())
-                        FTRank += 1;
+                    if (secondaryTeamId > 0)
+                    {
+                        if (expectedLinup.Players.Where(p => (p.TeamID == TeamId || p.TeamID == secondaryTeamId) && p.PlayerId == match.T1Player1Id).Any())
+                            FTRank += 1;
+                        if (expectedLinup.Players.Where(p => (p.TeamID == TeamId || p.TeamID == secondaryTeamId) && p.PlayerId == match.T1Player2Id).Any())
+                            FTRank += 1;
+                        if (expectedLinup.Players.Where(p => (p.TeamID == TeamId || p.TeamID == secondaryTeamId) && p.PlayerId == match.T1Player3Id).Any())
+                            FTRank += 1;
+                        if (expectedLinup.Players.Where(p => (p.TeamID == TeamId || p.TeamID == secondaryTeamId) && p.PlayerId == match.T1Player4Id).Any())
+                            FTRank += 1;
+                        if (expectedLinup.Players.Where(p => (p.TeamID == TeamId || p.TeamID == secondaryTeamId) && p.PlayerId == match.T1Player5Id).Any())
+                            FTRank += 1;
+                    }
+                    else
+                    {
+                        if (expectedLinup.Players.Where(p => p.TeamID == TeamId && p.PlayerId == match.T1Player1Id).Any())
+                            FTRank += 1;
+                        if (expectedLinup.Players.Where(p => p.TeamID == TeamId && p.PlayerId == match.T1Player2Id).Any())
+                            FTRank += 1;
+                        if (expectedLinup.Players.Where(p => p.TeamID == TeamId && p.PlayerId == match.T1Player3Id).Any())
+                            FTRank += 1;
+                        if (expectedLinup.Players.Where(p => p.TeamID == TeamId && p.PlayerId == match.T1Player4Id).Any())
+                            FTRank += 1;
+                        if (expectedLinup.Players.Where(p => p.TeamID == TeamId && p.PlayerId == match.T1Player5Id).Any())
+                            FTRank += 1;
+                    }
 
                     // How many played this map
                     match.T1FTR = FTRank;
