@@ -1,0 +1,157 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+
+    <title>@ViewBag.Title</title>
+
+    <!-- Bootstrap core CSS -->
+    @Styles.Render("~/Content/newcss")
+    @Scripts.Render("~/bundles/modernizr")
+    
+    <script type='text/javascript'>
+        var appInsights=window.appInsights||function(config)
+        {
+            function r(config){ t[config] = function(){ var i = arguments; t.queue.push(function(){ t[config].apply(t, i)})} }
+            var t = { config:config},u=document,e=window,o='script',s=u.createElement(o),i,f;for(s.src=config.url||'//az416426.vo.msecnd.net/scripts/a/ai.0.js',u.getElementsByTagName(o)[0].parentNode.appendChild(s),t.cookie=u.cookie,t.queue=[],i=['Event','Exception','Metric','PageView','Trace','Ajax'];i.length;)r('track'+i.pop());return r('setAuthenticatedUserContext'),r('clearAuthenticatedUserContext'),config.disableExceptionTracking||(i='onerror',r('_'+i),f=e[i],e[i]=function(config, r, u, e, o) { var s = f && f(config, r, u, e, o); return s !== !0 && t['_' + i](config, r, u, e, o),s}),t
+        }({
+            instrumentationKey:'7df5b529-b250-480c-a27d-a9a1843a2f48'
+        });
+
+        window.appInsights=appInsights;
+        appInsights.trackPageView();
+    </script>
+</head>
+
+<body>
+    <div class="header-wrapper">
+        <div class="site-name">
+            <h1>Betsack.com</h1>
+            <h2>First step in beating the odds</h2>
+        </div>
+    </div>
+    <div class="menu">
+        <div class="navbar">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <i class="fw-icon-th-list"></i>
+                    </button>
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                        <li>@Html.ActionLink("About", "About", "Home")</li>
+                        <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                    </ul>
+                    @Html.Partial("_LoginPartial")
+                </div><!--/.navbar-collapse -->
+            </div>
+        </div>
+        <div class="mini-menu">
+            <label>
+                <select class="selectnav">
+                    <option value="#" selected="">Home</option>
+                    <option value="#">About</option>
+                    <option value="#">→ Another action</option>
+                    <option value="#">→ Something else here</option>
+                    <option value="#">→ Another action</option>
+                    <option value="#">→ Something else here</option>
+                    <option value="#">Services</option>
+                    <option value="#">Work</option>
+                    <option value="#">Contact</option>
+                </select>
+            </label>
+        </div>
+    </div>
+
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <div class="footer-wrapper">
+            <div class="site-content">
+                <div class="container">
+                    <div class="row">
+
+                        <div class="block col-md-2 col-sm-6">
+                            <h1>Vitae lin</h1>
+                            <ul>
+                                <li><a href="#">Phasellus ultrices</a></li>
+                                <li><a href="#">Sed adipiscing lipsum</a></li>
+                                <li><a href="#">Nulla sed leoniton</a></li>
+                            </ul>
+                        </div>
+                        <div class="block col-md-2 col-sm-6">
+                            <h1>Luctrus</h1>
+                            <ul>
+                                <li><a href="#">Lorem ipsum</a></li>
+                                <li><a href="#">Donec nec justo</a></li>
+                                <li><a href="#">Morbi in se</a></li>
+                            </ul>
+                        </div>
+                        <div class="block col-md-2 col-sm-6">
+                            <h1>consetu</h1>
+                            <ul>
+                                <li><a href="#">Quisque a lectus</a></li>
+                                <li><a href="#">Donec consecte</a></li>
+                                <li><a href="#">Nulla sed leoniton</a></li>
+                            </ul>
+                        </div>
+                        <div class="block col-md-3">
+                            <h1>Praesent dapibus, neque id cursus faucibus</h1>
+                            <div class="input-group">
+                                <input type="email" value="" name="EMAIL" class="required email form-control" id="mce-EMAIL">
+                                <span class="input-group-btn">
+                                    <input type="submit" class="button btn btn-default" value="Subscribe" name="subscribe" id="mc-embedded-subscribe">
+                                </span>
+                            </div>
+                        </div>
+                        <div class="block col-md-3">
+                            <h1> Aliquam quam lectusfacilisis auctor</h1>
+                            <ul class="social">
+                                <li><a href="#"><i class="fw-icon-twitter"></i></a></li>
+                                <li><a href="#"><i class="fw-icon-facebook"></i></a></li>
+                                <li><a href="#"><i class="fw-icon-linkedin"></i></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="copy-rights">
+                <div class="container">
+                    <div class="row">
+
+                        <div class="col-md-6">
+                            Copyright(c) website name. Designed by: <a href="http://www.alltemplateneeds.com"> www.alltemplateneeds.com</a>
+                        </div>
+                        <div class="col-md-6">
+                            Images from: <a href="http://www.wallpaperswide.com">http://wallpaperswide.com</a> / <a href="http://www.wallcoo.net"> www.wallcoo.net</a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    @*<script src="~/Content/js/jquery-1.9.1.js"></script>*@
+    @*<script src="~/Content/js/bootstrap.js"></script>*@
+    @*<script src="~/Content/js/modernizr-2.6.2-respond-1.1.0.min.js"></script>*@
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+
+</body>
+</html>

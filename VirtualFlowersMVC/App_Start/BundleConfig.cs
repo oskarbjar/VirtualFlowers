@@ -24,8 +24,18 @@ namespace VirtualFlowersMVC
                       "~/Scripts/respond.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
-                      "~/Content/bootstrap.css",
-                      "~/Content/site.css"));
+                      "~/Content/css/bootstrap.css",
+                      "~/Content/css/site.css"));
+
+            bundles.Add(new StyleBundle("~/Content/newcss").Include(
+                      "~/Content/css/bootstrap.css",
+                      "~/Content/css/site.css",
+                      "~/Content/css/normalize.css",
+                      "~/Content/css/component.css",
+                      "~/Content/css/custom-styles.css",
+                      "~/Content/css/font-awesome.css",
+                      "~/Content/css/demo.css",
+                      "~/Content/css/font-awesome-ie7.css"));
         }
     }
 }

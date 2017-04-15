@@ -17,8 +17,13 @@ namespace VirtualFlowersMVC.Controllers
     {
         private dataWorker _dataWorker = new dataWorker();
         private Program _program = new Program();
-
+        
         public ActionResult Index()
+        {
+            return View();
+        }
+
+        public ActionResult IndexNew()
         {
             return View();
         }
