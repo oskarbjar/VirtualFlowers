@@ -81,10 +81,11 @@ namespace VirtualFlowersMVC.Controllers
             {
                 var overview = new OverViewViewModel();
 
-                overview.Url = "http://www.hltv.org/" + item;
+                overview.Url = "http://www.hltv.org" + item.Url;
                 overview.Cached = Cache.Exists(overview.Url);
+                overview.BestOf3 = item.BestOf3;
                 OverViewList.Add(overview);
-                overviewurls.Add(item);
+                overviewurls.Add(item.Url);
             }
             TempData["UrlList"] = overviewurls;
             return View(OverViewList);

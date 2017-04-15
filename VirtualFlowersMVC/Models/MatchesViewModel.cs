@@ -45,5 +45,16 @@ namespace VirtualFlowersMVC.Models
         public int Id { get; set; } 
         public string Url { get; set; }
         public bool Cached { get; set; }
+
+        public bool BestOf3 { get; set; }
+    }
+
+    public class UrlViewModel
+    {
+        public int id { get; set; }
+        public string Url { get; set; }
+        public bool BestOf3 { get; set; }
+
+
     }
 }

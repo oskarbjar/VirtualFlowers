@@ -32,13 +32,16 @@ namespace VirtualFlowers
 
         }
 
-        public List<string> GetMatches()
+        public List<UrlViewModel> GetMatches()
         {
+            var Models = new List<UrlViewModel>();
+           
             string url = "http://www.hltv.org/matches";
             List<string> urlsList = new List<string>();
           
             for (int i = 1; i < 50; i++)
             {
+                var objectToAdd = new UrlViewModel();
                 var htmlString = $"//*[@id='back']/div[3]/div[3]//div/div[{i}]/div[1]";
                 var matchesHtml = HWeb.Load(url);
                 var selection = matchesHtml.DocumentNode.SelectNodes(htmlString);
@@ -51,23 +54,39 @@ namespace VirtualFlowers
                 //var team2Selections = matchesHtml.DocumentNode.SelectNodes(team2);
                 var detaild =  $"//*[@id='back']/div[3]/div[3]/div/div[{i}]/div[1]/div[5]" /*Url*/;
 
+                var BestOf3 = $"//*[@id='back']/div[3]/div[3]/div/div[{i}]/div[1]/div[3]/div/div[1]";
+
 
                 var urls = matchesHtml.DocumentNode.SelectNodes(detaild);
+                var BestOf3Result = matchesHtml.DocumentNode.SelectNodes(BestOf3);
+
+                
 
 
                 if (urls != null)
                 { 
                 var urlString = GetMatchHref(urls[0].InnerHtml);
+                    var IsBestOf3 = false;
+                    if (BestOf3Result[0].InnerText.Contains("Best of 3"))
+                    {
+                        IsBestOf3 = true;
+                    };
+
+
 
                 var urlstring = urlString.Remove(0,1);
                 urlstring = urlstring.Remove(urlstring.Length-1);
 
                 urlsList.Add(urlstring);
+
+                    objectToAdd.Url = urlstring;
+                    objectToAdd.BestOf3 = IsBestOf3;
+                    Models.Add(objectToAdd);
                 }
 
             }
 
-            return urlsList;
+            return Models;
 
          
         }
@@ -940,6 +959,14 @@ namespace VirtualFlowers
 
 
             return tupleString;
+
+        }
+
+        public class UrlViewModel
+        {
+            public int id { get; set; }
+            public string Url { get; set; }
+            public bool BestOf3 { get; set; }
 
         }
     }

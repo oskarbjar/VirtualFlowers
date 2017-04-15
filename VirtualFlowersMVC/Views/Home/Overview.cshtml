@@ -18,6 +18,9 @@
         <th>
             @Html.DisplayNameFor(model => model.Url)
         </th>
+        <th>
+            @Html.DisplayNameFor(model => model.BestOf3)
+        </th>
         <th></th>
     </tr>
 
@@ -28,6 +31,9 @@
         </td>
         <td>
           <a href="@item.Url">@item.Url</a>
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.BestOf3)
         </td>
         <td>
             @*@Html.ActionLink("Edit", "Edit", new { id=item.Id }) |*@
