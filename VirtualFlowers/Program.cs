@@ -424,12 +424,31 @@ namespace VirtualFlowers
                 i++;
                 var htmlstring = $"//*[@id='back']/div[3]/div[3]/div/div[3]/div/div[{i}]/div";
                 var htmlSectionss = teamhtml.DocumentNode.SelectNodes(htmlstring);
+                if (htmlSectionss == null)
+                    break;
 
                 var matchIdHtmlString = htmlstring + "/a[1]";
                 var team1IdHtmlString = htmlstring + "/a[2]";
                 var team2IdHtmlString = htmlstring + "/a[3]";
                 var nodes = htmlSectionss?[0].SelectNodes(".//div");
                
+                var dateString = nodes[0].InnerText; //date
+                var dDate = NewDate(dateString);
+
+                // If we have moved past last scraped date, or year old data
+                if (dDate < lastScraped.AddDays(-1) || dDate < DateTime.Now.AddYears(-1))
+                {
+                    // And we have added some records
+                    if (lCounter > 0 || !history.Any())
+                    {
+                        // We save history record when last scraped for this team.
+                        db.ScrapeHistoryTeams.Add(new ScrapeHistoryTeams { TeamId = TeamId, LastDayScraped = DateTime.Now });
+                        db.SaveChanges();
+                    }
+
+                    // And quit scraping
+                    return Task.FromResult(0);
+                }
 
                 if (nodes?.Count() != 8)
                 {
@@ -465,28 +484,10 @@ namespace VirtualFlowers
                 }
                 CheckIfNeedToCreateTeam(team2Id, team2Name.Item1);
 
-                var dateString = nodes[0].InnerText; //date
                 var mapString = nodes[3].InnerText; //map
                 var eventString = nodes[4].InnerText; //event
 
-                var newData = NewDate(dateString);
                
-                var dDate = newData;
-
-                // If we have moved past last scraped date, or year old data
-                if (dDate < lastScraped.AddDays(-1) || dDate < DateTime.Now.AddYears(-1))
-                {
-                    // And we have added some records
-                    if (lCounter > 0)
-                    {
-                        // We save history record when last scraped for this team.
-                        db.ScrapeHistoryTeams.Add(new ScrapeHistoryTeams { TeamId = TeamId, LastDayScraped = DateTime.Now });
-                        db.SaveChanges();
-                    }
-
-                    // And quit scraping
-                    return Task.FromResult(0);
-                }
                 
                 var firstRoundWin = rounds.FirstOrDefault(y => y.Round1);
                 bool firstRoundTerr = firstRoundWin.Terrorist;
@@ -566,6 +567,14 @@ namespace VirtualFlowers
                 
                 db.SaveChanges();
                 lCounter++;
+            }
+
+            // If we have added some records or have no record for this team
+            if (lCounter > 0 || !history.Any())
+            {
+                // We save history record when last scraped for this team.
+                db.ScrapeHistoryTeams.Add(new ScrapeHistoryTeams { TeamId = TeamId, LastDayScraped = DateTime.Now });
+                db.SaveChanges();
             }
             return Task.FromResult(0);
         }

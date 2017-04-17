@@ -1,50 +1,257 @@
-﻿@using Models
+﻿
 @{
     ViewBag.Title = "Betsack";
 }
 
-<div class="jumbotron">
-    <h1>Betsack</h1>
-    <p class="lead">The greatest invention since the toaster and the vibrator.</p>
-</div>
+<!-- Main jumbotron for a primary marketing message or call to action -->
+<div class="banner">
+    <div id="carousel-example-generic" class="carousel slide">
 
-<div class="row">
-    @if (User.Identity.IsAuthenticated)
-    {
-        if (User.IsInRole("Admin"))
-        {
-            <div class="col-md-3">
-                <h2>Team Compare</h2>
-                <p>
-                    Compare cs:go teams statistics.  <br />To make educational bets!  <br />Or even better... profittable!.
-                </p>
-                <p><a class="btn btn-default" href="Home/Compare">Compare &raquo;</a></p>
+        <!-- Wrapper for slides -->
+        <div class="carousel-inner">
+            <div class="item active">
+                <img src="../../Content/Image/banner-image.jpg" alt="">
+                <div class="carousel-caption">
+                    <h1>CS GO</h1>
+                    <h2>Detailed comparison of teams, based on maps, ranking, win %, opponents ranking</h2>
+                </div>
             </div>
-            <div class="col-md-3">
-                <h2>Teams</h2>
-                <p>Find your team!  You have a team?  Well what are you waiting for find it!.</p>
-                <p><a class="btn btn-default" href="~/Teams/Index">Teams &raquo;</a></p>
+            <div class="item">
+                <img src="../../Content/Image/banner-image.jpg" alt="">
+                <div class="carousel-caption">
+                    <h1>Football</h1>
+                    <h2>Todays matches: Average goals, corners, yellow cards</h2>
+                </div>
             </div>
-            <div class="col-md-3">
-                <h2>Ranking</h2>
-                <p>Here is all the ranking you would ever want!  Who was top side, start of march 2016?  We know! We care! lets find out.</p>
-                <p><a class="btn btn-default" href="~/Ranks/Index">Ranking &raquo;</a></p>
+            <div class="item">
+                <img src="../../Content/Image/banner-image.jpg" alt="">
+                <div class="carousel-caption">
+                    <h1>Darts</h1>
+                    <h2>Past games, Average 180s, 9 darter %, Ranking, Form</h2>
+                </div>
             </div>
-            <div class="col-md-3">
-                <h2>Transfers</h2>
-                <p>Here is all the transfers you would ever want!  New transfer?  Add it here!!!!</p>
-                <p><a class="btn btn-default" href="~/Ranks/TransferHistory">Transfers &raquo;</a></p>
-            </div>
-        }
-        else
-        {
-            <div class="col-md-6">
-                <h2>Team Compare</h2>
-                <p>
-                    Compare cs:go teams statistics.  <br />To make educational bets!  <br />Or even better... profittable!.
-                </p>
-                <p><a class="btn btn-default" href="Home/Compare">Compare &raquo;</a></p>
-            </div>
-        }
-    }
+        </div>
+
+        <!-- Controls -->
+        <a class="left carousel-control" href="#carousel-example-generic" data-slide="prev">
+            <i class="fw-icon-chevron-left"></i>
+        </a>
+        <a class="right carousel-control" href="#carousel-example-generic" data-slide="next">
+            <i class="fw-icon-chevron-right"></i>
+        </a>
+    </div>
 </div>
+<div class="container">
+    <div class="featured-block">
+        <!-- Example row of columns -->
+        <div class="row">
+            <div class="col-md-3">
+                <div class="block">
+                    <div class="thumbnail">
+                        <img src="../../Content/Image/csgo.jpg" alt="" class="img-responsive" style="width: 245px; height: 185px">
+                        <div class="caption" style="width: 245px; height: 185px; position: relative;">
+                            <h1>CS:GO</h1>
+                            <p>Detailed comparison of teams, based on maps, ranking, win %, opponents ranking</p>
+                            <a class="btn" href="Compare" style="position: absolute; bottom: 0;">more</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="block">
+                    <div class="thumbnail">
+                        <img src="../../Content/Image/football.jpg" alt="" class="img-responsive" style="width: 245px; height: 185px">
+                        <div class="caption" style="width: 245px; height: 185px; position: relative;">
+                            <h1>Football</h1>
+                            <p>Todays matches: Average goals, corners, yellow cards</p>
+                            <a class="btn" href="#" style="position: absolute; bottom: 0;">more</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="block">
+                    <div class="thumbnail">
+                        <img src="../../Content/Image/darts.jpg" alt="" class="img-responsive" style="width: 245px; height: 185px">
+                        <div class="caption" style="width: 245px; height: 185px; position: relative;">
+                            <h1>Darts</h1>
+                            <p>Past games, Average 180s, 9 darter %, Ranking, Form</p>
+                            <a class="btn" href="#" style="position: absolute; bottom: 0;">more</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="block">
+                    <div class="thumbnail">
+                        <img src="../../Content/Image/arm-wrestling.jpg" alt="" class="img-responsive" style="width: 245px; height: 185px">
+                        <div class="caption" style="width: 245px; height: 185px; position: relative;">
+                            <h1>Undecided</h1>
+                            <p>Some sport which will benefit from statistical knowledge</p>
+                            <a class="btn" href="#" style="position: absolute; bottom: 0;">more</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+    <div class="ruler"></div>
+</div>
+@*<div class="container">
+        <div class="featured-item">
+            <div class="col-md-6">
+                <div class="block">
+                    <div class="block-title">
+                        <h1>Cras ornare tristi</h1>
+                        <h2>Vivamus vestibulum nulla nec ante  pellentesque</h2>
+                    </div>
+                    <ul>
+                        <li class="col-md-6">
+                            <div class="user-info">
+                                <i class="fw-icon-user icon"></i>
+                                <h1>Tim nulla nec </h1>
+                                <p>Cuibstui ipsum dolor sit amet, consectetu</p>
+                            </div>
+                        </li>
+                        <li class="col-md-6">
+                            <div class="user-info">
+                                <i class="fw-icon-pencil icon"></i>
+                                <h1>Vivamus mol</h1>
+                                <p>Phasellus ultrices nulla quis nibh lorem</p>
+                            </div>
+                        </li>
+                        <li class="col-md-6">
+                            <div class="user-info">
+                                <i class="fw-icon-tag icon"></i>
+                                <h1>Phas ellus</h1>
+                                <p>Aliquam erat volutpat. Nam dui mi, tinci</p>
+                            </div>
+                        </li>
+                        <li class="col-md-6">
+                            <div class="user-info">
+                                <i class="fw-icon-wrench icon"></i>
+                                <h1>Fusce lobortis</h1>
+                                <p>Class aptent taciti sociosqu ad litora</p>
+                            </div>
+                        </li>
+                        <li class="col-md-6">
+                            <div class="user-info">
+                                <i class="fw-icon-umbrella icon"></i>
+                                <h1>Sed adipiscing</h1>
+                                <p class="last space">Praesent dapibus, neque id cursus</p>
+                            </div>
+                        </li>
+                        <li class="col-md-6">
+                            <div class="user-info">
+                                <i class="fw-icon-coffee icon"></i>
+                                <h1>Nam convallis</h1>
+                                <p class="last">Lorem ipsum dolor sit amet, consectetuer </p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="block">
+                    <div class="block-title">
+                        <h1>Aliquam tincidunt</h1>
+                        <h2>Integer vitae libero ac risus egestas placerat</h2>
+                    </div>
+                    <div class="panel-group" id="accordion">
+                        <div class="panel panel-default">
+                            <div class="panel-heading accordion-caret">
+                                <h4 class="panel-title">
+                                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                                        Donec quis dui at dolor tempor
+                                    </a>
+                                </h4>
+                            </div>
+                            <div id="collapseOne" class="panel-collapse collapse in">
+                                <div class="panel-body">
+                                    Morbi in sem quis dui placerat ornare. Pellentesque odio nisi, euismod in, pharetra
+                                    ultricies in, diam. Sed arcu. Cras consequat.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading accordion-caret">
+                                <h4 class="panel-title">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
+                                        Vivamus molestie gravida turpis
+                                    </a>
+                                </h4>
+                            </div>
+                            <div id="collapseTwo" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    Morbi in sem quis dui placerat ornare. Pellentesque odio nisi, euismod in, pharetra
+                                    ultricies in, diam. Sed arcu. Cras consequat.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading accordion-caret">
+                                <h4 class="panel-title">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseThree">
+                                        Fusce lobortis lorem at ipsum semper
+                                    </a>
+                                </h4>
+                            </div>
+                            <div id="collapseThree" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    Morbi in sem quis dui placerat ornare. Pellentesque odio nisi, euismod in, pharetra
+                                    ultricies in, diam. Sed arcu. Cras consequat.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading accordion-caret">
+                                <h4 class="panel-title">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseFour">
+                                        Nam convallis pellentesque nisl
+                                    </a>
+                                </h4>
+                            </div>
+                            <div id="collapseFour" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    Morbi in sem quis dui placerat ornare. Pellentesque odio nisi, euismod in, pharetra
+                                    ultricies in, diam. Sed arcu. Cras consequat.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ruler"></div>
+    </div>*@
+    <div class="container">
+        <div class="featured-content">
+            <div class="col-md-6">
+                <div class="block">
+                    <img src="../../Content/Image/chessking.jpeg" alt="" class="img-spacing thumbnail" style="width:270px; height:210px">
+                    <h1>How can a gambler beat the odds?</h1>
+                    <p>
+                        To be able to beat the big gambling companies, we need to have better information than they have.  That is no easy task, and without some inside information or Sixth sense you need help.
+                    </p>
+                    <p>
+                        With our software and information gathering, we can help with that.  We like many others gather information where ever we can get them, but we display the statistical data in a way that a gambler would like to see them.
+                    </p>
+                    @*<a href="#" class="btn">more</a>*@
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="block">
+                    <img src="../../Content/Image/data.jpeg" alt="" class="img-spacing thumbnail" style="width:270px; height:210px">
+                    <h1>Where do we get statistics?</h1>
+                    <p>All over!  We gather information where ever we can get them, there are ton of data being displayed for free all over the web, and we simply harvest them, gather and display like we want.</p>
+                    <p>Is it legal?  Yes it is, if you are like us, scraping information that are being displayed free (not sold), then its just like google and their index of web pages.  But if its behind a paid login, its not good and we would not do it.</p>
+                    @*<a href="#" class="btn">more</a>*@
+                </div>
+            </div>
+        </div>
+    </div>

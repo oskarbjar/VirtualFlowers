@@ -170,7 +170,6 @@ p{padding-bottom: 25px; margin: 0;}
 .featured-item .block .block-title h1{font-size: 28px; line-height: 32px; color: #454855; text-transform: uppercase;font-family: 'source_sans_probold'; letter-spacing: 1px;}
 .featured-item .block .block-title h2{font-size: 18px; line-height: 24px; color: #454855; font-family: 'source_sans_prolight';}
 
-
 .user-info{overflow: hidden; float: left;}
 .user-info .icon{margin-right: 30px; background: #34b091; color: #fff; border-radius: 10px;
                 font-size: 25px; padding: 22px; line-height: 25px; width: 70px; height: 70px; float: left;}
@@ -186,6 +185,9 @@ p{padding-bottom: 25px; margin: 0;}
 .block .panel-group .panel + .panel {
 margin-top: 10px;
 }
+
+.block-title h1{font-size: 28px; line-height: 32px; color: #454855; text-transform: uppercase;font-family: 'source_sans_probold'; letter-spacing: 1px;}
+.block-title h2{font-size: 18px; line-height: 24px; color: #454855; font-family: 'source_sans_prolight';}
 
 .accordion-caret .accordion-toggle:hover {
         text-decoration: none;
@@ -233,7 +235,7 @@ margin-top: 10px;
 	Footer styles starts here
  ************************************************/
 .footer-wrapper{background: #3b3e4a;}
-.site-content{padding: 55px 0; overflow: hidden;}
+.site-content{  overflow: hidden;}
 .site-content .block h1{font-size: 18px; line-height: 24px; color: #fff; text-transform: uppercase; font-family: 'source_sans_probold'; padding-bottom: 10px;}
 .site-content .block ul{margin: 0; padding: 0;}
 .site-content .block ul li{list-style: none; line-height: 28px;}

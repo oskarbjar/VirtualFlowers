@@ -4,9 +4,21 @@
     ViewBag.Title = "Compare";
 }
 <script src="~/Scripts/jquery-3.1.1.min.js"></script>
-<h2>
-    @Html.ActionLink("Compare", "Compare", new { }, new { style="text-decoration:none" })
-</h2>
+<style>
+    body {
+        color: black;
+        font-family: 'source_sans_prolight';
+    }
+</style>
+
+<div class="featured-item">
+    <div class="block">
+        <div class="block-title">
+            <h1>@Html.ActionLink("Compare", "Compare", new { }, new { style = "text-decoration:none; color: #454855;" })</h1>
+            <h2>Compare cs go teams by teamid or match-url (hltv.org)</h2>
+        </div>
+    </div>
+
     @if (Model != null && Model.ExpectedLineUp != null && Model.ExpectedLineUp.Players != null && Model.ExpectedLineUp.Players.Count != 10)
     {
         <span style="color:red">
@@ -22,19 +34,19 @@
         </div>
         <div class="col-lg-9">
             <label for="MatchUrl">Or&nbsp;&nbsp;&nbsp;</label><input type="text" style="width: 800px" class="form-control" name="MatchUrl" value="" placeholder="MatchUrl" />
-            <input type="submit" class="btn btn-primary" id="CompareBtn" value="Compare" />
+            <input type="submit" class="btn btn-primary" id="CompareBtn" value="Compare" style="background-color:#34b091" />
             <img class="loading" src="~/Content/Image/ajax-loader.gif" alt="loader" style="display:none" />
         </div>
-            <div class="col-lg-3">
-                <label style="cursor: help" title="Automaticly scraped once a day, but if you want check again." ><input type="checkbox" name="Scrape" value="true" checked /> Scrape</label>
-                <label style="cursor: help" title="Don't use stats from memory, get all new! (will take 0.5-3 min)" ><input type="checkbox" name="NoCache" value="true" /> No cache</label>
-            </div>
-            <div class="col-lg-9">
-                <label style="cursor: help" title="Get history 3 months back"><input type="checkbox" name="PeriodSelection" value="3" checked /> 3 Month</label>
-                <label style="cursor: help" title="Get history 6 months back" ><input type="checkbox" name="PeriodSelection" value="6" checked /> 6 Month</label>
-            </div>
+        <div class="col-lg-3">
+            <label style="cursor: help" title="Automaticly scraped once a day, but if you want check again."><input type="checkbox" name="Scrape" value="true" checked /> Scrape</label>
+            <label style="cursor: help" title="Don't use stats from memory, get all new! (will take 0.5-3 min)"><input type="checkbox" name="NoCache" value="true" /> No cache</label>
+        </div>
+        <div class="col-lg-9">
+            <label style="cursor: help" title="Get history 3 months back"><input type="checkbox" name="PeriodSelection" value="3" checked /> 3 Month</label>
+            <label style="cursor: help" title="Get history 6 months back"><input type="checkbox" name="PeriodSelection" value="6" checked /> 6 Month</label>
+        </div>
     </form>
-        
+
 
     @if (Model != null)
     {
@@ -46,6 +58,7 @@
         }
     }
 
+</div>
 
     <script>
         $(document).ready(function () {
@@ -56,14 +69,14 @@
                 $('.loading').fadeIn('fast');
             });
 
-            $("tr").hover(function () {
-                var trClass = this.className;
+            $("tr.mapline").hover(function () {
+                var trClass = this.className.replace('mapline ', '');
                 $("." + trClass).css("background-color", "#f5f5f5");
             });
 
-            $("tr").mouseleave(function () {
-                var trClass = this.className;
-                $("." + trClass).css("background-color", "white");
+            $("tr.mapline").mouseleave(function () {
+                var trClass = this.className.replace('mapline ', '');
+                $("." + trClass).css("background-color", "");
             });
 
         });
