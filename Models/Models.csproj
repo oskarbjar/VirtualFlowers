@@ -72,6 +72,7 @@
     <Compile Include="Migrations\201703051934311_RoundHistory2.Designer.cs">
       <DependentUpon>201703051934311_RoundHistory2.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\FootballTips.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ExpectedLineUp.cs" />
     <Compile Include="Migrations\Configuration.cs" />
