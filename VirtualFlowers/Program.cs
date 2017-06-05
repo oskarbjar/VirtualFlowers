@@ -130,18 +130,59 @@ namespace VirtualFlowers
                 var span1Name = new HtmlNodeCollection(HtmlNode.CreateNode(""));
                 var span2Name = new HtmlNodeCollection(HtmlNode.CreateNode(""));
 
-                for (int i = 1; i < 10; i++)
-                {
+               
                     try
                     {
                         string span1;
                         string span2;
                         if (firstDiv)
                         {
-                            span1 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[16]/div[{i}]/div[1]/span/a";
+                            //var team1IdHtmlString = $"//*[@class='team1-gradient']";
+                            span1 = $"//*[@class='lineup standard-box']";
                             span1Name = matchHtml.DocumentNode.SelectNodes(span1);
-                            span2 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[19]/div[{i}]/div[1]/span/a";
-                            span2Name = matchHtml.DocumentNode.SelectNodes(span2);
+
+                            /*Get players from lineup*/
+                            foreach (var item in span1Name)
+                            {
+                                //td[@class="plaintext"]
+                                var players = item.SelectNodes("//*[@class='players']/*[@class='table']//*[@class='player']//@href");
+
+                                foreach (var player in players)
+                                {
+                                    var names = player.InnerText.Trim();
+
+                                if (names != "")
+                                {
+
+                                    var ids = GetPlayerID(player.Attributes[0].Value);
+                                    var pl = new Player
+                                    {
+                                        PlayerId = ids,
+                                        PlayerName = names,
+                                        TeamID = teamIDs.Item1
+
+                                    };
+                                    var plexists = expectedLineUp.Players.Any(x => x.PlayerId == ids);
+                                    if (!plexists)
+                                    {
+                                        expectedLineUp.Players.Add(pl);
+                                    }
+                                }
+                                    
+                                }
+
+                                
+
+                            }
+                            
+
+
+
+
+                            //span1 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[16]/div[{i}]/div[1]/span/a";
+                            //span1Name = matchHtml.DocumentNode.SelectNodes(span1);
+                            //span2 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[19]/div[{i}]/div[1]/span/a";
+                            //span2Name = matchHtml.DocumentNode.SelectNodes(span2);
 
                             if (span1Name == null)
                             {
@@ -153,74 +194,46 @@ namespace VirtualFlowers
 
                         }
 
-                        if (secondDiv)
-                        {
-                            span1 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[19]/div[{i}]/div[1]/span/a";
-                            span1Name = matchHtml.DocumentNode.SelectNodes(span1);
-                            span2 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[22]/div[{i}]/div[1]/span/a";
-                            span2Name = matchHtml.DocumentNode.SelectNodes(span2);
+                        //if (secondDiv)
+                        //{
+                        //    span1 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[19]/div[{i}]/div[1]/span/a";
+                        //    span1Name = matchHtml.DocumentNode.SelectNodes(span1);
+                        //    span2 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[22]/div[{i}]/div[1]/span/a";
+                        //    span2Name = matchHtml.DocumentNode.SelectNodes(span2);
 
-                            if (span2Name == null)
-                            {
-                                secondDiv = false;
-                                thirdDiv = true;
-                            }
-                        }
+                        //    if (span2Name == null)
+                        //    {
+                        //        secondDiv = false;
+                        //        thirdDiv = true;
+                        //    }
+                        //}
 
-                        if (thirdDiv)
-                        {
-                            span1 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[21]/div[{i}]/div[1]/span/a";
-                            span1Name = matchHtml.DocumentNode.SelectNodes(span1);
-                            span2 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[24]/div[{i}]/div[1]/span/a";
-                            span2Name = matchHtml.DocumentNode.SelectNodes(span2);
+                        //if (thirdDiv)
+                        //{
+                        //    span1 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[21]/div[{i}]/div[1]/span/a";
+                        //    span1Name = matchHtml.DocumentNode.SelectNodes(span1);
+                        //    span2 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[24]/div[{i}]/div[1]/span/a";
+                        //    span2Name = matchHtml.DocumentNode.SelectNodes(span2);
 
-                            if (span1Name == null)
-                            {
-                                thirdDiv = false;
-                                fourthDiv = true;
+                        //    if (span1Name == null)
+                        //    {
+                        //        thirdDiv = false;
+                        //        fourthDiv = true;
 
-                            }
-                        }
+                        //    }
+                        //}
 
-                        if (fourthDiv)
-                        {
-                            span1 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[24]/div[{i}]/div[1]/span/a";
-                            span1Name = matchHtml.DocumentNode.SelectNodes(span1);
-                            span2 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[27]/div[{i}]/div[1]/span/a";
+                        //if (fourthDiv)
+                        //{
+                        //    span1 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[24]/div[{i}]/div[1]/span/a";
+                        //    span1Name = matchHtml.DocumentNode.SelectNodes(span1);
+                        //    span2 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[27]/div[{i}]/div[1]/span/a";
 
-                            span2Name = matchHtml.DocumentNode.SelectNodes(span2);
+                        //    span2Name = matchHtml.DocumentNode.SelectNodes(span2);
 
-                        }
+                        //}
 
-
-
-
-
-                        var name = span1Name[0].InnerText;
-                        var id = GetPlayerID(span1Name[0].OuterHtml);
-                        var team1 = teamIDs.Item1;
-
-                        var pl = new Player
-                        {
-                            PlayerId = id,
-                            PlayerName = name,
-                            TeamID = team1
-
-                        };
-                        expectedLineUp.Players.Add(pl);
-
-                        var name2 = span2Name[0].InnerText;
-                        var id2 = GetPlayerID(span2Name[0].OuterHtml);
-                        var team2Id = teamIDs.Item2;
-
-                        var pl2 = new Player
-                        {
-                            PlayerId = id2,
-                            PlayerName = name2,
-                            TeamID = team2Id
-
-                        };
-                        expectedLineUp.Players.Add(pl2);
+                        
 
 
                     }
@@ -228,8 +241,7 @@ namespace VirtualFlowers
                     {
                         var nothing = ex;
                     }
-                    i++;
-                }
+               
 
                 return expectedLineUp;
 
@@ -261,32 +273,32 @@ namespace VirtualFlowers
             if (first)
             {
 
-                string[] stringSeparators = { "<a href=" };
-                string[] secondSplint = { "><span style=" };
-                string[] thirdspilt = { "-" };
+                //    string[] stringSeparators = { "<a href=" };
+                    string[] secondSplint = { "/" };
+                    string[] thirdspilt = { "/" };
                 string word = "/player//";
 
-                var result = outerHtml.Split(stringSeparators, StringSplitOptions.None);
-                var result2 = result[1].Split(secondSplint, StringSplitOptions.None);
-                var ID = result2[0].Remove(0, word.Length);
-                var ids = ID.Split(thirdspilt, StringSplitOptions.None);
-                final = Convert.ToInt32(ids[0]);
+            //    var result = outerHtml.Split(stringSeparators, StringSplitOptions.None);
+            //    var result2 = result[1].Split(secondSplint, StringSplitOptions.None);
+            //    var ID = result2[0].Remove(0, word.Length);
+                var ids = outerHtml.Split(secondSplint, StringSplitOptions.None);
+               final = Convert.ToInt32(ids[2]);
             }
-            else
-            {
+            //else
+            //{
 
-                string[] stringSeparators = { "pageid=173&amp;" };
-                string[] secondSplint = { "\">" };
-                string[] thirdspilt = { "-" };
-                string word = "playerid=";
-                var result = outerHtml.Split(stringSeparators, StringSplitOptions.None);
-                var result2 = result[1].Split(secondSplint, StringSplitOptions.None);
-                var ID = result2[0].Remove(0, word.Length);
+            //    string[] stringSeparators = { "pageid=173&amp;" };
+            //    string[] secondSplint = { "\">" };
+            //    string[] thirdspilt = { "-" };
+            //    string word = "playerid=";
+            //    var result = outerHtml.Split(stringSeparators, StringSplitOptions.None);
+            //    var result2 = result[1].Split(secondSplint, StringSplitOptions.None);
+            //    var ID = result2[0].Remove(0, word.Length);
 
-                final = Convert.ToInt32(ID);
+            //    final = Convert.ToInt32(ID);
 
 
-            }
+            //}
 
 
 
@@ -418,6 +430,15 @@ namespace VirtualFlowers
 
             bool bHasCreatedCurrentTeam = false;
             HtmlDocument teamhtml = HWeb.Load(url);
+            var StatsTableHtml = $"//*[@class='stats-table']";
+            var StatsTable = teamhtml.DocumentNode.SelectNodes(StatsTableHtml);
+
+
+
+
+
+
+
             for (int i = 5; i < 2074; i++)
             {
 
@@ -944,31 +965,45 @@ namespace VirtualFlowers
             string url = matchUrls;
             HtmlDocument matchHtml = HWeb.Load(url);
 
-            string[] stringSeperators = { ";teamid=" };
-            string[] SecondSpilt = { ">" };
+            string[] stringSeperators = { "src=\"https://static.hltv.org/images/team/logo/" };
+            string[] SecondSpilt = { "<img alt=\" " };
+            string[] thirdSplilt = { "\" class=\"" };
+            #region Team1
 
-            var team1IdHtmlString = $"  //*[@id='back']/div[3]/div[3]/div/div[1]/div[1]/span/div/div/div[1]/span[1]/a";
+            var team1IdHtmlString = $"//*[@class='team1-gradient']";
+            var urls = $"//*[@class='team1-gradient']/a";
+
+            var team1GradientSection = matchHtml.DocumentNode.SelectNodes(urls);
             var htmlSectionss = matchHtml.DocumentNode.SelectNodes(team1IdHtmlString);
+            var Team1Name = htmlSectionss[0].InnerText.TrimStart().TrimEnd();
+           
 
-            var result = htmlSectionss[0].OuterHtml.Split(stringSeperators, StringSplitOptions.None);
-            var team1Spilt = result[1].Split(SecondSpilt, StringSplitOptions.None);
-            var team11Id = team1Spilt[0].Remove(team1Spilt[0].Length - 1);
+            string team11Id = GenerateTeamID(stringSeperators, SecondSpilt, thirdSplilt, team1GradientSection);
+            #endregion
+            #region Team2
+
+            var team2IdHtmlString = $"//*[@class='team2-gradient']";
+            var urlsTeam2 = $"//*[@class='team2-gradient']/a";
+
+            var htmlSectionsss = matchHtml.DocumentNode.SelectNodes(urlsTeam2);
+            var htmlSectionss2 = matchHtml.DocumentNode.SelectNodes(team2IdHtmlString);
+            var Team2Name = htmlSectionss2[0].InnerText.TrimStart().TrimEnd();
 
 
-            var team2IdHtmlString = $"    //*[@id='back']/div[3]/div[3]/div/div[1]/div[1]/span/div/div/div[3]/span/a";
-            //*[@id="back"]/div[3]/div[3]/div/div[1]/div[1]/span/div/div/div[3]/span
-            var team2HtmlSections = matchHtml.DocumentNode.SelectNodes(team2IdHtmlString);
-
-
-            var result2 = team2HtmlSections[0].OuterHtml.Split(stringSeperators, StringSplitOptions.None);
-            var team2Spilt = result2[1].Split(SecondSpilt, StringSplitOptions.None);
-
-            var team2Id = team2Spilt[0].Remove(team2Spilt[0].Length - 1);
+            string team2Id = GenerateTeamID(stringSeperators, SecondSpilt, thirdSplilt, htmlSectionsss);
+            #endregion
+            
             var tupleString = new Tuple<int, int>(Convert.ToInt32(team11Id), Convert.ToInt32(team2Id));
-
-
             return tupleString;
+        }
 
+        private static string GenerateTeamID(string[] stringSeperators, string[] SecondSpilt, string[] thirdSplilt, HtmlNodeCollection htmlSectionsss)
+        {
+            var result = htmlSectionsss[0].OuterHtml.Split(stringSeperators, StringSplitOptions.None);
+            var team1Spilt = result[1].Split(SecondSpilt, StringSplitOptions.None);
+            var thirdSpilts = team1Spilt[0].Split(thirdSplilt, StringSplitOptions.None);
+            var team11Id = thirdSpilts[0];
+            return team11Id;
         }
 
         public class UrlViewModel
