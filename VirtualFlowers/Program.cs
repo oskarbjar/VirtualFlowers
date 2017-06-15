@@ -27,7 +27,7 @@ namespace VirtualFlowers
 
             //GetTeamLineup("http://www.hltv.org/match/2308074-godsent-endpoint-esea-premier-season-24-europe");
 
-          // var stringList = GetMatches("http://www.hltv.org/matches");
+            // var stringList = GetMatches("http://www.hltv.org/matches");
 
 
         }
@@ -35,10 +35,10 @@ namespace VirtualFlowers
         public List<UrlViewModel> GetMatches()
         {
             var Models = new List<UrlViewModel>();
-           
+
             string url = "http://www.hltv.org/matches";
             List<string> urlsList = new List<string>();
-          
+
             for (int i = 1; i < 50; i++)
             {
                 var objectToAdd = new UrlViewModel();
@@ -52,7 +52,7 @@ namespace VirtualFlowers
                 //var team1Selections = matchesHtml.DocumentNode.SelectNodes(team1);
                 //var team2 = $"//*[@id='back']/div[3]/div[3]/div/div[{i}]/div[1]/div[2]"/*Team1*/;
                 //var team2Selections = matchesHtml.DocumentNode.SelectNodes(team2);
-                var detaild =  $"//*[@id='back']/div[3]/div[3]/div/div[{i}]/div[1]/div[5]" /*Url*/;
+                var detaild = $"//*[@id='back']/div[3]/div[3]/div/div[{i}]/div[1]/div[5]" /*Url*/;
 
                 var BestOf3 = $"//*[@id='back']/div[3]/div[3]/div/div[{i}]/div[1]/div[3]/div/div[1]";
 
@@ -60,12 +60,12 @@ namespace VirtualFlowers
                 var urls = matchesHtml.DocumentNode.SelectNodes(detaild);
                 var BestOf3Result = matchesHtml.DocumentNode.SelectNodes(BestOf3);
 
-                
+
 
 
                 if (urls != null)
-                { 
-                var urlString = GetMatchHref(urls[0].InnerHtml);
+                {
+                    var urlString = GetMatchHref(urls[0].InnerHtml);
                     var IsBestOf3 = false;
                     if (BestOf3Result[0].InnerText.Contains("Best of 3"))
                     {
@@ -74,10 +74,10 @@ namespace VirtualFlowers
 
 
 
-                var urlstring = urlString.Remove(0,1);
-                urlstring = urlstring.Remove(urlstring.Length-1);
+                    var urlstring = urlString.Remove(0, 1);
+                    urlstring = urlstring.Remove(urlstring.Length - 1);
 
-                urlsList.Add(urlstring);
+                    urlsList.Add(urlstring);
 
                     objectToAdd.Url = urlstring;
                     objectToAdd.BestOf3 = IsBestOf3;
@@ -88,7 +88,7 @@ namespace VirtualFlowers
 
             return Models;
 
-         
+
         }
 
         private static string GetMatchHref(string innerHtml)
@@ -100,7 +100,7 @@ namespace VirtualFlowers
             var result2 = result1[1].Split(secondSplit, StringSplitOptions.None);
 
             return result2[0];
-            
+
         }
 
         public ExpectedLineUp GetTeamLineup(string matchUrls)
@@ -118,10 +118,10 @@ namespace VirtualFlowers
                     expectedLineUp.Players = new List<Player>();
                 }
 
-                var teamIDs = GetTeamIdsFromUrl(matchUrls);
+                var teamIDs = GetTeamIdsFromUrl();
 
                 var url = matchUrls;
-                var matchHtml = HWeb.Load(url);
+                var matchHtml = HWeb.Load(MatchUrl);
                 var firstDiv = true;
                 var secondDiv = false;
                 var thirdDiv = false;
@@ -131,52 +131,67 @@ namespace VirtualFlowers
                 var span2Name = new HtmlNodeCollection(HtmlNode.CreateNode(""));
                 var count = 0;
 
-               
-                    try
+
+                try
+                {
+                    string span1;
+                    string span2;
+                    if (firstDiv)
                     {
-                        string span1;
-                        string span2;
-                        if (firstDiv)
+                        //var team1IdHtmlString = $"//*[@class='team1-gradient']";
+                        span1 = $"//*[@class='lineup standard-box']";
+                        span1Name = matchHtml.DocumentNode.SelectNodes(span1);
+
+                        /*Get players from lineup*/
+                        var counter = 0;
+                        foreach (var item in span1Name)
                         {
-                            //var team1IdHtmlString = $"//*[@class='team1-gradient']";
-                            span1 = $"//*[@class='lineup standard-box']";
-                            span1Name = matchHtml.DocumentNode.SelectNodes(span1);
+                            //td[@class="plaintext"]
+                            var players = item.SelectNodes("//*[@class='players']/*[@class='table']//*[@class='player']//@href");
 
-                            /*Get players from lineup*/
-                            foreach (var item in span1Name)
+                            foreach (var player in players)
                             {
-                                //td[@class="plaintext"]
-                                var players = item.SelectNodes("//*[@class='players']/*[@class='table']//*[@class='player']//@href");
-
-                                foreach (var player in players)
-                                {
-                                    var names = player.InnerText.Trim();
+                                var names = player.InnerText.Trim();
 
                                 if (names != "")
                                 {
 
-                                    var ids = GetPlayerID(player.Attributes[0].Value);
-                                    var pl = new Player
-                                    {
-                                        PlayerId = ids,
-                                        PlayerName = names,
-                                        TeamID = teamIDs.Item1
 
-                                    };
+                                    var ids = GetPlayerID(player.Attributes[0].Value);
+                                    var pl = new Player();
+
+                                    pl.PlayerId = ids;
+                                    pl.PlayerName = names;
+
+                                    if (counter <= 4)
+                                    {
+
+
+                                        pl.TeamID = teamIDs.Item1;
+                                    }
+                                    else
+                                    {
+                                        pl.TeamID = teamIDs.Item2;
+                                    }
+
+
+
                                     var plexists = expectedLineUp.Players.Any(x => x.PlayerId == ids);
                                     if (!plexists)
                                     {
                                         expectedLineUp.Players.Add(pl);
-                                        
+
                                     }
+                                    counter++;
                                 }
-                                    
-                                }
-
-                                
-
                             }
-                            
+
+
+
+
+
+
+
 
 
 
@@ -195,55 +210,56 @@ namespace VirtualFlowers
 
 
                         }
-
-                        //if (secondDiv)
-                        //{
-                        //    span1 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[19]/div[{i}]/div[1]/span/a";
-                        //    span1Name = matchHtml.DocumentNode.SelectNodes(span1);
-                        //    span2 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[22]/div[{i}]/div[1]/span/a";
-                        //    span2Name = matchHtml.DocumentNode.SelectNodes(span2);
-
-                        //    if (span2Name == null)
-                        //    {
-                        //        secondDiv = false;
-                        //        thirdDiv = true;
-                        //    }
-                        //}
-
-                        //if (thirdDiv)
-                        //{
-                        //    span1 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[21]/div[{i}]/div[1]/span/a";
-                        //    span1Name = matchHtml.DocumentNode.SelectNodes(span1);
-                        //    span2 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[24]/div[{i}]/div[1]/span/a";
-                        //    span2Name = matchHtml.DocumentNode.SelectNodes(span2);
-
-                        //    if (span1Name == null)
-                        //    {
-                        //        thirdDiv = false;
-                        //        fourthDiv = true;
-
-                        //    }
-                        //}
-
-                        //if (fourthDiv)
-                        //{
-                        //    span1 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[24]/div[{i}]/div[1]/span/a";
-                        //    span1Name = matchHtml.DocumentNode.SelectNodes(span1);
-                        //    span2 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[27]/div[{i}]/div[1]/span/a";
-
-                        //    span2Name = matchHtml.DocumentNode.SelectNodes(span2);
-
-                        //}
-
-                        
-
-
                     }
-                    catch (Exception ex)
-                    {
-                        var nothing = ex;
-                    }
-               
+
+                    //if (secondDiv)
+                    //{
+                    //    span1 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[19]/div[{i}]/div[1]/span/a";
+                    //    span1Name = matchHtml.DocumentNode.SelectNodes(span1);
+                    //    span2 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[22]/div[{i}]/div[1]/span/a";
+                    //    span2Name = matchHtml.DocumentNode.SelectNodes(span2);
+
+                    //    if (span2Name == null)
+                    //    {
+                    //        secondDiv = false;
+                    //        thirdDiv = true;
+                    //    }
+                    //}
+
+                    //if (thirdDiv)
+                    //{
+                    //    span1 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[21]/div[{i}]/div[1]/span/a";
+                    //    span1Name = matchHtml.DocumentNode.SelectNodes(span1);
+                    //    span2 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[24]/div[{i}]/div[1]/span/a";
+                    //    span2Name = matchHtml.DocumentNode.SelectNodes(span2);
+
+                    //    if (span1Name == null)
+                    //    {
+                    //        thirdDiv = false;
+                    //        fourthDiv = true;
+
+                    //    }
+                    //}
+
+                    //if (fourthDiv)
+                    //{
+                    //    span1 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[24]/div[{i}]/div[1]/span/a";
+                    //    span1Name = matchHtml.DocumentNode.SelectNodes(span1);
+                    //    span2 = $"//*[@id='back']/div[3]/div[3]/div/div[1]/div[27]/div[{i}]/div[1]/span/a";
+
+                    //    span2Name = matchHtml.DocumentNode.SelectNodes(span2);
+
+                    //}
+
+
+
+
+                }
+                catch (Exception ex)
+                {
+                    var nothing = ex;
+                }
+
 
                 return expectedLineUp;
 
@@ -276,15 +292,15 @@ namespace VirtualFlowers
             {
 
                 //    string[] stringSeparators = { "<a href=" };
-                    string[] secondSplint = { "/" };
-                    string[] thirdspilt = { "/" };
+                string[] secondSplint = { "/" };
+                string[] thirdspilt = { "/" };
                 string word = "/player//";
 
-            //    var result = outerHtml.Split(stringSeparators, StringSplitOptions.None);
-            //    var result2 = result[1].Split(secondSplint, StringSplitOptions.None);
-            //    var ID = result2[0].Remove(0, word.Length);
+                //    var result = outerHtml.Split(stringSeparators, StringSplitOptions.None);
+                //    var result2 = result[1].Split(secondSplint, StringSplitOptions.None);
+                //    var ID = result2[0].Remove(0, word.Length);
                 var ids = outerHtml.Split(secondSplint, StringSplitOptions.None);
-               final = Convert.ToInt32(ids[2]);
+                final = Convert.ToInt32(ids[2]);
             }
             //else
             //{
@@ -436,25 +452,11 @@ namespace VirtualFlowers
             var StatsTable1 = teamhtml.DocumentNode.SelectNodes(StatsTableHtml);
             var StatsTable = teamhtml.DocumentNode.SelectNodes($"/ html / body / div[2] / div / div[2] / div[1] / div / table / tbody / tr[25] / td[1]");
 
-            var StatsTable2 = teamhtml.DocumentNode.SelectNodes($"/ html / body / div[2] / div / div[2] / div[1] / div / table / tbody / tr[position()>1]");
+            var StatsTable2 = teamhtml.DocumentNode.SelectNodes($"/ html / body / div[2] / div / div[2] / div[1] / div / table / tbody / tr[position()>0]");
+
+            var test = teamhtml.DocumentNode.SelectNodes($"/html/body/div[2]/div/div[2]/div[1]/div/table/tbody/tr");
 
 
-            //for (int i = 1; i < StatsTable2.Count; i++)
-            //{
-            //    var item1 = teamhtml.DocumentNode.SelectNodes($"/ html / body / div[2] / div / div[2] / div[1] / div / table / tbody / tr[{i}] / td[1]");
-            //    var item1InnerText = item1[0].InnerText;
-            //    var item2 = teamhtml.DocumentNode.SelectNodes($"/ html / body / div[2] / div / div[2] / div[1] / div / table / tbody / tr[{i}] / td[2]");
-            //    var item2InnerText = item2[0].InnerText;
-            //    var item3 = teamhtml.DocumentNode.SelectNodes($"/ html / body / div[2] / div / div[2] / div[1] / div / table / tbody / tr[{i}] / td[3]");
-            //    var item3InnerText = item3[0].InnerText;
-            //    var item4 = teamhtml.DocumentNode.SelectNodes($"/ html / body / div[2] / div / div[2] / div[1] / div / table / tbody / tr[{i}] / td[5]");
-            //    var item4InnerText = item4[0].InnerText;
-
-            //    var item5 = teamhtml.DocumentNode.SelectNodes($"/ html / body / div[2] / div / div[2] / div[1] / div / table / tbody / tr[{i}] / td[6]");
-            //    var item5nnerText = item5[0].InnerText;
-
-
-            //}
 
 
             foreach (var item in StatsTable2)
@@ -466,14 +468,16 @@ namespace VirtualFlowers
                 var matchID = GetMatchIDS(bla.ChildNodes[1].InnerHtml);
                 var mathcurl = GetMatchUrl(bla.ChildNodes[1].InnerHtml);
 
-                var rounds = GetRoundsV2(mathcurl);             
-                
+                var rounds = GetRoundsV2(mathcurl);
+
+                var players = GetTeamLineup(mathcurl);
+
                 var Event = bla.ChildNodes[3].InnerText;
                 var opponent = bla.ChildNodes[7].InnerText;
-                
+
 
                 var map = bla.ChildNodes[9].InnerText;
-                var result = bla.ChildNodes[11].InnerText;
+                var result = getResult(bla.ChildNodes[11].InnerText);
                 var winOrLoss = bla.ChildNodes[13].InnerText;
 
 
@@ -506,23 +510,25 @@ namespace VirtualFlowers
                     Date = dDate,
                     Map = map,
                     Event = Event,
-                    ResultT1 = 0, //Sækja value úr rounds
-                    ResultT2 = 0,
+                    ResultT1 = result.Item1, //Sækja value úr rounds
+                    ResultT2 = result.Item2,
                     Team1Id = Team1ID,
                     Team1RankValue = GetRankingValueForTeam(Team1ID, dDate),
                     Team2Id = Team2ID,
                     Team2RankValue = GetRankingValueForTeam(Team2ID, dDate),
 
-                    FirstRound1HWinTeamId = rounds.,
-                    FirstRound1HWinTerr = firstRoundTerr,
-                    FirstRound1HWinCt = firstRoundCt,
-                    FirstRound2HWinTeamId = firstRound2HWinTeamId,
-                    FirstRound2HWinTerr = secondRoundTerr,
-                    FirstRound2HWinCT = secondRoundCt
+
+
+                    FirstRound1HWinTeamId = rounds.Where(x => x.Round1 == true).FirstOrDefault().TeamId,
+                    FirstRound1HWinTerr = rounds.Where(x => x.Round1).FirstOrDefault().Terrorist,
+                    FirstRound1HWinCt = rounds.Where(x => x.Round1).FirstOrDefault().CounterTerrorist,
+                    FirstRound2HWinTeamId = rounds.Where(x => x.Round16).FirstOrDefault().TeamId,
+                    FirstRound2HWinTerr = rounds.Where(x => x.Round16).FirstOrDefault().Terrorist,
+                    FirstRound2HWinCT = rounds.Where(x => x.Round16).FirstOrDefault().CounterTerrorist
 
                 };
 
-                var t1Players = Players.Where(x => x.TeamID == Team1ID).ToArray();
+                var t1Players = players.Players.Where(x => x.TeamID == Team1ID).ToArray();
                 if (t1Players.Length > 0)
                     match.T1Player1Id = t1Players[0].PlayerId;
                 if (t1Players.Length > 1)
@@ -534,7 +540,7 @@ namespace VirtualFlowers
                 if (t1Players.Length > 4)
                     match.T1Player5Id = t1Players[4].PlayerId;
 
-                var t2Players = Players.Where(x => x.TeamID == Team2ID).ToArray();
+                var t2Players = players.Players.Where(x => x.TeamID == Team2ID).ToArray();
                 if (t2Players.Length > 0)
                     match.T2Player1Id = t2Players[0].PlayerId;
                 if (t2Players.Length > 1)
@@ -568,156 +574,156 @@ namespace VirtualFlowers
 
 
 
-            for (int i = 5; i < 2074; i++)
-            {
+            //for (int i = 5; i < 2074; i++)
+            //{
 
-                i++;
-                var htmlstring = $"//*[@id='back']/div[3]/div[3]/div/div[3]/div/div[{i}]/div";
-                var htmlSectionss = teamhtml.DocumentNode.SelectNodes(htmlstring);
-                if (htmlSectionss == null)
-                    break;
+            //    i++;
+            //    var htmlstring = $"//*[@id='back']/div[3]/div[3]/div/div[3]/div/div[{i}]/div";
+            //    var htmlSectionss = teamhtml.DocumentNode.SelectNodes(htmlstring);
+            //    if (htmlSectionss == null)
+            //        break;
 
-                var matchIdHtmlString = htmlstring + "/a[1]";
-                var team1IdHtmlString = htmlstring + "/a[2]";
-                var team2IdHtmlString = htmlstring + "/a[3]";
-                var nodes = htmlSectionss?[0].SelectNodes(".//div");
-               
-                var dateString = nodes[0].InnerText; //date
-                var dDate = NewDate(dateString);
+            //    var matchIdHtmlString = htmlstring + "/a[1]";
+            //    var team1IdHtmlString = htmlstring + "/a[2]";
+            //    var team2IdHtmlString = htmlstring + "/a[3]";
+            //    var nodes = htmlSectionss?[0].SelectNodes(".//div");
 
-                // If we have moved past last scraped date, or year old data
-                if (dDate < lastScraped.AddDays(-1) || dDate < DateTime.Now.AddYears(-1))
-                {
-                    // And we have added some records
-                    if (lCounter > 0 || !history.Any())
-                    {
-                        // We save history record when last scraped for this team.
-                        db.ScrapeHistoryTeams.Add(new ScrapeHistoryTeams { TeamId = TeamId, LastDayScraped = DateTime.Now });
-                        db.SaveChanges();
-                    }
+            //    var dateString = nodes[0].InnerText; //date
+            //    var dDate = NewDate(dateString);
 
-                    // And quit scraping
-                    return Task.FromResult(0);
-                }
+            //    // If we have moved past last scraped date, or year old data
+            //    if (dDate < lastScraped.AddDays(-1) || dDate < DateTime.Now.AddYears(-1))
+            //    {
+            //        // And we have added some records
+            //        if (lCounter > 0 || !history.Any())
+            //        {
+            //            // We save history record when last scraped for this team.
+            //            db.ScrapeHistoryTeams.Add(new ScrapeHistoryTeams { TeamId = TeamId, LastDayScraped = DateTime.Now });
+            //            db.SaveChanges();
+            //        }
 
-                if (nodes?.Count() != 8)
-                {
-                    string TeamNameUrl = $"http://www.hltv.org/?pageid=179&teamid={TeamId}";
-                    HtmlDocument teamNameHtml = HWeb.Load(TeamNameUrl);
-                    var nameHtml = "//*[@id='back']/div[3]/div[3]/div/div[2]/div[2]/div[1]/div[2]";
-                    var name = teamNameHtml.DocumentNode.SelectNodes(nameHtml);
-                    CheckIfNeedToCreateTeam(TeamId, name[0].InnerText);
-                    continue;
-                } 
-                var matchid = GetMatchId(teamhtml, matchIdHtmlString);
-                if (db.Match.Any(s => s.MatchId == matchid)) continue;
-                // If matchId had been previously saved, we skip
-                var team1Id = GetTeamId(teamhtml, team1IdHtmlString);
-                var team2Id = GetTeamId(teamhtml, team2IdHtmlString);
+            //        // And quit scraping
+            //        return Task.FromResult(0);
+            //    }
 
-
-                // Get Team Name and result
-                var team1Name = GetTeamNameAndResult(nodes[1].InnerText);
-                var team2Name = GetTeamNameAndResult(nodes[2].InnerText);
-
-                var gameURL = $"http://www.hltv.org/?pageid=188&matchid={matchid}";
-                var Players = GetPlayers(gameURL, team1Id, team2Id);
-
-                var rounds = GetRounds(gameURL, team1Id, team2Id);
-                
-
-                // Create team if needed, no need after that.
-                if (!bHasCreatedCurrentTeam)
-                {
-                    CheckIfNeedToCreateTeam(team1Id, team1Name.Item1);
-                    bHasCreatedCurrentTeam = true;
-                }
-                CheckIfNeedToCreateTeam(team2Id, team2Name.Item1);
-
-                var mapString = nodes[3].InnerText; //map
-                var eventString = nodes[4].InnerText; //event
-
-               
-                
-                var firstRoundWin = rounds.FirstOrDefault(y => y.Round1);
-                bool firstRoundTerr = firstRoundWin.Terrorist;
-                bool firstRoundCt = !firstRoundTerr;
-                var secondRoundWin = rounds.FirstOrDefault(y => y.Round16);
-                bool secondRoundTerr = false;
-
-                if (secondRoundWin != null)
-                {
-                    secondRoundTerr = secondRoundWin.Terrorist;
-                }
-
-                var secondRoundCt = !secondRoundTerr;
-                var firstRound2HWinTeamId = 0;
-                var firstRound1HWinTeamId = 0;
-                var firstOrDefault = rounds.FirstOrDefault(x => x.Round16);
-                if (firstOrDefault != null)
-                {
-                    firstRound2HWinTeamId = firstOrDefault.TeamId;
-                }
+            //    if (nodes?.Count() != 8)
+            //    {
+            //        string TeamNameUrl = $"http://www.hltv.org/?pageid=179&teamid={TeamId}";
+            //        HtmlDocument teamNameHtml = HWeb.Load(TeamNameUrl);
+            //        var nameHtml = "//*[@id='back']/div[3]/div[3]/div/div[2]/div[2]/div[1]/div[2]";
+            //        var name = teamNameHtml.DocumentNode.SelectNodes(nameHtml);
+            //        CheckIfNeedToCreateTeam(TeamId, name[0].InnerText);
+            //        continue;
+            //    }
+            //    var matchid = GetMatchId(teamhtml, matchIdHtmlString);
+            //    if (db.Match.Any(s => s.MatchId == matchid)) continue;
+            //    // If matchId had been previously saved, we skip
+            //    var team1Id = GetTeamId(teamhtml, team1IdHtmlString);
+            //    var team2Id = GetTeamId(teamhtml, team2IdHtmlString);
 
 
-                var roundHistory = rounds.FirstOrDefault(x => x.Round1);
-                if (roundHistory != null)
-                {
-                    firstRound1HWinTeamId = roundHistory.TeamId;
-                }
+            //    // Get Team Name and result
+            //    var team1Name = GetTeamNameAndResult(nodes[1].InnerText);
+            //    var team2Name = GetTeamNameAndResult(nodes[2].InnerText);
+
+            //    var gameURL = $"http://www.hltv.org/?pageid=188&matchid={matchid}";
+            //    var Players = GetPlayers(gameURL, team1Id, team2Id);
+
+            //    var rounds = GetRounds(gameURL, team1Id, team2Id);
+
+
+            //    // Create team if needed, no need after that.
+            //    if (!bHasCreatedCurrentTeam)
+            //    {
+            //        CheckIfNeedToCreateTeam(team1Id, team1Name.Item1);
+            //        bHasCreatedCurrentTeam = true;
+            //    }
+            //    CheckIfNeedToCreateTeam(team2Id, team2Name.Item1);
+
+            //    var mapString = nodes[3].InnerText; //map
+            //    var eventString = nodes[4].InnerText; //event
 
 
 
-                var match = new Match
-                {
-                    MatchId = matchid,
-                    Date = dDate,
-                    Map = mapString,
-                    Event = eventString,
-                    ResultT1 = team1Name.Item2,
-                    ResultT2 = team2Name.Item2,
-                    Team1Id = team1Id,
-                    Team1RankValue = GetRankingValueForTeam(team1Id, dDate),
-                    Team2Id = team2Id,
-                    Team2RankValue = GetRankingValueForTeam(team2Id, dDate),
-                    FirstRound1HWinTeamId = firstRound1HWinTeamId,
-                    FirstRound1HWinTerr = firstRoundTerr,
-                    FirstRound1HWinCt = firstRoundCt,
-                    FirstRound2HWinTeamId = firstRound2HWinTeamId,
-                    FirstRound2HWinTerr = secondRoundTerr,
-                    FirstRound2HWinCT = secondRoundCt
+            //    var firstRoundWin = rounds.FirstOrDefault(y => y.Round1);
+            //    bool firstRoundTerr = firstRoundWin.Terrorist;
+            //    bool firstRoundCt = !firstRoundTerr;
+            //    var secondRoundWin = rounds.FirstOrDefault(y => y.Round16);
+            //    bool secondRoundTerr = false;
 
-                };
+            //    if (secondRoundWin != null)
+            //    {
+            //        secondRoundTerr = secondRoundWin.Terrorist;
+            //    }
 
-                var t1Players = Players.Where(x => x.TeamID == team1Id).ToArray();
-                if (t1Players.Length > 0)
-                    match.T1Player1Id = t1Players[0].PlayerId;
-                if (t1Players.Length > 1)
-                    match.T1Player2Id = t1Players[1].PlayerId;
-                if (t1Players.Length > 2)
-                    match.T1Player3Id = t1Players[2].PlayerId;
-                if (t1Players.Length > 3)
-                    match.T1Player4Id = t1Players[3].PlayerId;
-                if (t1Players.Length > 4)
-                    match.T1Player5Id = t1Players[4].PlayerId;
+            //    var secondRoundCt = !secondRoundTerr;
+            //    var firstRound2HWinTeamId = 0;
+            //    var firstRound1HWinTeamId = 0;
+            //    var firstOrDefault = rounds.FirstOrDefault(x => x.Round16);
+            //    if (firstOrDefault != null)
+            //    {
+            //        firstRound2HWinTeamId = firstOrDefault.TeamId;
+            //    }
 
-                var t2Players = Players.Where(x => x.TeamID == team2Id).ToArray();
-                if (t2Players.Length > 0)
-                    match.T2Player1Id = t2Players[0].PlayerId;
-                if (t2Players.Length > 1)
-                    match.T2Player2Id = t2Players[1].PlayerId;
-                if (t2Players.Length > 2)
-                    match.T2Player3Id = t2Players[2].PlayerId;
-                if (t2Players.Length > 3)
-                    match.T2Player4Id = t2Players[3].PlayerId;
-                if (t2Players.Length > 4)
-                    match.T2Player5Id = t2Players[4].PlayerId;
-                
-                db.Match.Add(match);
-                
-                db.SaveChanges();
-                lCounter++;
-            }
+
+            //    var roundHistory = rounds.FirstOrDefault(x => x.Round1);
+            //    if (roundHistory != null)
+            //    {
+            //        firstRound1HWinTeamId = roundHistory.TeamId;
+            //    }
+
+
+
+            //    var match = new Match
+            //    {
+            //        MatchId = matchid,
+            //        Date = dDate,
+            //        Map = mapString,
+            //        Event = eventString,
+            //        ResultT1 = team1Name.Item2,
+            //        ResultT2 = team2Name.Item2,
+            //        Team1Id = team1Id,
+            //        Team1RankValue = GetRankingValueForTeam(team1Id, dDate),
+            //        Team2Id = team2Id,
+            //        Team2RankValue = GetRankingValueForTeam(team2Id, dDate),
+            //        FirstRound1HWinTeamId = firstRound1HWinTeamId,
+            //        FirstRound1HWinTerr = firstRoundTerr,
+            //        FirstRound1HWinCt = firstRoundCt,
+            //        FirstRound2HWinTeamId = firstRound2HWinTeamId,
+            //        FirstRound2HWinTerr = secondRoundTerr,
+            //        FirstRound2HWinCT = secondRoundCt
+
+            //    };
+
+            //    var t1Players = Players.Where(x => x.TeamID == team1Id).ToArray();
+            //    if (t1Players.Length > 0)
+            //        match.T1Player1Id = t1Players[0].PlayerId;
+            //    if (t1Players.Length > 1)
+            //        match.T1Player2Id = t1Players[1].PlayerId;
+            //    if (t1Players.Length > 2)
+            //        match.T1Player3Id = t1Players[2].PlayerId;
+            //    if (t1Players.Length > 3)
+            //        match.T1Player4Id = t1Players[3].PlayerId;
+            //    if (t1Players.Length > 4)
+            //        match.T1Player5Id = t1Players[4].PlayerId;
+
+            //    var t2Players = Players.Where(x => x.TeamID == team2Id).ToArray();
+            //    if (t2Players.Length > 0)
+            //        match.T2Player1Id = t2Players[0].PlayerId;
+            //    if (t2Players.Length > 1)
+            //        match.T2Player2Id = t2Players[1].PlayerId;
+            //    if (t2Players.Length > 2)
+            //        match.T2Player3Id = t2Players[2].PlayerId;
+            //    if (t2Players.Length > 3)
+            //        match.T2Player4Id = t2Players[3].PlayerId;
+            //    if (t2Players.Length > 4)
+            //        match.T2Player5Id = t2Players[4].PlayerId;
+
+            //    db.Match.Add(match);
+
+            //    db.SaveChanges();
+            //    lCounter++;
+            //}
 
             // If we have added some records or have no record for this team
             if (lCounter > 0 || !history.Any())
@@ -728,10 +734,25 @@ namespace VirtualFlowers
             }
             return Task.FromResult(0);
         }
+        /// <summary>
+        /// Returns Result from matches
+        /// </summary>
+        /// <param name="innerText"></param>
+        /// <returns>tuple with 2 integers, home and away team.</returns>
+        private Tuple<int, int> getResult(string innerText)
+        {
+            var returnvalue = new Tuple<int, int>(int.MinValue, int.MinValue);
+            string[] seperator = new string[] { "-" };
+            var resultArray = innerText.Split(seperator, StringSplitOptions.None);
+
+            returnvalue = new Tuple<int, int>(Convert.ToInt32(resultArray[0]), Convert.ToInt32(resultArray[1]));
+
+            return returnvalue;
+        }
 
         private object GetMatchIDS(string innerHtml)
         {
-            int id=0;
+            int id = 0;
             string[] stringSeperators = { "/" };
             var IdArray = innerHtml.Split(stringSeperators, StringSplitOptions.None);
 
@@ -741,7 +762,7 @@ namespace VirtualFlowers
         private string GetMatchUrl(string innerHtml)
         {
             string[] stringSeparators = new string[] { "&amp;" };
-            string[] stringSeprators2 = new string [] {"<a href="};
+            string[] stringSeprators2 = new string[] { "<a href=" };
             var urlsArray = innerHtml.Split(stringSeparators, StringSplitOptions.None);
             var FinalUrl = urlsArray[0].Split(stringSeprators2, StringSplitOptions.None);
 
@@ -758,8 +779,8 @@ namespace VirtualFlowers
             var result1 = result[1].Split(stringSeperators1, StringSplitOptions.None);
             var date = Convert.ToInt32(result[0]);
             var month = Convert.ToInt32(result[1]);
-           var year = 2000 + Convert.ToInt32(result[2]);
-           var newdatetime = new DateTime(year,month,date);
+            var year = 2000 + Convert.ToInt32(result[2]);
+            var newdatetime = new DateTime(year, month, date);
 
 
             return newdatetime;
@@ -808,16 +829,16 @@ namespace VirtualFlowers
                 team1Round16Win = true;
             }
             var FirstRoundScore = Team1FirstChildNodes.Length > 0 ? Team1FirstChildNodes : Team2FirstChildNodes;
-            var SixteenRoundScore = team1SecondhalfChildNodes.Length > 0 ? team1SecondhalfChildNodes  : Team2SecondChildNodes;
+            var SixteenRoundScore = team1SecondhalfChildNodes.Length > 0 ? team1SecondhalfChildNodes : Team2SecondChildNodes;
 
 
-           
+
 
 
             var bla = gameHtml.DocumentNode.SelectNodes(strings);
 
-             Team1ID = GetTeamID(bla[0].Attributes["src"].Value);
-             Team2ID = GetTeamID(bla[1].Attributes["src"].Value);
+            Team1ID = GetTeamID(teamnames[0].FirstChild.Attributes["src"].Value);
+            Team2ID = GetTeamID(teamnames[1].FirstChild.Attributes["src"].Value);
 
 
             var rounds = new RoundHistory();
@@ -825,7 +846,7 @@ namespace VirtualFlowers
             var round16Teamid = team1Round16Win ? Team1ID : Team2ID;
 
             //var rounds = getScore2()
-    
+
 
             rounds.TeamId = round1Teamid;
             if (team1Round1Win)
@@ -971,7 +992,7 @@ namespace VirtualFlowers
                     roundWinner.Add(rounds);
                 }
             }
-            
+
             return roundWinner;
         }
         private Tuple<int, int> getScore(string outerHtml)
@@ -1230,7 +1251,7 @@ namespace VirtualFlowers
             {
                 lMatchID = 0;
             }
-            
+
             return lMatchID;
         }
 
@@ -1247,10 +1268,21 @@ namespace VirtualFlowers
 
         }
 
-        public Tuple<int, int> GetTeamIdsFromUrl(string matchUrls)
+        public Tuple<int, int> GetTeamIdsFromUrl(string matchUrls = "")
         {
-            string url = matchUrls;
-            HtmlDocument matchHtml = HWeb.Load(url);
+            string url = "";
+            HtmlDocument matchHtml = new HtmlDocument();
+
+            if (matchUrls.Length > 0)
+            {
+                matchHtml = HWeb.Load(matchUrls);
+            }
+            else
+            {
+                matchHtml = HWeb.Load(MatchUrl);
+            }
+
+
 
             string[] stringSeperators = { "src=\"https://static.hltv.org/images/team/logo/" };
             string[] SecondSpilt = { "<img alt=\" " };
@@ -1263,7 +1295,7 @@ namespace VirtualFlowers
             var team1GradientSection = matchHtml.DocumentNode.SelectNodes(urls);
             var htmlSectionss = matchHtml.DocumentNode.SelectNodes(team1IdHtmlString);
             var Team1Name = htmlSectionss[0].InnerText.TrimStart().TrimEnd();
-           
+
 
             string team11Id = GenerateTeamID(stringSeperators, SecondSpilt, thirdSplilt, team1GradientSection);
             #endregion
@@ -1279,7 +1311,7 @@ namespace VirtualFlowers
 
             string team2Id = GenerateTeamID(stringSeperators, SecondSpilt, thirdSplilt, htmlSectionsss);
             #endregion
-            
+
             var tupleString = new Tuple<int, int>(Convert.ToInt32(team11Id), Convert.ToInt32(team2Id));
             return tupleString;
         }
@@ -1305,6 +1337,7 @@ namespace VirtualFlowers
         public int Team2ID { get; set; }
         public string Team1Name { get; set; }
         public string Team2Name { get; set; }
+        public static string MatchUrl { get; set; }
     }
 }
 
