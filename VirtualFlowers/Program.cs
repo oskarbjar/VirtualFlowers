@@ -424,6 +424,7 @@ namespace VirtualFlowers
                     CheckIfNeedToCreateTeam(Team2ID, Team2Name);
 
 
+
                     var match = new Match
                     {
                         MatchId = Convert.ToInt32(matchID),
@@ -439,12 +440,12 @@ namespace VirtualFlowers
 
 
 
-                        FirstRound1HWinTeamId = rounds.Where(x => x.Round1 == true).FirstOrDefault().TeamId,
-                        FirstRound1HWinTerr = rounds.Where(x => x.Round1).FirstOrDefault().Terrorist,
-                        FirstRound1HWinCt = rounds.Where(x => x.Round1).FirstOrDefault().CounterTerrorist,
-                        FirstRound2HWinTeamId = rounds.Where(x => x.Round16).FirstOrDefault().TeamId,
-                        FirstRound2HWinTerr = rounds.Where(x => x.Round16).FirstOrDefault().Terrorist,
-                        FirstRound2HWinCT = rounds.Where(x => x.Round16).FirstOrDefault().CounterTerrorist
+                        FirstRound1HWinTeamId = rounds.Count > 0 ? rounds.Where(x => x.Round1 == true).FirstOrDefault().TeamId : 0,
+                        FirstRound1HWinTerr = rounds.Count > 0 ? rounds.Where(x => x.Round1).FirstOrDefault().Terrorist:false,
+                        FirstRound1HWinCt = rounds.Count > 0 ? rounds.Where(x => x.Round1).FirstOrDefault().CounterTerrorist : false,
+                        FirstRound2HWinTeamId = rounds.Count > 0 ? rounds.Where(x => x.Round16).FirstOrDefault().TeamId:0,
+                        FirstRound2HWinTerr = rounds.Count > 0 ? rounds.Where(x => x.Round16).FirstOrDefault().Terrorist:false,
+                        FirstRound2HWinCT = rounds.Count > 0 ? rounds.Where(x => x.Round16).FirstOrDefault().CounterTerrorist:false
 
                     };
 
@@ -565,6 +566,8 @@ namespace VirtualFlowers
             var results = gameHtml.DocumentNode.SelectNodes(resultHtml);
             var teamnames = gameHtml.DocumentNode.SelectNodes(strings);
 
+            if ( teamnames != null)
+            { 
             Team1Name = teamnames[0].FirstChild.Attributes["Title"].Value;
             Team2Name = teamnames[1].FirstChild.Attributes["Title"].Value;
 
@@ -642,19 +645,19 @@ namespace VirtualFlowers
 
 
 
-            //if (score.Item1 > score.Item2)
-            //    {
-            //        rounds.TeamId = round1Teamid;
-            //        rounds.CounterTerrorist = true;
-            //        rounds.Round1 = true;
-            //        rounds.round = score.Item1 + score.Item2;
-            //    }
-            //    roundWinner.Add(rounds);
+                //if (score.Item1 > score.Item2)
+                //    {
+                //        rounds.TeamId = round1Teamid;
+                //        rounds.CounterTerrorist = true;
+                //        rounds.Round1 = true;
+                //        rounds.round = score.Item1 + score.Item2;
+                //    }
+                //    roundWinner.Add(rounds);
 
 
-            //}
+                //}
 
-
+            }
 
 
             return roundWinner;
