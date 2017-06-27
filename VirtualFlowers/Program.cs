@@ -124,54 +124,54 @@ namespace VirtualFlowers
                 try
                 {
                     string span1;
- //var team1IdHtmlString = $"//*[@class='team1-gradient']";
-                        span1 = $"//*[@class='lineup standard-box']";
-                        span1Name = matchHtml.DocumentNode.SelectNodes(span1);
+                    //var team1IdHtmlString = $"//*[@class='team1-gradient']";
+                    span1 = $"//*[@class='lineup standard-box']";
+                    span1Name = matchHtml.DocumentNode.SelectNodes(span1);
 
-                        /*Get players from lineup*/
-                        var counter = 0;
-                        foreach (var item in span1Name)
+                    /*Get players from lineup*/
+                    var counter = 0;
+                    foreach (var item in span1Name)
+                    {
+                        //td[@class="plaintext"]
+                        var players = item.SelectNodes("//*[@class='players']/*[@class='table']//*[@class='player']//@href");
+
+                        foreach (var player in players)
                         {
-                            //td[@class="plaintext"]
-                            var players = item.SelectNodes("//*[@class='players']/*[@class='table']//*[@class='player']//@href");
+                            var names = player.InnerText.Trim();
 
-                            foreach (var player in players)
+                            if (names != "")
                             {
-                                var names = player.InnerText.Trim();
 
-                                if (names != "")
+                                var ids = GetPlayerID(player.Attributes[0].Value);
+                                var pl = new Player();
+
+                                pl.PlayerId = ids;
+                                pl.PlayerName = names;
+
+                                if (counter <= 4)
                                 {
-                                    
-                                    var ids = GetPlayerID(player.Attributes[0].Value);
-                                    var pl = new Player();
 
-                                    pl.PlayerId = ids;
-                                    pl.PlayerName = names;
-
-                                    if (counter <= 4)
-                                    {
-                                        
-                                        pl.TeamID = teamIDs.Item1;
-                                    }
-                                    else
-                                    {
-                                        pl.TeamID = teamIDs.Item2;
-                                    }
-                                    
-                                    var plexists = expectedLineUp.Players.Any(x => x.PlayerId == ids);
-                                    if (!plexists)
-                                    {
-                                        expectedLineUp.Players.Add(pl);
-
-                                    }
-                                    counter++;
+                                    pl.TeamID = teamIDs.Item1;
                                 }
+                                else
+                                {
+                                    pl.TeamID = teamIDs.Item2;
+                                }
+
+                                var plexists = expectedLineUp.Players.Any(x => x.PlayerId == ids);
+                                if (!plexists)
+                                {
+                                    expectedLineUp.Players.Add(pl);
+
+                                }
+                                counter++;
                             }
-
                         }
-                    
 
-                   
+                    }
+
+
+
                 }
                 catch (Exception ex)
                 {
@@ -377,112 +377,116 @@ namespace VirtualFlowers
 
 
 
-            foreach (var item in StatsTable2)
+            if (StatsTable2 != null)
             {
-                var statstableRow = item;
-
-                var dateString = statstableRow.ChildNodes[1].InnerText;
-                var dDate = NewDate(dateString);
-                var matchID = GetMatchIDS(statstableRow.ChildNodes[1].InnerHtml);
-                var mathcurl = GetMatchUrl(statstableRow.ChildNodes[1].InnerHtml);
-
-                var rounds = GetRoundsV2(mathcurl);
-
-                var players = GetTeamLineup(mathcurl);
-
-                var Event = statstableRow.ChildNodes[3].InnerText;
-                var opponent = statstableRow.ChildNodes[7].InnerText;
-
-
-                var map = statstableRow.ChildNodes[9].InnerText;
-                var result = getResult(statstableRow.ChildNodes[11].InnerText);
-                var winOrLoss = statstableRow.ChildNodes[13].InnerText;
-
-
-                // If we have moved past last scraped date, or year old data
-                if (dDate < lastScraped.AddDays(-1) || dDate < DateTime.Now.AddYears(-1))
+                foreach (var item in StatsTable2)
                 {
-                    // And we have added some records
-                    if (lCounter > 0 || !history.Any())
+                    var statstableRow = item;
+
+                    var dateString = statstableRow.ChildNodes[1].InnerText;
+                    var dDate = NewDate(dateString);
+                    var matchID = GetMatchIDS(statstableRow.ChildNodes[1].InnerHtml);
+                    var mathcurl = GetMatchUrl(statstableRow.ChildNodes[1].InnerHtml);
+
+                    var rounds = GetRoundsV2(mathcurl);
+
+                    var players = GetTeamLineup(mathcurl);
+
+                    var Event = statstableRow.ChildNodes[3].InnerText;
+                    var opponent = statstableRow.ChildNodes[7].InnerText;
+
+
+                    var map = statstableRow.ChildNodes[9].InnerText;
+                    var result = getResult(statstableRow.ChildNodes[11].InnerText);
+                    var winOrLoss = statstableRow.ChildNodes[13].InnerText;
+
+
+                    // If we have moved past last scraped date, or year old data
+                    if (dDate < lastScraped.AddDays(-1) || dDate < DateTime.Now.AddYears(-1))
                     {
-                        // We save history record when last scraped for this team.
-                        db.ScrapeHistoryTeams.Add(new ScrapeHistoryTeams { TeamId = TeamId, LastDayScraped = DateTime.Now });
-                        db.SaveChanges();
+                        // And we have added some records
+                        if (lCounter > 0 || !history.Any())
+                        {
+                            // We save history record when last scraped for this team.
+                            db.ScrapeHistoryTeams.Add(new ScrapeHistoryTeams { TeamId = TeamId, LastDayScraped = DateTime.Now });
+                            db.SaveChanges();
+                        }
+
+                        // And quit scraping
+                        return Task.FromResult(0);
                     }
 
-                    // And quit scraping
-                    return Task.FromResult(0);
+                    if (!bHasCreatedCurrentTeam)
+                    {
+                        CheckIfNeedToCreateTeam(Team1ID, Team1Name);
+                        bHasCreatedCurrentTeam = true;
+                    }
+                    CheckIfNeedToCreateTeam(Team2ID, Team2Name);
+
+
+
+                    var match = new Match
+                    {
+                        MatchId = Convert.ToInt32(matchID),
+                        Date = dDate,
+                        Map = map,
+                        Event = Event,
+                        ResultT1 = result.Item1, //Sækja value úr rounds
+                        ResultT2 = result.Item2,
+                        Team1Id = Team1ID,
+                        Team1RankValue = GetRankingValueForTeam(Team1ID, dDate),
+                        Team2Id = Team2ID,
+                        Team2RankValue = GetRankingValueForTeam(Team2ID, dDate),
+
+
+
+                        FirstRound1HWinTeamId = rounds.Count > 0 ? rounds.Where(x => x.Round1 == true).FirstOrDefault().TeamId : 0,
+                        FirstRound1HWinTerr = rounds.Count > 0 ? rounds.Where(x => x.Round1).FirstOrDefault().Terrorist:false,
+                        FirstRound1HWinCt = rounds.Count > 0 ? rounds.Where(x => x.Round1).FirstOrDefault().CounterTerrorist : false,
+                        FirstRound2HWinTeamId = rounds.Count > 0 ? rounds.Where(x => x.Round16).FirstOrDefault().TeamId:0,
+                        FirstRound2HWinTerr = rounds.Count > 0 ? rounds.Where(x => x.Round16).FirstOrDefault().Terrorist:false,
+                        FirstRound2HWinCT = rounds.Count > 0 ? rounds.Where(x => x.Round16).FirstOrDefault().CounterTerrorist:false
+
+                    };
+
+                    var t1Players = players.Players.Where(x => x.TeamID == Team1ID).ToArray();
+                    if (t1Players.Length > 0)
+                        match.T1Player1Id = t1Players[0].PlayerId;
+                    if (t1Players.Length > 1)
+                        match.T1Player2Id = t1Players[1].PlayerId;
+                    if (t1Players.Length > 2)
+                        match.T1Player3Id = t1Players[2].PlayerId;
+                    if (t1Players.Length > 3)
+                        match.T1Player4Id = t1Players[3].PlayerId;
+                    if (t1Players.Length > 4)
+                        match.T1Player5Id = t1Players[4].PlayerId;
+
+                    var t2Players = players.Players.Where(x => x.TeamID == Team2ID).ToArray();
+                    if (t2Players.Length > 0)
+                        match.T2Player1Id = t2Players[0].PlayerId;
+                    if (t2Players.Length > 1)
+                        match.T2Player2Id = t2Players[1].PlayerId;
+                    if (t2Players.Length > 2)
+                        match.T2Player3Id = t2Players[2].PlayerId;
+                    if (t2Players.Length > 3)
+                        match.T2Player4Id = t2Players[3].PlayerId;
+                    if (t2Players.Length > 4)
+                        match.T2Player5Id = t2Players[4].PlayerId;
+
+                    db.Match.Add(match);
+
+                    db.SaveChanges();
+                    lCounter++;
+
+
+
+
                 }
-
-                if (!bHasCreatedCurrentTeam)
-                {
-                    CheckIfNeedToCreateTeam(Team1ID, Team1Name);
-                    bHasCreatedCurrentTeam = true;
-                }
-                CheckIfNeedToCreateTeam(Team2ID, Team2Name);
-
-
-                var match = new Match
-                {
-                    MatchId = Convert.ToInt32(matchID),
-                    Date = dDate,
-                    Map = map,
-                    Event = Event,
-                    ResultT1 = result.Item1, //Sækja value úr rounds
-                    ResultT2 = result.Item2,
-                    Team1Id = Team1ID,
-                    Team1RankValue = GetRankingValueForTeam(Team1ID, dDate),
-                    Team2Id = Team2ID,
-                    Team2RankValue = GetRankingValueForTeam(Team2ID, dDate),
-
-
-
-                    FirstRound1HWinTeamId = rounds.Where(x => x.Round1 == true).FirstOrDefault().TeamId,
-                    FirstRound1HWinTerr = rounds.Where(x => x.Round1).FirstOrDefault().Terrorist,
-                    FirstRound1HWinCt = rounds.Where(x => x.Round1).FirstOrDefault().CounterTerrorist,
-                    FirstRound2HWinTeamId = rounds.Where(x => x.Round16).FirstOrDefault().TeamId,
-                    FirstRound2HWinTerr = rounds.Where(x => x.Round16).FirstOrDefault().Terrorist,
-                    FirstRound2HWinCT = rounds.Where(x => x.Round16).FirstOrDefault().CounterTerrorist
-
-                };
-
-                var t1Players = players.Players.Where(x => x.TeamID == Team1ID).ToArray();
-                if (t1Players.Length > 0)
-                    match.T1Player1Id = t1Players[0].PlayerId;
-                if (t1Players.Length > 1)
-                    match.T1Player2Id = t1Players[1].PlayerId;
-                if (t1Players.Length > 2)
-                    match.T1Player3Id = t1Players[2].PlayerId;
-                if (t1Players.Length > 3)
-                    match.T1Player4Id = t1Players[3].PlayerId;
-                if (t1Players.Length > 4)
-                    match.T1Player5Id = t1Players[4].PlayerId;
-
-                var t2Players = players.Players.Where(x => x.TeamID == Team2ID).ToArray();
-                if (t2Players.Length > 0)
-                    match.T2Player1Id = t2Players[0].PlayerId;
-                if (t2Players.Length > 1)
-                    match.T2Player2Id = t2Players[1].PlayerId;
-                if (t2Players.Length > 2)
-                    match.T2Player3Id = t2Players[2].PlayerId;
-                if (t2Players.Length > 3)
-                    match.T2Player4Id = t2Players[3].PlayerId;
-                if (t2Players.Length > 4)
-                    match.T2Player5Id = t2Players[4].PlayerId;
-
-                db.Match.Add(match);
-
-                db.SaveChanges();
-                lCounter++;
-
-
-
-
             }
 
 
 
-            
+
             // If we have added some records or have no record for this team
             if (lCounter > 0 || !history.Any())
             {
@@ -562,6 +566,8 @@ namespace VirtualFlowers
             var results = gameHtml.DocumentNode.SelectNodes(resultHtml);
             var teamnames = gameHtml.DocumentNode.SelectNodes(strings);
 
+            if ( teamnames != null)
+            { 
             Team1Name = teamnames[0].FirstChild.Attributes["Title"].Value;
             Team2Name = teamnames[1].FirstChild.Attributes["Title"].Value;
 
@@ -639,19 +645,19 @@ namespace VirtualFlowers
 
 
 
-            //if (score.Item1 > score.Item2)
-            //    {
-            //        rounds.TeamId = round1Teamid;
-            //        rounds.CounterTerrorist = true;
-            //        rounds.Round1 = true;
-            //        rounds.round = score.Item1 + score.Item2;
-            //    }
-            //    roundWinner.Add(rounds);
+                //if (score.Item1 > score.Item2)
+                //    {
+                //        rounds.TeamId = round1Teamid;
+                //        rounds.CounterTerrorist = true;
+                //        rounds.Round1 = true;
+                //        rounds.round = score.Item1 + score.Item2;
+                //    }
+                //    roundWinner.Add(rounds);
 
 
-            //}
+                //}
 
-
+            }
 
 
             return roundWinner;
