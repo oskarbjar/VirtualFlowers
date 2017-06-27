@@ -155,7 +155,8 @@ namespace VirtualFlowersMVC.Data
 
 
             // Group list by maps.
-            var groupedbymaps = fixedMatches.GroupBy(k => k.Map).ToList();
+            var groupedbymaps = fixedMatches.GroupBy(k.Map->k.Map.ToLower()
+                ).ToList();
 
             result = groupedbymaps.Select(n => new MapStatisticModel
             {
