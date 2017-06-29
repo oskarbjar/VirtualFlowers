@@ -153,9 +153,9 @@ namespace VirtualFlowersMVC.Data
                 fixedMatches.AddRange(fixedsecondaryMatches);
             }
 
-
+            //cachedModel.Teams = cachedModel.Teams.Where(p => p.TeamStatistics.Any(s => s.Maps.Where(r => r.FullTeamRanking >= model.MinFullTeamRanking))).ToList();
             // Group list by maps.
-            var groupedbymaps = fixedMatches.GroupBy(k => k.Map).ToList();
+            var groupedbymaps = fixedMatches.GroupBy(k => k.Map, StringComparer.InvariantCultureIgnoreCase).ToList();
 
             result = groupedbymaps.Select(n => new MapStatisticModel
             {
@@ -183,9 +183,10 @@ namespace VirtualFlowersMVC.Data
                 AverageLossRoundsWhenLoss = Math.Round(n.Where(p => p.ResultT1 < p.ResultT2) // Where team lost
                     .Sum(p => p.ResultT2) / // Sum opponents rounds
                     (double)n.Count(p => p.ResultT1 < p.ResultT2), 1), // Divided total games we lost
-                DifficultyRating = Math.Round(n.Sum(p => p.Team2RankValue) / (double)n.Count(),2),
+                DifficultyRating = Math.Round(n.Sum(p => p.Team2RankValue) / (double)n.Count(), 2),
                 DiffTitleGroupBy = GetDiffTitleGroupBy(n.ToList()),
                 FullTeamRanking = GetFullTeamPercent(TeamId, n.ToList(), expectedLinup, secondaryTeamId),
+                FullTeamGroupBy = GetFullTeamTitle(TeamId, n.ToList(), expectedLinup, secondaryTeamId),
                 FirstRound1HWinPercent = GetFirstRoundStats(TeamId, n.ToList(), true),
                 FirstRound2HWinPercent = GetFirstRoundStats(TeamId, n.ToList(), false)
             }).OrderByDescending(n => n.WinPercent).ToList();
@@ -227,9 +228,8 @@ namespace VirtualFlowersMVC.Data
         }
 
 
-        private Tuple<double,string> GetFullTeamPercent(int TeamId, List<Match> Map, ExpectedLineUp expectedLinup, int secondaryTeamId)
+        private double GetFullTeamPercent(int TeamId, List<Match> Map, ExpectedLineUp expectedLinup, int secondaryTeamId)
         {
-            Tuple<double, string> result = new Tuple<double, string>(0, "");
             double Accumulator = 0;
             double AvFTR = 0;
 
@@ -274,6 +274,15 @@ namespace VirtualFlowersMVC.Data
                 }
             }
 
+            // Av. played
+            if (Accumulator > 0)
+                AvFTR = Accumulator / Map.Count;
+
+            return AvFTR;
+        }
+
+        private string GetFullTeamTitle(int TeamId, List<Match> Map, ExpectedLineUp expectedLinup, int secondaryTeamId)
+        { 
             var rankList = new List<Tuple<double, string>>();
             var FTRankList = Map.GroupBy(p => p.T1FTR).ToList();
             var returnSymbol = "&#010;";
@@ -299,13 +308,8 @@ namespace VirtualFlowersMVC.Data
                 Title += string.IsNullOrEmpty(Title) ? " " : " " + returnSymbol + " ";
                 Title += tup.Item1 + " - " + tup.Item2;
             }
-
-            // Av. played
-            if (Accumulator > 0)
-                AvFTR = Accumulator / Map.Count;
-
-            result = new Tuple<double, string>(AvFTR, Title);
-            return result;
+            
+            return Title;
         }
 
         private string GetDiffTitleGroupBy(List<Match> Map)
@@ -465,15 +469,14 @@ namespace VirtualFlowersMVC.Data
             var valuePoint = Math.Round((WinPercentA - WinPercentB) / 10.0);
             
             var diffPoint = (int)Math.Floor((MapA.DifficultyRating - MapB.DifficultyRating) * 10);
-            if (MapB.FullTeamRanking != null)
-                TFRPoints = MapA.FullTeamRanking.Item1 -  MapB.FullTeamRanking.Item1;
+            TFRPoints = MapA.FullTeamRanking -  MapB.FullTeamRanking;
             
             if (WinLossRecord > 0 && valuePoint > 0 && MapA.WinPercent >= 50)
             {
                 result = new SuggestedMapModel();
 
                 result.Map = MapA.Map;
-                result.SuggestedRank = Math.Ceiling((((WinLossRecord + valuePoint) / 2.0) + diffPoint ) * (MapA.FullTeamRanking.Item1 * 0.2));
+                result.SuggestedRank = Math.Ceiling((((WinLossRecord + valuePoint) / 2.0) + diffPoint ) * (MapA.FullTeamRanking * 0.2));
                 result.WinLossRecord = WinLossRecord;
                 result.WinPercent = Math.Round(WinPercentA - WinPercentB, 1);
                 result.DifficultyRating = Math.Round((MapA.DifficultyRating - MapB.DifficultyRating) * 10, 1);

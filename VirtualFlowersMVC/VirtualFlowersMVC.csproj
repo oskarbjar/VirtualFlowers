@@ -305,6 +305,9 @@
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\_references.js" />
+    <Content Include="virtualflowers - FTP.pubxml.user" />
+    <Content Include="virtualflowers - Web Deploy.pubxml.user" />
+    <Content Include="VirtualFlowersMVC - Web Deploy.pubxml.user" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -362,6 +365,9 @@
     <Content Include="Views\Home\SendToCompare.cshtml" />
     <Content Include="Views\Shared\_LayoutNew.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
+    <None Include="virtualflowers - FTP.pubxml" />
+    <None Include="virtualflowers - Web Deploy.pubxml" />
+    <None Include="VirtualFlowersMVC - Web Deploy.pubxml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

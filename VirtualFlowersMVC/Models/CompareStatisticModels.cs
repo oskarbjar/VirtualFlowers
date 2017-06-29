@@ -14,6 +14,7 @@ namespace VirtualFlowersMVC.Models
         public List<string> PeriodSelection { get; set; }
         public bool Scrape { get; set; }
         public bool NoCache { get; set; }
+        public int MinFullTeamRanking { get; set; }
         public List<TeamStatisticPeriodModel> Teams { get; set; }
         public ExpectedLineUp ExpectedLineUp { get; set; }
 
@@ -64,7 +65,8 @@ namespace VirtualFlowersMVC.Models
         public double AverageLossRoundsWhenLoss { get; set; }
         public double DifficultyRating { get; set; }
         public string DiffTitleGroupBy { get; set; }
-        public Tuple<double,string> FullTeamRanking { get; set; }
+        public double FullTeamRanking { get; set; }
+        public string FullTeamGroupBy { get; set; }
         public Tuple<double, string> FirstRound1HWinPercent { get; set; }
         public Tuple<double, string> FirstRound2HWinPercent { get; set; }
 
