@@ -1,0 +1,18 @@
+﻿@model List<string>
+
+
+
+<table class="table">
+    <tr>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.Raw(item);
+        </td>
+    </tr>
+}
+
+</table>

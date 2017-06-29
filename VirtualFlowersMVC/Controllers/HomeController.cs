@@ -205,8 +205,10 @@ namespace VirtualFlowersMVC.Controllers
                                 return (CompareStatisticModel)Cache.Get(CACHEKEY);
 
                             // If we dont have in cache, we continue
+                            Program.MatchUrl = model.MatchUrl;
                             var result = _program.GetTeamIdsFromUrl(model.MatchUrl);
                             model.ExpectedLineUp = _program.GetTeamLineup(model.MatchUrl);
+                            
                             model.Team1Id = result.Item1;
                             model.Team2Id = result.Item2;
                         }

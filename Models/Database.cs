@@ -29,6 +29,6 @@ namespace Models
 
         public DbSet<RoundHistory> RoundHistories { get; set; }
 
-        
+        //public System.Data.Entity.DbSet<Models.Models.FootballTips> FootballTips { get; set; }
     }
 }

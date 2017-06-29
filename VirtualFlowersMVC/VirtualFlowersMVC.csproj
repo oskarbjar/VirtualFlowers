@@ -201,6 +201,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\FootballTipsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\MatchesController.cs" />
@@ -305,18 +306,6 @@
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\_references.js" />
-    <Content Include="virtualflowers - FTP.pubxml.user" />
-    <Content Include="virtualflowers - Web Deploy.pubxml.user" />
-    <Content Include="VirtualFlowersMVC - Web Deploy.pubxml.user" />
-    <Content Include="Web.config">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Web.Debug.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </Content>
-    <Content Include="Web.Release.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </Content>
     <Content Include="Views\Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -365,9 +354,8 @@
     <Content Include="Views\Home\SendToCompare.cshtml" />
     <Content Include="Views\Shared\_LayoutNew.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
-    <None Include="virtualflowers - FTP.pubxml" />
-    <None Include="virtualflowers - Web Deploy.pubxml" />
-    <None Include="VirtualFlowersMVC - Web Deploy.pubxml" />
+    <Content Include="Views\FootballTips\Index.cshtml" />
+    <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -383,6 +371,10 @@
     <ProjectReference Include="..\Models\Models.csproj">
       <Project>{b4afc29c-b7c1-48c8-aa8d-b0fd5c96a211}</Project>
       <Name>Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\VirtualFlowersFootball\VirtualFlowersFootball.csproj">
+      <Project>{dbd83e91-82b9-45c6-949c-15cc9b71dfa9}</Project>
+      <Name>VirtualFlowersFootball</Name>
     </ProjectReference>
     <ProjectReference Include="..\VirtualFlowers\VirtualFlowers.csproj">
       <Project>{7f58940b-cb3d-41e1-9e04-1881067bf4ac}</Project>
