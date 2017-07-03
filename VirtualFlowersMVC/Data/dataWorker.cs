@@ -6,6 +6,7 @@ using System.Linq;
 using System.Web;
 using VirtualFlowers;
 using System.Threading.Tasks;
+using MemoryCache;
 
 namespace VirtualFlowersMVC.Data
 {
@@ -79,11 +80,20 @@ namespace VirtualFlowersMVC.Data
             return result ?? "";
         }
 
+        public int GetSecondaryTeamId(int TeamId)
+        {
+            int secondaryTeamId = 0;
+            var secondaryTeam = _db.TransferHistory.Where(p => p.NewTeamId == TeamId).OrderByDescending(k => k.TransferDate).FirstOrDefault();
+            if (secondaryTeam != null)
+                secondaryTeamId = secondaryTeam.OldTeamId;
+            return secondaryTeamId;
+        }
+
         #endregion
 
         #region COMPARE
 
-        public async Task<TeamStatisticPeriodModel> GetTeamPeriodStatistics(int TeamId, List<string> PeriodSelection, ExpectedLineUp expectedLinup)
+        public async Task<TeamStatisticPeriodModel> GetTeamPeriodStatistics(int TeamId, List<string> PeriodSelection, ExpectedLineUp expectedLinup, int secondaryTeamId, bool NoCache, int MinFullTeamRanking)
         {
             var result = new TeamStatisticPeriodModel();
             result.TeamId = TeamId;
@@ -91,13 +101,13 @@ namespace VirtualFlowersMVC.Data
             result.TeamDifficultyRating = _program.GetRankingValueForTeam(TeamId, DateTime.Now);
             foreach (var period in PeriodSelection)
             {
-                await Task.Run(() => result.TeamStatistics.Add(GetTeamPeriodStatistics(TeamId, (PeriodEnum)int.Parse(period), expectedLinup))).ConfigureAwait(false);
+                await Task.Run(() => result.TeamStatistics.Add(GetTeamPeriodStatistics(TeamId, (PeriodEnum)int.Parse(period), expectedLinup, secondaryTeamId, NoCache, MinFullTeamRanking))).ConfigureAwait(false);
             }
 
             return result;
         }
 
-        public TeamStatisticModel GetTeamPeriodStatistics(int TeamId, PeriodEnum period, ExpectedLineUp expectedLinup)
+        public TeamStatisticModel GetTeamPeriodStatistics(int TeamId, PeriodEnum period, ExpectedLineUp expectedLinup, int secondaryTeamId, bool NoCache, int MinFullTeamRanking)
         {
             var result = new TeamStatisticModel();
             var dTo = DateTime.Now;
@@ -119,45 +129,107 @@ namespace VirtualFlowersMVC.Data
                     break;
             }
 
-            result.Maps = GetMapStatistics(TeamId, dFrom, dTo, expectedLinup);
+            result.Maps = GetMapStatistics(TeamId, dFrom, dTo, expectedLinup, secondaryTeamId, NoCache, MinFullTeamRanking);
             
             return result;
         }
 
-        public List<MapStatisticModel> GetMapStatistics(int TeamId, DateTime dFrom, DateTime dTo, ExpectedLineUp expectedLinup)
+        public List<MapStatisticModel> GetMapStatistics(int TeamId, DateTime dFrom, DateTime dTo, ExpectedLineUp expectedLinup, int secondaryTeamId, bool NoCache, int MinFullTeamRanking)
         {
             var result = new List<MapStatisticModel>();
-            var secondaryTeam = _db.TransferHistory.Where(p => p.NewTeamId == TeamId).OrderByDescending(k => k.TransferDate).FirstOrDefault();
-            var secondaryTeamId = 0;
-            if (secondaryTeam != null)
-                secondaryTeamId = secondaryTeam.OldTeamId;
+            List<Match> fixedMatches = null;
 
-            var matches = _db.Match
-                .Where(p => (p.Team1Id == TeamId || p.Team2Id == TeamId)
-                && (p.Date >= dFrom.Date && p.Date <= dTo.Date)).ToList();
+            // Create Cachekey from parameters
+            var CACHEKEY = "cacheKey:TeamId=" + TeamId + "-DateFrom=" + dFrom.ToString() + "-dTo=" + dTo.ToString();
 
-            // Fix matches so that "our" team is always Team1, to simplify later query
-            var fixedMatches = FixTeamMatches(matches, TeamId);
-
-            if (secondaryTeamId > 0)
+            // If we have object in cache, return it
+            if (NoCache && Cache.Exists(CACHEKEY))
+                fixedMatches = (List<Match>)Cache.Get(CACHEKEY);
+            else
             {
-                // Get matches for secondaryTeamId
-                var secondaryMatches = _db.Match
-                .Where(p => (p.Team1Id == secondaryTeamId || p.Team2Id == secondaryTeamId)
-                && (p.Date >= dFrom.Date && p.Date <= dTo.Date)).ToList();
+                var matches = _db.Match
+                    .Where(p => (p.Team1Id == TeamId || p.Team2Id == TeamId)
+                    && (p.Date >= dFrom.Date && p.Date <= dTo.Date)).ToList();
 
-                // Fix matches for secondaryMatches
-                var fixedsecondaryMatches = FixTeamMatches(secondaryMatches, secondaryTeamId);
+                // Fix matches so that "our" team is always Team1, to simplify later query
+                fixedMatches = FixTeamMatches(matches, TeamId);
 
-                // Add matches from secondaryTeamId to fixedMatches
-                fixedMatches.AddRange(fixedsecondaryMatches);
+                if (secondaryTeamId > 0)
+                {
+                    // Get matches for secondaryTeamId
+                    var secondaryMatches = _db.Match
+                    .Where(p => (p.Team1Id == secondaryTeamId || p.Team2Id == secondaryTeamId)
+                    && (p.Date >= dFrom.Date && p.Date <= dTo.Date)).ToList();
+
+                    // Fix matches for secondaryMatches
+                    var fixedsecondaryMatches = FixTeamMatches(secondaryMatches, secondaryTeamId);
+
+                    // Add matches from secondaryTeamId to fixedMatches
+                    fixedMatches.AddRange(fixedsecondaryMatches);
+                }
+            }
+            
+            if (!string.IsNullOrEmpty(CACHEKEY))
+            {
+                if (!Cache.Exists(CACHEKEY))
+                {
+                    int storeTime = 1000 * 3600 * 24 * 2; // store 2 days
+                    Cache.Store(CACHEKEY, fixedMatches, storeTime);
+                }
+                else
+                    Cache.Update(CACHEKEY, fixedMatches);
             }
 
-            //cachedModel.Teams = cachedModel.Teams.Where(p => p.TeamStatistics.Any(s => s.Maps.Where(r => r.FullTeamRanking >= model.MinFullTeamRanking))).ToList();
+            result = CalculateResults(TeamId, fixedMatches, expectedLinup, secondaryTeamId, MinFullTeamRanking);
+            
+            return result;
+        }
+
+        public List<MapStatisticModel> CalculateResults(int TeamId, List<Match> fixedMatches, ExpectedLineUp expectedLinup, int secondaryTeamId, int MinFullTeamRanking)
+        {
+            if (MinFullTeamRanking > 0)
+            {
+                if (MinFullTeamRanking == 5)
+                {
+                    fixedMatches = fixedMatches.Where(p => expectedLinup.Players.Where(x => p.T1Player1Id == x.PlayerId).Any()
+                    && expectedLinup.Players.Where(x => p.T1Player2Id == x.PlayerId).Any()
+                    && expectedLinup.Players.Where(x => p.T1Player3Id == x.PlayerId).Any()
+                    && expectedLinup.Players.Where(x => p.T1Player4Id == x.PlayerId).Any()
+                    && expectedLinup.Players.Where(x => p.T1Player5Id == x.PlayerId).Any()).ToList();
+                }
+                else if(MinFullTeamRanking == 4)
+                {
+                        fixedMatches = fixedMatches.Where(p => (expectedLinup.Players.Where(x => p.T1Player1Id == x.PlayerId).Any()
+                        && expectedLinup.Players.Where(x => p.T1Player2Id == x.PlayerId).Any()
+                        && expectedLinup.Players.Where(x => p.T1Player3Id == x.PlayerId).Any()
+                        && expectedLinup.Players.Where(x => p.T1Player4Id == x.PlayerId).Any())
+                        ||
+                        (expectedLinup.Players.Where(x => p.T1Player1Id == x.PlayerId).Any()
+                        && expectedLinup.Players.Where(x => p.T1Player2Id == x.PlayerId).Any()
+                        && expectedLinup.Players.Where(x => p.T1Player3Id == x.PlayerId).Any()
+                        && expectedLinup.Players.Where(x => p.T1Player5Id == x.PlayerId).Any())
+                        ||
+                        (expectedLinup.Players.Where(x => p.T1Player1Id == x.PlayerId).Any()
+                        && expectedLinup.Players.Where(x => p.T1Player2Id == x.PlayerId).Any()
+                        && expectedLinup.Players.Where(x => p.T1Player4Id == x.PlayerId).Any()
+                        && expectedLinup.Players.Where(x => p.T1Player5Id == x.PlayerId).Any())
+                        ||
+                        (expectedLinup.Players.Where(x => p.T1Player1Id == x.PlayerId).Any()
+                        && expectedLinup.Players.Where(x => p.T1Player3Id == x.PlayerId).Any()
+                        && expectedLinup.Players.Where(x => p.T1Player4Id == x.PlayerId).Any()
+                        && expectedLinup.Players.Where(x => p.T1Player5Id == x.PlayerId).Any())
+                        ||
+                        (expectedLinup.Players.Where(x => p.T1Player2Id == x.PlayerId).Any()
+                        && expectedLinup.Players.Where(x => p.T1Player3Id == x.PlayerId).Any()
+                        && expectedLinup.Players.Where(x => p.T1Player4Id == x.PlayerId).Any()
+                        && expectedLinup.Players.Where(x => p.T1Player5Id == x.PlayerId).Any())).ToList();
+                }
+            }
+
             // Group list by maps.
             var groupedbymaps = fixedMatches.GroupBy(k => k.Map, StringComparer.InvariantCultureIgnoreCase).ToList();
 
-            result = groupedbymaps.Select(n => new MapStatisticModel
+            var result = groupedbymaps.Select(n => new MapStatisticModel
             {
                 Map = n.Key,
                 TotalWins = n.Count(p => p.ResultT1 > p.ResultT2),

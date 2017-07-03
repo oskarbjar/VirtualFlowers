@@ -46,7 +46,7 @@ namespace VirtualFlowersMVC.Controllers
             {
                 if (model != null)
                 {
-                    model = await runCompare(model, model.NoCache);
+                    model = await runCompare(model);
                 }
 
                 return View(model);
@@ -145,9 +145,9 @@ namespace VirtualFlowersMVC.Controllers
                 model.Team1Id = result.Item1;
                 model.Team2Id = result.Item2;
             }
-            
+
             #region "Hægt að nota svona til að scrapa allt"
-            
+
             /*
             foreach (var item in str.Take(3))
             {
@@ -163,19 +163,23 @@ namespace VirtualFlowersMVC.Controllers
                 model.Team2Id = result.Item2;
             }*/
             #endregion
-            
+
             if (model.Team1Id > 0)
-                {
-                    if (model.Scrape)
-                        await _program.GetTeamDetails(model.Team1Id);
-                    model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team1Id, model.PeriodSelection, model.ExpectedLineUp));
-                }
-                if (model.Team2Id > 0)
-                {
-                    if (model.Scrape)
-                        await _program.GetTeamDetails(model.Team2Id);
-                    model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team2Id, model.PeriodSelection, model.ExpectedLineUp));
-                }
+            {
+                var secondaryTeamId = _dataWorker.GetSecondaryTeamId(model.Team1Id);
+
+                if (model.Scrape)
+                    await _program.GetTeamDetails(model.Team1Id);
+                model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team1Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeamId, model.NoCache, model.MinFullTeamRanking));
+            }
+            if (model.Team2Id > 0)
+            {
+                var secondaryTeamId = _dataWorker.GetSecondaryTeamId(model.Team2Id);
+
+                if (model.Scrape)
+                    await _program.GetTeamDetails(model.Team2Id);
+                model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team2Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeamId, model.NoCache, model.MinFullTeamRanking));
+            }
 
             if (model.Teams != null && model.Teams.Count > 0)
             {
@@ -186,25 +190,16 @@ namespace VirtualFlowersMVC.Controllers
   
         }
 
-        public async Task<CompareStatisticModel> runCompare(CompareStatisticModel model, bool BypassCache = false)
+        public async Task<CompareStatisticModel> runCompare(CompareStatisticModel model)
         {
             try
             {
-                var CACHEKEY = "";
                 if (model != null)
                 {
                     if (!string.IsNullOrEmpty(model.MatchUrl) || model.Team1Id > 0 || model.Team2Id > 0)
                     {
                         if (!string.IsNullOrEmpty(model.MatchUrl))
                         {
-                            // Create Cachekey from parameters
-                            CACHEKEY = "cacheKey:MatchUrl=" + model.MatchUrl;
-                            
-                            // If we have object in cache, return it
-                            if (!BypassCache && Cache.Exists(CACHEKEY))
-                                return (CompareStatisticModel)Cache.Get(CACHEKEY);
-
-                            // If we dont have in cache, we continue
                             Program.MatchUrl = model.MatchUrl;
                             var result = _program.GetTeamIdsFromUrl(model.MatchUrl);
                             model.ExpectedLineUp = _program.GetTeamLineup(model.MatchUrl);
@@ -216,31 +211,24 @@ namespace VirtualFlowersMVC.Controllers
                             model.ExpectedLineUp = new ExpectedLineUp();
                         if (model.Team1Id > 0)
                         {
+                            var secondaryTeamId = _dataWorker.GetSecondaryTeamId(model.Team1Id);
+
                             if (model.Scrape)
                                 await _program.GetTeamDetails(model.Team1Id);
-                            model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team1Id, model.PeriodSelection, model.ExpectedLineUp));
+                            model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team1Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeamId, model.NoCache, model.MinFullTeamRanking));
                         }
                         if (model.Team2Id > 0)
                         {
+                            var secondaryTeamId = _dataWorker.GetSecondaryTeamId(model.Team2Id);
+
                             if (model.Scrape)
                                 await _program.GetTeamDetails(model.Team2Id);
-                            model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team2Id, model.PeriodSelection, model.ExpectedLineUp));
+                            model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team2Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeamId, model.NoCache, model.MinFullTeamRanking));
                         }
 
                         if (model.Teams != null && model.Teams.Count > 0)
                         {
                             _dataWorker.GenerateSuggestedMaps(ref model);
-                        }
-
-
-                        if (!string.IsNullOrEmpty(CACHEKEY)) {
-                            if (!Cache.Exists(CACHEKEY))
-                            {
-                                int storeTime = 1000 * 3600 * 24 * 2; // store 2 days
-                                Cache.Store(CACHEKEY, model, storeTime); 
-                            }
-                            else
-                                Cache.Update(CACHEKEY, model);
                         }
                     }
                 }

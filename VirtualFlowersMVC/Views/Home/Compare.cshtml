@@ -1,6 +1,6 @@
 ﻿@using VirtualFlowersMVC.Models
 @model CompareStatisticModel
-@{
+@{    
     ViewBag.Title = "Compare";
 }
 <script src="~/Scripts/jquery-3.1.1.min.js"></script>
@@ -18,7 +18,7 @@
             <h2>Compare cs go teams by teamid or match-url (hltv.org)</h2>
         </div>
     </div>
-
+    
     @if (Model != null && Model.ExpectedLineUp != null && Model.ExpectedLineUp.Players != null && Model.ExpectedLineUp.Players.Count != 10)
     {
         <span style="color:red">
@@ -44,8 +44,8 @@
         <div class="col-lg-9">
             <label style="cursor: help" title="Get history 3 months back"><input type="checkbox" name="PeriodSelection" value="3" checked /> 3 Month</label>
             <label style="cursor: help" title="Get history 6 months back"><input type="checkbox" name="PeriodSelection" value="6" checked /> 6 Month</label>
-            <label style="cursor: help" title="Min FTR 4"><input type="checkbox" name="MinFullTeamRanking" value="4" checked /> Min FTR 4</label>
-            <label style="cursor: help" title="Min FTR 5"><input type="checkbox" name="MinFullTeamRanking" value="5" checked /> Min FTR 5</label>
+            <label style="cursor: help" title="Min FTR 4"><input type="checkbox" name="MinFullTeamRanking" value="4" /> Min FTR 4</label>
+            <label style="cursor: help" title="Min FTR 5"><input type="checkbox" name="MinFullTeamRanking" value="5" /> Min FTR 5</label>
         </div>
     </form>
 

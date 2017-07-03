@@ -355,7 +355,15 @@
     <Content Include="Views\Shared\_LayoutNew.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\FootballTips\Index.cshtml" />
-    <Content Include="Web.config" />
+    <Content Include="virtualflowers - FTP.pubxml.user" />
+    <Content Include="virtualflowers - Web Deploy.pubxml.user" />
+    <Content Include="VirtualFlowersMVC - Web Deploy.pubxml.user" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <None Include="virtualflowers - FTP.pubxml" />
+    <None Include="virtualflowers - Web Deploy.pubxml" />
+    <None Include="VirtualFlowersMVC - Web Deploy.pubxml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
