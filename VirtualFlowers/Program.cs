@@ -113,7 +113,7 @@ namespace VirtualFlowers
                     expectedLineUp.Players = new List<Player>();
                 }
 
-                var teamIDs = GetTeamIdsFromUrl();
+                //var teamIDs = GetTeamIdsFromUrl();
 
                 var url = matchUrls;
                 var matchHtml = HWeb.Load(MatchUrl);
@@ -151,11 +151,11 @@ namespace VirtualFlowers
                                 if (counter <= 4)
                                 {
 
-                                    pl.TeamID = teamIDs.Item1;
+                                    pl.TeamID = Team1ID;
                                 }
                                 else
                                 {
-                                    pl.TeamID = teamIDs.Item2;
+                                    pl.TeamID = Team2ID;
                                 }
 
                                 var plexists = expectedLineUp.Players.Any(x => x.PlayerId == ids);
@@ -741,35 +741,63 @@ namespace VirtualFlowers
 
                 };
                 db.RankingList.Add(rankingList);
-                for (int index = 2; index < 35; index++)
-                {
-                    //*[1] - Selects the first div in within div[{index 1-31}] 
-                    //*[2] - Selects the second div in *[1]
-                    var IdString = $"//*[@id='back']/div[3]/div[3]/div/div[{index}]/*[1]";
-                    var rankingUrlStringNo = $"//*[@id='back']/div[3]/div[3]/div/div[{index}]/*[1]/*[2]";
-                    var id = rankingHtmlDocument.DocumentNode.SelectNodes(IdString);
 
-                    if (id != null)
+
+                var tablesHtml = "//*[@class='ranked-team standard-box']";
+                var results = rankingHtmlDocument.DocumentNode.SelectNodes(tablesHtml);
+               
+                for (int i = 0; i < results.Count; i++)                {
+                    var sTeamId = results[i].SelectNodes(".//*[@class='name js-link']");
+                    var teamID = GetTeamIDs(sTeamId[0].OuterHtml);
+                    var points = GetPoints(results[i].SelectNodes(".//*[@class='points']")[0].InnerHtml);
+                    var ranking = new Rank
                     {
-                        var teamId = id[0].Id.Remove(0, 5);
-                        var team = rankingHtmlDocument.DocumentNode.SelectNodes(rankingUrlStringNo);
-                        var teamAndRanking = GetTeamRanking(team[0].InnerText);
-
-                        var ranking = new Rank
-                        {
-                            RankPosition = index - 1,
-                            Points = teamAndRanking.Item2,
-                            TeamId = Convert.ToInt32(teamId),
-                            RankingListId = rankingListId
-                        };
-                        db.Rank.Add(ranking);
-
-                    }
-                    db.SaveChanges();
+                        RankPosition = i +1,
+                        Points = points,
+                        TeamId = teamID,
+                        RankingListId = rankingListId
+                    };
+                    db.Rank.Add(ranking);
 
                 }
+                    db.SaveChanges();
+
+                
 
             }
+        }
+        /// <summary>
+        /// Gets the teamID from the html string 
+        /// </summary>
+        /// <param name="outerHtml"></param>
+        /// <returns></returns>
+        private int GetTeamIDs(string outerHtml)
+        {
+            string[] stringseperator = { "data-url=" };
+            string[] secondSpilt = { "/team/" };
+            string[] thirdspilt = { "'/'" };
+
+           
+            var result = outerHtml.Split(stringseperator, StringSplitOptions.None);
+            var result2 = result[1].Split(secondSpilt, StringSplitOptions.None);
+            int index = result2[1].IndexOf("/");
+
+            var input = result2[1].Substring(0, index);
+            //var result3 = result2[1].Split(thirdspilt, StringSplitOptions.None);
+            return Convert.ToInt32( input);
+        }
+
+        /// <summary>
+        /// Gets the points from ranking list - Removes points text from string and returns the integer number
+        /// </summary>
+        /// <param name="innerHtml"></param>
+        /// <returns></returns>
+        private int GetPoints(string innerHtml)
+        {
+            string[] stringseperator = { "points)" };
+            var result = innerHtml.Split(stringseperator, StringSplitOptions.None);
+            var finalResult = result[0].Replace("(", string.Empty);
+            return Convert.ToInt32(finalResult);
         }
 
         private DateTime GetDateTime(string rankingUrl)
@@ -847,6 +875,7 @@ namespace VirtualFlowers
         private Tuple<string, int> GetTeamRanking(string innerText)
         {
             string[] stringSeperators = { "(" };
+            string[] stringsep = { "\n-\n    "};
             var newstring = "";
             string results = Regex.Replace(innerText, @"\n\n?|\n", newstring);
 
