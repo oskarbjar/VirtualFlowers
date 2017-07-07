@@ -103,7 +103,7 @@ namespace VirtualFlowers
 
         }
 
-        public ExpectedLineUp GetTeamLineup(string matchUrls)
+        public ExpectedLineUp GetTeamLineup(string matchUrls, int team1Id = 0, int team2ID=0)
         {
             try
             {
@@ -150,12 +150,29 @@ namespace VirtualFlowers
 
                                 if (counter <= 4)
                                 {
-
-                                    pl.TeamID = Team1ID;
+                                    if (team1Id>0)
+                                    {
+                                        //teamID that comes from runcompare in home controller
+                                        pl.TeamID = team1Id;
+                                    }
+                                    else
+                                    {
+                                        pl.TeamID = Team1ID;
+                                    }
+                                    
                                 }
                                 else
                                 {
-                                    pl.TeamID = Team2ID;
+                                    if (team1Id > 0)
+                                    {
+                                        //teamID that comes from runcompare in home controller
+                                        pl.TeamID = team2ID;
+                                    }
+                                    else
+                                    {
+                                        pl.TeamID = Team2ID;
+                                    }
+
                                 }
 
                                 var plexists = expectedLineUp.Players.Any(x => x.PlayerId == ids);
