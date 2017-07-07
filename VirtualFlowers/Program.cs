@@ -114,11 +114,18 @@ namespace VirtualFlowers
                 }
 
                 //var teamIDs = GetTeamIdsFromUrl();
+                var urlHtml = $"[@class='//match-page-link button']";
+
+               
 
                 var url = matchUrls;
+
+                var MoreInfo = HWeb.Load(url);
                 var matchHtml = HWeb.Load(MatchUrl);
                 var span1Name = new HtmlNodeCollection(HtmlNode.CreateNode(""));
                 var span2Name = new HtmlNodeCollection(HtmlNode.CreateNode(""));
+
+              
 
 
                 try
@@ -126,8 +133,13 @@ namespace VirtualFlowers
                     string span1;
                     //var team1IdHtmlString = $"//*[@class='team1-gradient']";
                     span1 = $"//*[@class='lineup standard-box']";
-                    span1Name = matchHtml.DocumentNode.SelectNodes(span1);
 
+                    var spantest = "//*[@class='match-info-box-con']";
+                    span1Name = matchHtml.DocumentNode.SelectNodes(span1);
+                   //var lineup = MoreInfo.DocumentNode.SelectNodes(spantest);
+
+                    //var href = lineup[0].ChildNodes[13].OuterHtml;
+    
                     /*Get players from lineup*/
                     var counter = 0;
                     foreach (var item in span1Name)
@@ -209,6 +221,137 @@ namespace VirtualFlowers
 
 
         }
+
+        public ExpectedLineUp GetTeamLineupFromDetails(string matchUrls, int team1Id = 0, int team2ID = 0)
+        {
+            try
+            {
+                var expectedLineUp = new ExpectedLineUp();
+                if (expectedLineUp.Players == null)
+                {
+                    expectedLineUp.Players = new List<Player>();
+                }
+
+                //var teamIDs = GetTeamIdsFromUrl();
+                var urlHtml = $"[@class='//match-page-link button']";
+
+
+
+                var url = matchUrls;
+
+                var MoreInfo = HWeb.Load(url);
+                var matchHtml = HWeb.Load(MatchUrl);
+                var span1Name = new HtmlNodeCollection(HtmlNode.CreateNode(""));
+                var span2Name = new HtmlNodeCollection(HtmlNode.CreateNode(""));
+               
+
+
+
+                try
+                {
+                    string span1;
+                    //var team1IdHtmlString = $"//*[@class='team1-gradient']";
+                    span1 = $"//*[@class='lineup standard-box']";
+                    
+                    var spantest = "//*[@class='match-info-box-con']";
+
+                    //span1Name = matchHtml.DocumentNode.SelectNodes(span1);
+                    var lineup = MoreInfo.DocumentNode.SelectNodes(spantest);
+
+                    var href = lineup[0].ChildNodes[13].OuterHtml;
+
+                    var externalLink = GetMatchUrlForDetails(href);
+
+                    var externalUrl = "http://www.hltv.org" + externalLink;
+
+                     MoreInfo = HWeb.Load(externalUrl);
+                    span1Name = MoreInfo.DocumentNode.SelectNodes(span1);
+
+
+
+
+                    /*Get players from lineup*/
+                    var counter = 0;
+                    foreach (var item in span1Name)
+                    {
+                        //td[@class="plaintext"]
+                        var players = item.SelectNodes("//*[@class='players']/*[@class='table']//*[@class='player']//@href");
+
+                        foreach (var player in players)
+                        {
+                            var names = player.InnerText.Trim();
+
+                            if (names != "")
+                            {
+
+                                var ids = GetPlayerID(player.Attributes[0].Value);
+                                var pl = new Player();
+
+                                pl.PlayerId = ids;
+                                pl.PlayerName = names;
+
+                                if (counter <= 4)
+                                {
+                                    if (team1Id > 0)
+                                    {
+                                        //teamID that comes from runcompare in home controller
+                                        pl.TeamID = team1Id;
+                                    }
+                                    else
+                                    {
+                                        pl.TeamID = Team1ID;
+                                    }
+
+                                }
+                                else
+                                {
+                                    if (team1Id > 0)
+                                    {
+                                        //teamID that comes from runcompare in home controller
+                                        pl.TeamID = team2ID;
+                                    }
+                                    else
+                                    {
+                                        pl.TeamID = Team2ID;
+                                    }
+
+                                }
+
+                                var plexists = expectedLineUp.Players.Any(x => x.PlayerId == ids);
+                                if (!plexists)
+                                {
+                                    expectedLineUp.Players.Add(pl);
+
+                                }
+                                counter++;
+                            }
+                        }
+
+                    }
+
+
+
+                }
+                catch (Exception ex)
+                {
+                    var nothing = ex;
+                }
+
+
+                return expectedLineUp;
+
+            }
+            catch (Exception)
+            {
+                /*Logga niður villur*/
+                //throw;
+                // return empty list, to avoid crash
+                return new ExpectedLineUp();
+            }
+
+
+        }
+
 
 
         private int GetPlayerID(string outerHtml)
@@ -405,9 +548,14 @@ namespace VirtualFlowers
                     var matchID = GetMatchIDS(statstableRow.ChildNodes[1].InnerHtml);
                     var mathcurl = GetMatchUrl(statstableRow.ChildNodes[1].InnerHtml);
 
+                    var xx = mathcurl.Substring(1);
+                    var prefix = "https://www.hltv.org";
+
+                    var fullUrl = prefix + xx;
+
                     var rounds = GetRoundsV2(mathcurl);
 
-                    var players = GetTeamLineup(mathcurl);
+                    var players = GetTeamLineupFromDetails(fullUrl);
 
                     var Event = statstableRow.ChildNodes[3].InnerText;
                     var opponent = statstableRow.ChildNodes[7].InnerText;
@@ -547,6 +695,18 @@ namespace VirtualFlowers
 
 
             return FinalUrl[1];
+        }
+
+        private string GetMatchUrlForDetails(string innerHtml)
+        {
+            string[] stringSeparators = new string[] { "class=" };
+            string[] stringSeprators2 = new string[] { "<a href=" };
+            var urlsArray = innerHtml.Split(stringSeparators, StringSplitOptions.None);
+            var FinalUrl = urlsArray[0].Split(stringSeprators2, StringSplitOptions.None);
+
+            var finalString = FinalUrl[1].Substring(1);
+
+            return finalString;
         }
 
         private DateTime NewDate(string dateString)
