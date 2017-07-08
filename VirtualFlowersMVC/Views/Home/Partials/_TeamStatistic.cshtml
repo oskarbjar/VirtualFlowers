@@ -70,9 +70,9 @@
             </tr>
             @foreach (var map in period.Maps)
             {
-                <tr class="mapline @map.Map">
+                <tr class="mapline @map.Map.ToLower()">
                     <td>
-                        @map.Map
+                        @map.Map.ToLower()
                     </td>
                     <td>
                         @map.TotalWins / @map.TotalLosses
