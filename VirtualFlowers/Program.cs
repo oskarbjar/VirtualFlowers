@@ -374,6 +374,7 @@ namespace VirtualFlowers
 
             var test = teamhtml.DocumentNode.SelectNodes($"/html/body/div[2]/div/div[2]/div[1]/div/table/tbody/tr");
 
+         
 
 
 
@@ -385,6 +386,23 @@ namespace VirtualFlowers
 
                     var dateString = statstableRow.ChildNodes[1].InnerText;
                     var dDate = NewDate(dateString);
+
+                    if (dDate < lastScraped.AddDays(-1) || dDate < DateTime.Now.AddYears(-1))
+                    {
+                        // And we have added some records
+                        if (lCounter > 0 || !history.Any())
+                        {
+                            // We save history record when last scraped for this team.
+                            db.ScrapeHistoryTeams.Add(new ScrapeHistoryTeams { TeamId = TeamId, LastDayScraped = DateTime.Now });
+                            db.SaveChanges();
+                        }
+
+                        // And quit scraping
+                        return Task.FromResult(0);
+                    }
+
+
+
                     var matchID = GetMatchIDS(statstableRow.ChildNodes[1].InnerHtml);
                     var mathcurl = GetMatchUrl(statstableRow.ChildNodes[1].InnerHtml);
 
@@ -402,19 +420,7 @@ namespace VirtualFlowers
 
 
                     // If we have moved past last scraped date, or year old data
-                    if (dDate < lastScraped.AddDays(-1) || dDate < DateTime.Now.AddYears(-1))
-                    {
-                        // And we have added some records
-                        if (lCounter > 0 || !history.Any())
-                        {
-                            // We save history record when last scraped for this team.
-                            db.ScrapeHistoryTeams.Add(new ScrapeHistoryTeams { TeamId = TeamId, LastDayScraped = DateTime.Now });
-                            db.SaveChanges();
-                        }
-
-                        // And quit scraping
-                        return Task.FromResult(0);
-                    }
+                   
 
                     if (!bHasCreatedCurrentTeam)
                     {
