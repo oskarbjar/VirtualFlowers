@@ -112,6 +112,7 @@ namespace VirtualFlowersMVC.Data
             var result = new TeamStatisticModel();
             var dTo = DateTime.Now;
             var dFrom = new DateTime();
+            var mapList = new List<string> { "nuke", "overpass", "cobblestone", "train", "inferno", "mirage", "cache" };
 
             switch (period)
             {
@@ -130,7 +131,18 @@ namespace VirtualFlowersMVC.Data
             }
 
             result.Maps = GetMapStatistics(TeamId, dFrom, dTo, expectedLinup, secondaryTeamId, NoCache, MinFullTeamRanking);
-            
+
+            foreach (var map in mapList)
+            {
+                if (!result.Maps.Where(p => p.Map.ToLower() == map).Any())
+                    result.Maps.Add(new MapStatisticModel
+                    {
+                        Map = map,
+                        FirstRound1HWinPercent = new Tuple<double, string>(0, ""),
+                        FirstRound2HWinPercent = new Tuple<double, string>(0, "")
+                    });
+            }
+
             return result;
         }
 

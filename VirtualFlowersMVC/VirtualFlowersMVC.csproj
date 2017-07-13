@@ -288,6 +288,7 @@
     <Content Include="Content\fonts\sourcesanspro-regular-webfont.woff" />
     <None Include="Properties\PublishProfiles\virtualflowers - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\virtualflowers - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\VirtualFlowersMVC - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\VirtualFlowersMVC - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <None Include="Scripts\jquery-3.1.1.intellisense.js" />
@@ -355,15 +356,9 @@
     <Content Include="Views\Shared\_LayoutNew.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\FootballTips\Index.cshtml" />
-    <Content Include="virtualflowers - FTP.pubxml.user" />
-    <Content Include="virtualflowers - Web Deploy.pubxml.user" />
-    <Content Include="VirtualFlowersMVC - Web Deploy.pubxml.user" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
-    <None Include="virtualflowers - FTP.pubxml" />
-    <None Include="virtualflowers - Web Deploy.pubxml" />
-    <None Include="VirtualFlowersMVC - Web Deploy.pubxml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

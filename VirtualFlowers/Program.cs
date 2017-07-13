@@ -103,7 +103,7 @@ namespace VirtualFlowers
 
         }
 
-        public ExpectedLineUp GetTeamLineup(string matchUrls)
+        public ExpectedLineUp GetTeamLineup(string matchUrls, int team1Id = 0, int team2ID=0)
         {
             try
             {
@@ -113,12 +113,19 @@ namespace VirtualFlowers
                     expectedLineUp.Players = new List<Player>();
                 }
 
-                var teamIDs = GetTeamIdsFromUrl();
+                //var teamIDs = GetTeamIdsFromUrl();
+                var urlHtml = $"[@class='//match-page-link button']";
+
+               
 
                 var url = matchUrls;
+
+                var MoreInfo = HWeb.Load(url);
                 var matchHtml = HWeb.Load(MatchUrl);
                 var span1Name = new HtmlNodeCollection(HtmlNode.CreateNode(""));
                 var span2Name = new HtmlNodeCollection(HtmlNode.CreateNode(""));
+
+              
 
 
                 try
@@ -126,8 +133,13 @@ namespace VirtualFlowers
                     string span1;
                     //var team1IdHtmlString = $"//*[@class='team1-gradient']";
                     span1 = $"//*[@class='lineup standard-box']";
-                    span1Name = matchHtml.DocumentNode.SelectNodes(span1);
 
+                    var spantest = "//*[@class='match-info-box-con']";
+                    span1Name = matchHtml.DocumentNode.SelectNodes(span1);
+                   //var lineup = MoreInfo.DocumentNode.SelectNodes(spantest);
+
+                    //var href = lineup[0].ChildNodes[13].OuterHtml;
+    
                     /*Get players from lineup*/
                     var counter = 0;
                     foreach (var item in span1Name)
@@ -150,12 +162,29 @@ namespace VirtualFlowers
 
                                 if (counter <= 4)
                                 {
-
-                                    pl.TeamID = teamIDs.Item1;
+                                    if (team1Id>0)
+                                    {
+                                        //teamID that comes from runcompare in home controller
+                                        pl.TeamID = team1Id;
+                                    }
+                                    else
+                                    {
+                                        pl.TeamID = Team1ID;
+                                    }
+                                    
                                 }
                                 else
                                 {
-                                    pl.TeamID = teamIDs.Item2;
+                                    if (team1Id > 0)
+                                    {
+                                        //teamID that comes from runcompare in home controller
+                                        pl.TeamID = team2ID;
+                                    }
+                                    else
+                                    {
+                                        pl.TeamID = Team2ID;
+                                    }
+
                                 }
 
                                 var plexists = expectedLineUp.Players.Any(x => x.PlayerId == ids);
@@ -192,6 +221,137 @@ namespace VirtualFlowers
 
 
         }
+
+        public ExpectedLineUp GetTeamLineupFromDetails(string matchUrls, int team1Id = 0, int team2ID = 0)
+        {
+            try
+            {
+                var expectedLineUp = new ExpectedLineUp();
+                if (expectedLineUp.Players == null)
+                {
+                    expectedLineUp.Players = new List<Player>();
+                }
+
+                //var teamIDs = GetTeamIdsFromUrl();
+                var urlHtml = $"[@class='//match-page-link button']";
+
+
+
+                var url = matchUrls;
+
+                var MoreInfo = HWeb.Load(url);
+                var matchHtml = HWeb.Load(MatchUrl);
+                var span1Name = new HtmlNodeCollection(HtmlNode.CreateNode(""));
+                var span2Name = new HtmlNodeCollection(HtmlNode.CreateNode(""));
+               
+
+
+
+                try
+                {
+                    string span1;
+                    //var team1IdHtmlString = $"//*[@class='team1-gradient']";
+                    span1 = $"//*[@class='lineup standard-box']";
+                    
+                    var spantest = "//*[@class='match-info-box-con']";
+
+                    //span1Name = matchHtml.DocumentNode.SelectNodes(span1);
+                    var lineup = MoreInfo.DocumentNode.SelectNodes(spantest);
+
+                    var href = lineup[0].ChildNodes[13].OuterHtml;
+
+                    var externalLink = GetMatchUrlForDetails(href);
+
+                    var externalUrl = "http://www.hltv.org" + externalLink;
+
+                     MoreInfo = HWeb.Load(externalUrl);
+                    span1Name = MoreInfo.DocumentNode.SelectNodes(span1);
+
+
+
+
+                    /*Get players from lineup*/
+                    var counter = 0;
+                    foreach (var item in span1Name)
+                    {
+                        //td[@class="plaintext"]
+                        var players = item.SelectNodes("//*[@class='players']/*[@class='table']//*[@class='player']//@href");
+
+                        foreach (var player in players)
+                        {
+                            var names = player.InnerText.Trim();
+
+                            if (names != "")
+                            {
+
+                                var ids = GetPlayerID(player.Attributes[0].Value);
+                                var pl = new Player();
+
+                                pl.PlayerId = ids;
+                                pl.PlayerName = names;
+
+                                if (counter <= 4)
+                                {
+                                    if (team1Id > 0)
+                                    {
+                                        //teamID that comes from runcompare in home controller
+                                        pl.TeamID = team1Id;
+                                    }
+                                    else
+                                    {
+                                        pl.TeamID = Team1ID;
+                                    }
+
+                                }
+                                else
+                                {
+                                    if (team1Id > 0)
+                                    {
+                                        //teamID that comes from runcompare in home controller
+                                        pl.TeamID = team2ID;
+                                    }
+                                    else
+                                    {
+                                        pl.TeamID = Team2ID;
+                                    }
+
+                                }
+
+                                var plexists = expectedLineUp.Players.Any(x => x.PlayerId == ids);
+                                if (!plexists)
+                                {
+                                    expectedLineUp.Players.Add(pl);
+
+                                }
+                                counter++;
+                            }
+                        }
+
+                    }
+
+
+
+                }
+                catch (Exception ex)
+                {
+                    var nothing = ex;
+                }
+
+
+                return expectedLineUp;
+
+            }
+            catch (Exception)
+            {
+                /*Logga niður villur*/
+                //throw;
+                // return empty list, to avoid crash
+                return new ExpectedLineUp();
+            }
+
+
+        }
+
 
 
         private int GetPlayerID(string outerHtml)
@@ -406,9 +566,14 @@ namespace VirtualFlowers
                     var matchID = GetMatchIDS(statstableRow.ChildNodes[1].InnerHtml);
                     var mathcurl = GetMatchUrl(statstableRow.ChildNodes[1].InnerHtml);
 
+                    var xx = mathcurl.Substring(1);
+                    var prefix = "https://www.hltv.org";
+
+                    var fullUrl = prefix + xx;
+
                     var rounds = GetRoundsV2(mathcurl);
 
-                    var players = GetTeamLineup(mathcurl);
+                    var players = GetTeamLineupFromDetails(fullUrl);
 
                     var Event = statstableRow.ChildNodes[3].InnerText;
                     var opponent = statstableRow.ChildNodes[7].InnerText;
@@ -536,6 +701,18 @@ namespace VirtualFlowers
 
 
             return FinalUrl[1];
+        }
+
+        private string GetMatchUrlForDetails(string innerHtml)
+        {
+            string[] stringSeparators = new string[] { "class=" };
+            string[] stringSeprators2 = new string[] { "<a href=" };
+            var urlsArray = innerHtml.Split(stringSeparators, StringSplitOptions.None);
+            var FinalUrl = urlsArray[0].Split(stringSeprators2, StringSplitOptions.None);
+
+            var finalString = FinalUrl[1].Substring(1);
+
+            return finalString;
         }
 
         private DateTime NewDate(string dateString)
@@ -747,35 +924,63 @@ namespace VirtualFlowers
 
                 };
                 db.RankingList.Add(rankingList);
-                for (int index = 2; index < 35; index++)
-                {
-                    //*[1] - Selects the first div in within div[{index 1-31}] 
-                    //*[2] - Selects the second div in *[1]
-                    var IdString = $"//*[@id='back']/div[3]/div[3]/div/div[{index}]/*[1]";
-                    var rankingUrlStringNo = $"//*[@id='back']/div[3]/div[3]/div/div[{index}]/*[1]/*[2]";
-                    var id = rankingHtmlDocument.DocumentNode.SelectNodes(IdString);
 
-                    if (id != null)
+
+                var tablesHtml = "//*[@class='ranked-team standard-box']";
+                var results = rankingHtmlDocument.DocumentNode.SelectNodes(tablesHtml);
+               
+                for (int i = 0; i < results.Count; i++)                {
+                    var sTeamId = results[i].SelectNodes(".//*[@class='name js-link']");
+                    var teamID = GetTeamIDs(sTeamId[0].OuterHtml);
+                    var points = GetPoints(results[i].SelectNodes(".//*[@class='points']")[0].InnerHtml);
+                    var ranking = new Rank
                     {
-                        var teamId = id[0].Id.Remove(0, 5);
-                        var team = rankingHtmlDocument.DocumentNode.SelectNodes(rankingUrlStringNo);
-                        var teamAndRanking = GetTeamRanking(team[0].InnerText);
-
-                        var ranking = new Rank
-                        {
-                            RankPosition = index - 1,
-                            Points = teamAndRanking.Item2,
-                            TeamId = Convert.ToInt32(teamId),
-                            RankingListId = rankingListId
-                        };
-                        db.Rank.Add(ranking);
-
-                    }
-                    db.SaveChanges();
+                        RankPosition = i +1,
+                        Points = points,
+                        TeamId = teamID,
+                        RankingListId = rankingListId
+                    };
+                    db.Rank.Add(ranking);
 
                 }
+                    db.SaveChanges();
+
+                
 
             }
+        }
+        /// <summary>
+        /// Gets the teamID from the html string 
+        /// </summary>
+        /// <param name="outerHtml"></param>
+        /// <returns></returns>
+        private int GetTeamIDs(string outerHtml)
+        {
+            string[] stringseperator = { "data-url=" };
+            string[] secondSpilt = { "/team/" };
+            string[] thirdspilt = { "'/'" };
+
+           
+            var result = outerHtml.Split(stringseperator, StringSplitOptions.None);
+            var result2 = result[1].Split(secondSpilt, StringSplitOptions.None);
+            int index = result2[1].IndexOf("/");
+
+            var input = result2[1].Substring(0, index);
+            //var result3 = result2[1].Split(thirdspilt, StringSplitOptions.None);
+            return Convert.ToInt32( input);
+        }
+
+        /// <summary>
+        /// Gets the points from ranking list - Removes points text from string and returns the integer number
+        /// </summary>
+        /// <param name="innerHtml"></param>
+        /// <returns></returns>
+        private int GetPoints(string innerHtml)
+        {
+            string[] stringseperator = { "points)" };
+            var result = innerHtml.Split(stringseperator, StringSplitOptions.None);
+            var finalResult = result[0].Replace("(", string.Empty);
+            return Convert.ToInt32(finalResult);
         }
 
         private DateTime GetDateTime(string rankingUrl)
@@ -853,6 +1058,7 @@ namespace VirtualFlowers
         private Tuple<string, int> GetTeamRanking(string innerText)
         {
             string[] stringSeperators = { "(" };
+            string[] stringsep = { "\n-\n    "};
             var newstring = "";
             string results = Regex.Replace(innerText, @"\n\n?|\n", newstring);
 
