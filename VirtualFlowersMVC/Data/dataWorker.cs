@@ -518,7 +518,7 @@ namespace VirtualFlowersMVC.Data
                     // Try to find matching map
                     foreach (var MapB in period.Maps)
                     {
-                        if(MapA.Map == MapB.Map)
+                        if(MapA.Map.ToLower() == MapB.Map.ToLower())
                         {
                             MapFound = true;
                             // If found compare maps
