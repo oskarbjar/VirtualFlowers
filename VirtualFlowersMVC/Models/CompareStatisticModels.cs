@@ -31,6 +31,7 @@ namespace VirtualFlowersMVC.Models
         public string TeamName { get; set; }
         public double TeamDifficultyRating { get; set; }
         public List<TeamStatisticModel> TeamStatistics { get; set; }
+        public string TeamRank { get; set; }
 
         public TeamStatisticPeriodModel()
         {

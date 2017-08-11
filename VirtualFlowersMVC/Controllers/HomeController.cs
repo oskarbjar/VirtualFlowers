@@ -170,7 +170,7 @@ namespace VirtualFlowersMVC.Controllers
 
                 if (model.Scrape)
                     await _program.GetTeamDetails(model.Team1Id);
-                model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team1Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeamId, model.NoCache, model.MinFullTeamRanking));
+                model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team1Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeamId, model.NoCache, model.MinFullTeamRanking, _program.Team1Rank));
             }
             if (model.Team2Id > 0)
             {
@@ -178,7 +178,7 @@ namespace VirtualFlowersMVC.Controllers
 
                 if (model.Scrape)
                     await _program.GetTeamDetails(model.Team2Id);
-                model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team2Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeamId, model.NoCache, model.MinFullTeamRanking));
+                model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team2Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeamId, model.NoCache, model.MinFullTeamRanking, _program.Team2Rank));
             }
 
             if (model.Teams != null && model.Teams.Count > 0)
@@ -217,7 +217,7 @@ namespace VirtualFlowersMVC.Controllers
 
                             if (model.Scrape)
                                 await _program.GetTeamDetails(model.Team1Id);
-                            model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team1Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeamId, model.NoCache, model.MinFullTeamRanking));
+                            model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team1Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeamId, model.NoCache, model.MinFullTeamRanking,_program.Team1Rank));
                         }
                         if (model.Team2Id > 0)
                         {
@@ -225,7 +225,7 @@ namespace VirtualFlowersMVC.Controllers
 
                             if (model.Scrape)
                                 await _program.GetTeamDetails(model.Team2Id);
-                            model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team2Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeamId, model.NoCache, model.MinFullTeamRanking));
+                            model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team2Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeamId, model.NoCache, model.MinFullTeamRanking,_program.Team2Rank));
                         }
 
                         if (model.Teams != null && model.Teams.Count > 0)

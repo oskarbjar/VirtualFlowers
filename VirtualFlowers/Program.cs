@@ -125,9 +125,8 @@ namespace VirtualFlowers
                 var span1Name = new HtmlNodeCollection(HtmlNode.CreateNode(""));
                 var span2Name = new HtmlNodeCollection(HtmlNode.CreateNode(""));
 
-              
-
-
+                Team1Rank = GetTeamRank(team1Id, Team1Name);
+               
                 try
                 {
                     string span1;
@@ -186,6 +185,7 @@ namespace VirtualFlowers
                                     }
 
                                 }
+                               Team2Rank = GetTeamRank(team2ID, Team2Name);
 
                                 var plexists = expectedLineUp.Players.Any(x => x.PlayerId == ids);
                                 if (!plexists)
@@ -579,6 +579,7 @@ namespace VirtualFlowers
                     var opponent = statstableRow.ChildNodes[7].InnerText;
 
 
+
                     var map = statstableRow.ChildNodes[9].InnerText;
                     var result = getResult(statstableRow.ChildNodes[11].InnerText);
                     var winOrLoss = statstableRow.ChildNodes[13].InnerText;
@@ -594,6 +595,8 @@ namespace VirtualFlowers
                     }
                     CheckIfNeedToCreateTeam(Team2ID, Team2Name);
 
+                    var GetTeam1IDRank = GetTeamRank(Team1ID,Team1Name);
+                    var getTeam2IDRank = GetTeamRank(Team2ID, Team2Name);
 
 
                     var match = new Match
@@ -667,6 +670,28 @@ namespace VirtualFlowers
             }
             return Task.FromResult(0);
         }
+
+        private string GetTeamRank(int teamID,string teamName)
+        {
+            var rankUrl = $"https://www.hltv.org/team/{teamID}/{teamName}/";
+
+            HtmlDocument rankHtml = HWeb.Load(rankUrl);
+            var test = rankHtml.DocumentNode.SelectNodes("/html/body/div[2]/div/div[2]/div[1]/div/div[2]/div[6]/a");
+
+
+            if (test != null)
+            {
+                return test[0].InnerHtml.ToString();
+            }
+            else
+            {
+                return "No rank";
+
+            }
+
+
+        }
+
         /// <summary>
         /// Returns Result from matches
         /// </summary>
@@ -1095,7 +1120,7 @@ namespace VirtualFlowers
 
             var team1GradientSection = matchHtml.DocumentNode.SelectNodes(urls);
             var htmlSectionss = matchHtml.DocumentNode.SelectNodes(team1IdHtmlString);
-            var Team1Name = htmlSectionss[0].InnerText.TrimStart().TrimEnd();
+            Team1Name = htmlSectionss[0].InnerText.TrimStart().TrimEnd();
 
 
             string team11Id = GenerateTeamID(stringSeperators, SecondSpilt, thirdSplilt, team1GradientSection);
@@ -1107,7 +1132,7 @@ namespace VirtualFlowers
 
             var htmlSectionsss = matchHtml.DocumentNode.SelectNodes(urlsTeam2);
             var htmlSectionss2 = matchHtml.DocumentNode.SelectNodes(team2IdHtmlString);
-            var Team2Name = htmlSectionss2[0].InnerText.TrimStart().TrimEnd();
+            Team2Name = htmlSectionss2[0].InnerText.TrimStart().TrimEnd();
 
 
             string team2Id = GenerateTeamID(stringSeperators, SecondSpilt, thirdSplilt, htmlSectionsss);
@@ -1139,6 +1164,9 @@ namespace VirtualFlowers
         public string Team1Name { get; set; }
         public string Team2Name { get; set; }
         public static string MatchUrl { get; set; }
+
+        public string Team1Rank { get; set; }
+        public string Team2Rank { get; set; }
     }
 }
 
