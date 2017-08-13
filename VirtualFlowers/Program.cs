@@ -678,9 +678,16 @@ namespace VirtualFlowers
             HtmlDocument rankHtml = HWeb.Load(rankUrl);
             var test = rankHtml.DocumentNode.SelectNodes("/html/body/div[2]/div/div[2]/div[1]/div/div[2]/div[6]/a");
 
+            if (test.Count > 1)
+            {
+                test = rankHtml.DocumentNode.SelectNodes("/html/body/div[2]/div/div[2]/div[1]/div/div[2]/div[6]/a[3]");
+            }
+
 
             if (test != null)
             {
+
+
                 return test[0].InnerHtml.ToString();
             }
             else
