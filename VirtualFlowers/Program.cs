@@ -522,7 +522,8 @@ namespace VirtualFlowers
 
             int lCounter = 0;
 
-            string url = $"http://www.hltv.org/?pageid=188&teamid={TeamId}";
+            string url = $"" +
+                $"http://www.hltv.org/?pageid=188&teamid={TeamId}";
 
             bool bHasCreatedCurrentTeam = false;
             HtmlDocument teamhtml = HWeb.Load(url);
@@ -678,17 +679,21 @@ namespace VirtualFlowers
             HtmlDocument rankHtml = HWeb.Load(rankUrl);
             var test = rankHtml.DocumentNode.SelectNodes("/html/body/div[2]/div/div[2]/div[1]/div/div[2]/div[6]/a");
 
-            if (test.Count > 1)
-            {
-                test = rankHtml.DocumentNode.SelectNodes("/html/body/div[2]/div/div[2]/div[1]/div/div[2]/div[6]/a[3]");
-            }
+          
 
 
             if (test != null)
             {
-
-
-                return test[0].InnerHtml.ToString();
+                if (test.Count > 1)
+                {
+                    test = rankHtml.DocumentNode.SelectNodes("/html/body/div[2]/div/div[2]/div[1]/div/div[2]/div[6]/a[3]");
+                    return test[0].InnerHtml.ToString();
+                }
+                else
+                {
+                    return test[0].InnerHtml.ToString();
+                }
+                
             }
             else
             {
