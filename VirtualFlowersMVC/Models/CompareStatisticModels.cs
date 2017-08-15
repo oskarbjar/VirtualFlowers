@@ -68,6 +68,7 @@ namespace VirtualFlowersMVC.Models
         public string DiffTitleGroupBy { get; set; }
         public double FullTeamRanking { get; set; }
         public string FullTeamGroupBy { get; set; }
+        public string TitleMapMatches { get; set; }
         public Tuple<double, string> FirstRound1HWinPercent { get; set; }
         public Tuple<double, string> FirstRound2HWinPercent { get; set; }
 

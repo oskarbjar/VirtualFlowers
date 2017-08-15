@@ -72,7 +72,7 @@
             @foreach (var map in period.Maps)
             {
                 <tr class="mapline @map.Map.ToLower()">
-                    <td>
+                    <td style="cursor: help" title="@Html.Raw(@map.TitleMapMatches)">
                         @map.Map.ToLower()
                     </td>
                     <td>

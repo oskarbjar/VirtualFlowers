@@ -687,7 +687,10 @@ namespace VirtualFlowers
                 if (test.Count > 1)
                 {
                     test = rankHtml.DocumentNode.SelectNodes("/html/body/div[2]/div/div[2]/div[1]/div/div[2]/div[6]/a[3]");
-                    return test[0].InnerHtml.ToString();
+                    if(test != null)
+                        return test[0].InnerHtml.ToString();
+                    else
+                        return "No rank";
                 }
                 else
                 {

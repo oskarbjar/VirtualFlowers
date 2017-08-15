@@ -245,6 +245,7 @@ namespace VirtualFlowersMVC.Data
             var result = groupedbymaps.Select(n => new MapStatisticModel
             {
                 Map = n.Key,
+                TitleMapMatches = GetTitleMapMatches(fixedMatches.Where(p => p.Map == n.Key).OrderByDescending(p => p.Date).ToList()),
                 TotalWins = n.Count(p => p.ResultT1 > p.ResultT2),
                 TotalLosses = n.Count(p => p.ResultT2 > p.ResultT1),
                 WinPercent = Math.Round(n.Count(p => p.ResultT1 > p.ResultT2) / (double)n.Count() * 100, 1),
@@ -428,6 +429,21 @@ namespace VirtualFlowersMVC.Data
             return result;
         }
 
+        private string GetTitleMapMatches(List<Match> MapMatches)
+        {
+            var result = "";
+            var returnSymbol = "&#010;";
+            
+            foreach (var match in MapMatches)
+            {
+                var opponentName = _db.Team.SingleOrDefault(p => p.TeamId == match.Team2Id).TeamName;
+                result += string.IsNullOrEmpty(result) ? " " : " " + returnSymbol + " ";
+                result += match.Date.ToShortDateString() + " - " + match.ResultT1 + " - " + match.ResultT2 + " " + opponentName + " (" + match.Team2RankValue + ")";
+            }
+            
+            return result;
+        }
+
         /// <summary>
         /// Take matches query and set "our" (TeamId) team always as Team1
         /// </summary>
@@ -458,7 +474,7 @@ namespace VirtualFlowersMVC.Data
                 T1Player3Id = n.Team1Id == TeamId ? n.T1Player3Id : n.T2Player3Id,
                 T1Player4Id = n.Team1Id == TeamId ? n.T1Player4Id : n.T2Player4Id,
                 T1Player5Id = n.Team1Id == TeamId ? n.T1Player5Id : n.T2Player5Id,
-                Team2Id = n.Team1Id == TeamId ? n.Team1Id : n.Team2Id,
+                Team2Id = n.Team1Id == TeamId ? n.Team2Id : n.Team1Id,
                 Team2RankValue = n.Team1Id == TeamId ? n.Team2RankValue : n.Team1RankValue,
                 T2Player1Id = n.Team1Id == TeamId ? n.T2Player1Id : n.T1Player1Id,
                 T2Player2Id = n.Team1Id == TeamId ? n.T2Player2Id : n.T1Player2Id,
