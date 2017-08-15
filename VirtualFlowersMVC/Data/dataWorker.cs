@@ -436,7 +436,9 @@ namespace VirtualFlowersMVC.Data
             
             foreach (var match in MapMatches)
             {
-                var opponentName = _db.Team.SingleOrDefault(p => p.TeamId == match.Team2Id).TeamName;
+                var opponentName = "";
+                if(_db.Team.Any(p => p.TeamId == match.Team2Id))
+                    opponentName = _db.Team.SingleOrDefault(p => p.TeamId == match.Team2Id).TeamName;
                 result += string.IsNullOrEmpty(result) ? " " : " " + returnSymbol + " ";
                 result += match.Date.ToShortDateString() + " - " + match.ResultT1 + " - " + match.ResultT2 + " " + opponentName + " (" + match.Team2RankValue + ")";
             }
