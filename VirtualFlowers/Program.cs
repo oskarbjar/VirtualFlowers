@@ -600,9 +600,11 @@ namespace VirtualFlowers
                     var getTeam2IDRank = GetTeamRank(Team2ID, Team2Name);
 
 
+
+                    var MatchID = Convert.ToInt32(matchID);
                     var match = new Match
                     {
-                        MatchId = Convert.ToInt32(matchID),
+                        MatchId = MatchID,
                         Date = dDate,
                         Map = map,
                         Event = Event,
@@ -648,6 +650,7 @@ namespace VirtualFlowers
                     if (t2Players.Length > 4)
                         match.T2Player5Id = t2Players[4].PlayerId;
 
+                    if (db.Match.Any(s => s.MatchId == MatchID)) continue;
                     db.Match.Add(match);
 
                     db.SaveChanges();
@@ -780,7 +783,6 @@ namespace VirtualFlowers
             var fullUrl = prefix + xx;
             bool team1Round1Win = false;
             bool team1Round16Win = false;
-
 
 
             HtmlDocument gameHtml = HWeb.Load(fullUrl);
