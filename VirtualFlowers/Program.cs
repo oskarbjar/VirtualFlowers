@@ -572,7 +572,7 @@ namespace VirtualFlowers
 
                     var fullUrl = prefix + xx;
 
-                    var rounds = GetRoundsV2(mathcurl);
+                    var rounds = GetRoundsV2(mathcurl, TeamId);
 
                     var players = GetTeamLineupFromDetails(fullUrl);
 
@@ -600,7 +600,12 @@ namespace VirtualFlowers
                     var getTeam2IDRank = GetTeamRank(Team2ID, Team2Name);
 
 
-
+                    var bSwitchTeams = Team1ID != TeamId;
+                    if (bSwitchTeams)
+                    {
+                        Team2ID = Team1ID;
+                        Team1ID = TeamId;
+                    }
                     var MatchID = Convert.ToInt32(matchID);
                     var match = new Match
                     {
@@ -774,7 +779,7 @@ namespace VirtualFlowers
             return newdatetime;
         }
 
-        private List<RoundHistory> GetRoundsV2(string gameUrl)
+        private List<RoundHistory> GetRoundsV2(string gameUrl, int TeamId)
         {
             var roundWinner = new List<RoundHistory>();
             var xx = gameUrl.Substring(1);
@@ -825,12 +830,11 @@ namespace VirtualFlowers
 
 
             var bla = gameHtml.DocumentNode.SelectNodes(strings);
-
-            Team1ID = GetTeamID(teamnames[0].FirstChild.Attributes["src"].Value);
+            Team1ID = GetTeamID(teamnames[0].FirstChild.Attributes["src"].Value); 
             Team2ID = GetTeamID(teamnames[1].FirstChild.Attributes["src"].Value);
 
 
-            var rounds = new RoundHistory();
+                var rounds = new RoundHistory();
             var round1Teamid = team1Round1Win ? Team1ID : Team2ID;
             var round16Teamid = team1Round16Win ? Team1ID : Team2ID;
 
