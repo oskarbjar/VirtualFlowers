@@ -35,4 +35,16 @@ namespace Models
         public int NewTeamId { get; set; }
         public string NewTeamName { get; set; }
     }
+
+    public class ScrapedMatchesInCache
+    {
+        public int MatchId { get; set; }
+        public string Name { get; set; }
+        public string Event { get; set; }
+        public DateTime Start { get; set; }
+        public DateTime CachedStart { get; set; }
+        public DateTime CachedEnd { get; set; }
+        public string SportName { get; set; }
+        public string Json { get; set; }
+    }
 }

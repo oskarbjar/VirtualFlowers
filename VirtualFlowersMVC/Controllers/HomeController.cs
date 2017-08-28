@@ -10,6 +10,7 @@ using VirtualFlowersMVC.Utility;
 using Models;
 using MemoryCache;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace VirtualFlowersMVC.Controllers
 {
@@ -235,6 +236,10 @@ namespace VirtualFlowersMVC.Controllers
                     }
                 }
 
+                //if (model != null)
+                //{
+                //    var json = JsonConvert.SerializeObject(model);
+                //}
                 return model;
             }
             catch (Exception ex)

@@ -255,8 +255,11 @@
     <Content Include="Content\Image\img6.jpg" />
     <Content Include="Content\Image\minus-sign.png" />
     <Content Include="Content\Image\money.jpeg" />
+    <Content Include="Content\Image\overview.png" />
     <Content Include="Content\Image\piggy.jpg" />
     <Content Include="Content\Image\plus-sign.png" />
+    <Content Include="Content\Image\ranking.gif" />
+    <Content Include="Content\Image\transfer.png" />
     <Content Include="Scripts\html5shiv.js" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
