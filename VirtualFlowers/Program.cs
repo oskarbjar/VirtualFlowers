@@ -103,7 +103,7 @@ namespace VirtualFlowers
 
         }
 
-        public ExpectedLineUp GetTeamLineup(string matchUrls, int team1Id = 0, int team2ID=0)
+        public ExpectedLineUp GetTeamLineup(string matchUrls, ref string EventName, int team1Id = 0, int team2ID=0)
         {
             try
             {
@@ -129,6 +129,12 @@ namespace VirtualFlowers
                
                 try
                 {
+                    // Get Event name
+                    string eventspan = $"//*[@class='event text-ellipsis']//@href";
+                    var eventnode = matchHtml.DocumentNode.SelectNodes(eventspan);
+                    EventName = eventnode.Count > 0? eventnode[0].InnerHtml : "";
+
+
                     string span1;
                     //var team1IdHtmlString = $"//*[@class='team1-gradient']";
                     span1 = $"//*[@class='lineup standard-box']";

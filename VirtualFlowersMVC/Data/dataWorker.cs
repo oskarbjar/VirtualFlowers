@@ -605,6 +605,15 @@ namespace VirtualFlowersMVC.Data
                 return Map.WinPercent;
         }
 
+        public bool AddScrapedMatch(ScrapedMatches scrapedMatch)
+        {
+            bool Result = false;
+            //_db.ScrapedMatches.Add(scrapedMatch);
+            //_db.SaveChanges();
+
+            return Result;
+        }
+
         #endregion
 
         #region RANKING

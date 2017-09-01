@@ -36,9 +36,10 @@ namespace Models
         public string NewTeamName { get; set; }
     }
 
-    public class ScrapedMatchesInCache
+    public class ScrapedMatches
     {
         public int MatchId { get; set; }
+        public string MatchUrl { get; set; }
         public string Name { get; set; }
         public string Event { get; set; }
         public DateTime Start { get; set; }

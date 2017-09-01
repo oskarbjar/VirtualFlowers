@@ -11,6 +11,7 @@ namespace VirtualFlowersMVC.Models
         public int Team1Id { get; set; }
         public int Team2Id { get; set; }
         public string MatchUrl { get; set; }
+        public string EventName { get; set; }
         public List<string> PeriodSelection { get; set; }
         public bool Scrape { get; set; }
         public bool NoCache { get; set; }

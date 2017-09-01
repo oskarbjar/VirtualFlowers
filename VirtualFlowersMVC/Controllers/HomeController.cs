@@ -142,7 +142,8 @@ namespace VirtualFlowersMVC.Controllers
             if (url.Length > 0)
             {
                 var result = _program.GetTeamIdsFromUrl(url);
-                model.ExpectedLineUp = _program.GetTeamLineup(model.MatchUrl);
+                string eventName = "";
+                model.ExpectedLineUp = _program.GetTeamLineup(model.MatchUrl, ref eventName);
                 model.Team1Id = result.Item1;
                 model.Team2Id = result.Item2;
             }
@@ -203,12 +204,12 @@ namespace VirtualFlowersMVC.Controllers
                         {
                             Program.MatchUrl = model.MatchUrl;
                             var result = _program.GetTeamIdsFromUrl(model.MatchUrl);
-                           
+
                             model.Team1Id = result.Item1;
                             model.Team2Id = result.Item2;
-
-                            model.ExpectedLineUp = _program.GetTeamLineup(model.MatchUrl, model.Team1Id, model.Team2Id);
-
+                            string EventName = "";
+                            model.ExpectedLineUp = _program.GetTeamLineup(model.MatchUrl, ref EventName, model.Team1Id, model.Team2Id);
+                            model.EventName = EventName;
                         }
                         else
                             model.ExpectedLineUp = new ExpectedLineUp();
@@ -218,7 +219,7 @@ namespace VirtualFlowersMVC.Controllers
 
                             if (model.Scrape)
                                 await _program.GetTeamDetails(model.Team1Id);
-                            model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team1Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeamId, model.NoCache, model.MinFullTeamRanking,_program.Team1Rank));
+                            model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team1Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeamId, model.NoCache, model.MinFullTeamRanking, _program.Team1Rank));
                         }
                         if (model.Team2Id > 0)
                         {
@@ -226,20 +227,29 @@ namespace VirtualFlowersMVC.Controllers
 
                             if (model.Scrape)
                                 await _program.GetTeamDetails(model.Team2Id);
-                            model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team2Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeamId, model.NoCache, model.MinFullTeamRanking,_program.Team2Rank));
+                            model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team2Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeamId, model.NoCache, model.MinFullTeamRanking, _program.Team2Rank));
                         }
 
                         if (model.Teams != null && model.Teams.Count > 0)
                         {
                             _dataWorker.GenerateSuggestedMaps(ref model);
                         }
+
+
+                        if (model != null)
+                        {
+                            ScrapedMatches scrapedMatch = new ScrapedMatches();
+                            scrapedMatch.SportName = "CS:GO";
+                            scrapedMatch.Event = model.EventName;
+                            scrapedMatch.MatchUrl = model.MatchUrl;
+                            scrapedMatch.Name = $"{model.Teams[0].TeamName} - {model.Teams[1].TeamName} {model.EventName}";
+                            scrapedMatch.Json = JsonConvert.SerializeObject(model);
+                            _dataWorker.AddScrapedMatch(scrapedMatch);
+                        }
                     }
                 }
 
-                //if (model != null)
-                //{
-                //    var json = JsonConvert.SerializeObject(model);
-                //}
+
                 return model;
             }
             catch (Exception ex)
