@@ -38,53 +38,22 @@ namespace VirtualFlowers
 
             string url = "http://www.hltv.org/matches";
             List<string> urlsList = new List<string>();
+            var matchesHtml = HWeb.Load(url);          
+            var selection2 = "//div[@class='upcoming-matches']";
+           var MatchesCollectionNodes = matchesHtml.DocumentNode.SelectNodes(selection2);           
 
-            for (int i = 1; i < 50; i++)
+            var MatchesCollection = MatchesCollectionNodes[0].ChildNodes[1].SelectNodes(".//div[@class='match-day']//@href");
+            foreach (var item in MatchesCollection)
             {
                 var objectToAdd = new UrlViewModel();
-                var htmlString = $"//*[@id='back']/div[3]/div[3]//div/div[{i}]/div[1]";
-                var matchesHtml = HWeb.Load(url);
-                var selection = matchesHtml.DocumentNode.SelectNodes(htmlString);
 
+                // var htmlString = $"//*[@id='back']/div[3]/div[3]//div/div[{i}]/div[1]";
+                var urls = item.Attributes[0].Value;
+                objectToAdd.Url = urls;
 
-                //var team1 = $"//*[@id='back']/div[3]/div[3]/div/div[{i}]/div[1]/div[4]"/*Team2*/;
-
-                //var team1Selections = matchesHtml.DocumentNode.SelectNodes(team1);
-                //var team2 = $"//*[@id='back']/div[3]/div[3]/div/div[{i}]/div[1]/div[2]"/*Team1*/;
-                //var team2Selections = matchesHtml.DocumentNode.SelectNodes(team2);
-                var detaild = $"//*[@id='back']/div[3]/div[3]/div/div[{i}]/div[1]/div[5]" /*Url*/;
-
-                var BestOf3 = $"//*[@id='back']/div[3]/div[3]/div/div[{i}]/div[1]/div[3]/div/div[1]";
-
-
-                var urls = matchesHtml.DocumentNode.SelectNodes(detaild);
-                var BestOf3Result = matchesHtml.DocumentNode.SelectNodes(BestOf3);
-
-
-
-
-                if (urls != null)
-                {
-                    var urlString = GetMatchHref(urls[0].InnerHtml);
-                    var IsBestOf3 = false;
-                    if (BestOf3Result[0].InnerText.Contains("Best of 3"))
-                    {
-                        IsBestOf3 = true;
-                    };
-
-
-
-                    var urlstring = urlString.Remove(0, 1);
-                    urlstring = urlstring.Remove(urlstring.Length - 1);
-
-                    urlsList.Add(urlstring);
-
-                    objectToAdd.Url = urlstring;
-                    objectToAdd.BestOf3 = IsBestOf3;
-                    Models.Add(objectToAdd);
-                }
-
-            }
+                Models.Add(objectToAdd);
+                
+            }            
 
             return Models;
 
@@ -905,24 +874,6 @@ namespace VirtualFlowers
             return Convert.ToInt32(htls[1]);
         }
 
-        private Tuple<int, int> getScore2(string outerHtml)
-        {
-            string[] stringSeperators = { "style=" };
-            var returnvalue = new Tuple<int, int>(int.MinValue, int.MinValue);
-            var result = outerHtml.Split(stringSeperators, StringSplitOptions.None);
-            var result2 = result[0].Substring(12, result[0].Length - 12);
-            var res3 = result2.Remove(result2.Length - 1);
-            var rounds = res3.Remove(res3.Length - 1, 1);
-
-            if (rounds == "") return returnvalue;
-            string[] roundsSeperator = { ":" };
-            var splitrounds = rounds.Split(roundsSeperator, StringSplitOptions.None);
-            returnvalue = new Tuple<int, int>(Convert.ToInt32(splitrounds[0]), Convert.ToInt32(splitrounds[1]));
-
-
-            return returnvalue;
-        }
-
         public double GetRankingValueForTeam(int TeamId, DateTime dDate)
         {
             var result = 0.5;
@@ -1105,20 +1056,6 @@ namespace VirtualFlowers
             }
 
             return lMatchID;
-        }
-
-        private Tuple<string, int> GetTeamRanking(string innerText)
-        {
-            string[] stringSeperators = { "(" };
-            string[] stringsep = { "\n-\n    "};
-            var newstring = "";
-            string results = Regex.Replace(innerText, @"\n\n?|\n", newstring);
-
-            var result = results.Split(stringSeperators, StringSplitOptions.None);
-            var rounds = result[1].Remove(result[1].Length - 9);
-            var tupleString = new Tuple<string, int>(result[0].TrimStart(), Convert.ToInt32(rounds));
-            return tupleString;
-
         }
 
         public Tuple<int, int> GetTeamIdsFromUrl(string matchUrls = "")

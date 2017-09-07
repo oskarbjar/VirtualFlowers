@@ -110,7 +110,7 @@ namespace VirtualFlowersMVC.Controllers
             foreach (var item in result)
             {
                 var statsModel = new CompareStatisticModel();
-                statsModel.MatchUrl = "http://www.hltv.org" + item;
+                statsModel.MatchUrl = "http://www.hltv.org" + item.Url;
                 statsModel.Scrape = true;
                 statsModel.PeriodSelection = PeriodSelection;
                 await runCompare(statsModel);
