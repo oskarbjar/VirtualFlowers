@@ -323,7 +323,7 @@ namespace VirtualFlowersMVC.Data
             foreach (var match in Map)
             {
                 int FTRank = 0;
-                if (match.Team1Id == TeamId && expectedLinup != null)
+                if ((match.Team1Id == TeamId || match.Team1Id == secondaryTeamId) && expectedLinup != null)
                 {
                     if (secondaryTeamId > 0)
                     {
