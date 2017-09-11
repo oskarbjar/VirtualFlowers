@@ -492,10 +492,6 @@ namespace VirtualFlowers
 
                     var dateString = statstableRow.ChildNodes[1].InnerText;
                     var dDate = NewDate(dateString);
-                    var StopDate = DateTime.Today.AddMonths(-6);
-
-                    var dateCompare = DateTime.Compare(dDate, StopDate);
-
                     if (dDate < lastScraped.AddDays(-1) || dDate < DateTime.Now.AddMonths(-6))
                     {
                         // And we have added some records
@@ -510,25 +506,7 @@ namespace VirtualFlowers
                         return Task.FromResult(0);
                     }
 
-                    //We stop scraping when the data is older then six  months - We only need six months of initial data
-                    /* if (dateCompare < 0)
-                         relationship = "is earlier than";
-                     else if (dateCompare == 0)
-                         relationship = "is the same time as";
-                     else
-                         relationship = "is later than";*/
-
-
-                    if (dateCompare < 0)
-                    {
-                        return Task.FromResult(0);
-                    }
-
-
-
-
-
-
+                   
                     var matchID = GetMatchIDS(statstableRow.ChildNodes[1].InnerHtml);
                     var matchUrl = GetMatchUrl(statstableRow.ChildNodes[1].InnerHtml);
 
