@@ -523,7 +523,7 @@ namespace VirtualFlowers
                     var dateString = statstableRow.ChildNodes[1].InnerText;
                     var dDate = NewDate(dateString);
 
-                    if (dDate < lastScraped.AddDays(-1) || dDate < DateTime.Now.AddYears(-1))
+                    if (dDate < lastScraped.AddDays(-1) || dDate < DateTime.Now.AddMonths(-6))
                     {
                         // And we have added some records
                         if (lCounter > 0 || !history.Any())
