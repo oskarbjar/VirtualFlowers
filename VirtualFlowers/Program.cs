@@ -660,25 +660,31 @@ namespace VirtualFlowers
             var rankUrl = $"https://www.hltv.org/team/{teamID}/{teamName}/";
 
             HtmlDocument rankHtml = HWeb.Load(rankUrl);
-            var test = rankHtml.DocumentNode.SelectNodes("/html/body/div[2]/div/div[2]/div[1]/div/div[2]/div[6]/a");
+            //var test = rankHtml.DocumentNode.SelectNodes("/html/body/div[2]/div/div[2]/div[1]/div/div[2]/div[6]/a");
 
-          
+            // Get ranked
+            var rank = rankHtml.DocumentNode.Descendants("a") // All <a links
+                                  .Where(d => d.Attributes.Contains("href") // contains href attribute
+                                    && d.Attributes["href"].Value.Contains("/ranking/teams") // with this value
+                                    && d.InnerHtml.Contains("Ranked")) // and this text in innerHtml
+                                  .Select(p => p.InnerHtml).FirstOrDefault(); // return InnerHtml
+            
 
-
-            if (test != null)
+            if (!string.IsNullOrEmpty(rank))
             {
-                if (test.Count > 1)
-                {
-                    test = rankHtml.DocumentNode.SelectNodes("/html/body/div[2]/div/div[2]/div[1]/div/div[2]/div[6]/a[3]");
-                    if(test != null)
-                        return test[0].InnerHtml.ToString();
-                    else
-                        return "No rank";
-                }
-                else
-                {
-                    return test[0].InnerHtml.ToString();
-                }
+                return rank;
+                //if (test.Count > 1)
+                //{
+                //    test = rankHtml.DocumentNode.SelectNodes("/html/body/div[2]/div/div[2]/div[1]/div/div[2]/div[6]/a[3]");
+                //    if(test != null)
+                //        return test[0].InnerHtml.ToString();
+                //    else
+                //        return "No rank";
+                //}
+                //else
+                //{
+                //    return test[0].InnerHtml.ToString();
+                //}
                 
             }
             else
