@@ -38,14 +38,15 @@ namespace Models
 
     public class ScrapedMatches
     {
+        public int Id { get; set; }
         public int MatchId { get; set; }
         public string MatchUrl { get; set; }
         public string Name { get; set; }
         public string Event { get; set; }
         public DateTime Start { get; set; }
-        public DateTime CachedStart { get; set; }
-        public DateTime CachedEnd { get; set; }
         public string SportName { get; set; }
         public string Json { get; set; }
+        public string Json4MinFTR { get; set; }
+        public string Json5MinFTR { get; set; }
     }
 }
