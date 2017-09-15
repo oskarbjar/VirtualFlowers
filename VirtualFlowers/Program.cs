@@ -72,7 +72,7 @@ namespace VirtualFlowers
 
         }
 
-        public ExpectedLineUp GetTeamLineup(string matchUrls, ref string EventName, int team1Id = 0, int team2ID=0)
+        public ExpectedLineUp GetTeamLineup(string matchUrls, int team1Id = 0, int team2ID=0)
         {
             try
             {
@@ -90,19 +90,45 @@ namespace VirtualFlowers
                 var url = matchUrls;
 
                 var MoreInfo = HWeb.Load(url);
-                var matchHtml = HWeb.Load(MatchUrl);
+                var matchHtml = HWeb.Load(matchUrls);
                 var span1Name = new HtmlNodeCollection(HtmlNode.CreateNode(""));
                 var span2Name = new HtmlNodeCollection(HtmlNode.CreateNode(""));
 
                 Team1Rank = GetTeamRank(team1Id, Team1Name);
-               
+
                 try
                 {
                     // Get Event name
                     string eventspan = $"//*[@class='event text-ellipsis']//@href";
                     var eventnode = matchHtml.DocumentNode.SelectNodes(eventspan);
-                    EventName = eventnode.Count > 0? eventnode[0].InnerHtml : "";
+                    expectedLineUp.EventName = eventnode.Count > 0 ? eventnode[0].InnerHtml : "";
 
+                    // Get MatchId
+                    var urlSplit = url.Split('/');
+                    bool next = false;
+                    int matchid = 0;
+                    foreach (var str in urlSplit)
+                    {
+                        if (next && int.TryParse(str, out matchid))
+                        {
+                            expectedLineUp.MatchId = matchid;
+                            break;
+                        }
+                        if (str == "matches")
+                            next = true;
+                    }
+
+                    // Get Start
+                    var startUnix = matchHtml.DocumentNode.Descendants("div") // All <a links
+                                          .Where(d => d.Attributes.Contains("class") // contains href attribute
+                                        && d.Attributes["class"].Value.Contains("date") // with this value
+                                        && d.Attributes.Contains("data-unix")) // contains href attribute
+                                          .Select(p => p.Attributes["data-unix"].Value).FirstOrDefault(); // return InnerHtml
+                    
+                    DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
+                    double dUnix;
+                    if (!string.IsNullOrEmpty(startUnix) && double.TryParse(startUnix, out dUnix))
+                        expectedLineUp.Start = dtDateTime.AddMilliseconds(dUnix).ToLocalTime();
 
                     string span1;
                     //var team1IdHtmlString = $"//*[@class='team1-gradient']";
@@ -507,7 +533,10 @@ namespace VirtualFlowers
                     }
 
                    
-                    var matchID = GetMatchIDS(statstableRow.ChildNodes[1].InnerHtml);
+                    int MatchID = GetMatchIDS(statstableRow.ChildNodes[1].InnerHtml);
+                    if (MatchID == 0 || db.Match.Any(s => s.MatchId == MatchID))
+                        continue;
+
                     var matchUrl = GetMatchUrl(statstableRow.ChildNodes[1].InnerHtml);
 
                     var xx = matchUrl.Substring(1);
@@ -538,18 +567,13 @@ namespace VirtualFlowers
                         bHasCreatedCurrentTeam = true;
                     }
                     CheckIfNeedToCreateTeam(Team2ID, Team2Name);
-
-                    var GetTeam1IDRank = GetTeamRank(Team1ID,Team1Name);
-                    var getTeam2IDRank = GetTeamRank(Team2ID, Team2Name);
-
-
+                    
                     var bSwitchTeams = Team1ID != TeamId;
                     if (bSwitchTeams)
                     {
                         Team2ID = Team1ID;
                         Team1ID = TeamId;
                     }
-                    var MatchID = Convert.ToInt32(matchID);
                     var match = new Match
                     {
                         MatchId = MatchID,
@@ -620,32 +644,34 @@ namespace VirtualFlowers
             return Task.FromResult(0);
         }
 
-        private string GetTeamRank(int teamID,string teamName)
+        private string GetTeamRank(int teamID, string teamName)
         {
-            var rankUrl = $"https://www.hltv.org/team/{teamID}/{teamName}/";
-
-            HtmlDocument rankHtml = HWeb.Load(rankUrl);
-
-            // Get ranked
-            var rank = rankHtml.DocumentNode.Descendants("a") // All <a links
-                                  .Where(d => d.Attributes.Contains("href") // contains href attribute
-                                    && d.Attributes["href"].Value.Contains("/ranking/teams") // with this value
-                                    && d.InnerHtml.Contains("Ranked")) // and this text in innerHtml
-                                  .Select(p => p.InnerHtml).FirstOrDefault(); // return InnerHtml
-            
-
-            if (!string.IsNullOrEmpty(rank))
+            string result = "No rank";
+            try
             {
-                return rank;
-                
+                var rankUrl = $"https://www.hltv.org/team/{teamID}/{teamName.Replace("#", "")}/";
+
+                HtmlDocument rankHtml = HWeb.Load(rankUrl);
+
+                // Get ranked
+                var rank = rankHtml.DocumentNode.Descendants("a") // All <a links
+                                      .Where(d => d.Attributes.Contains("href") // contains href attribute
+                                        && d.Attributes["href"].Value.Contains("/ranking/teams") // with this value
+                                        && d.InnerHtml.Contains("Ranked")) // and this text in innerHtml
+                                      .Select(p => p.InnerHtml).FirstOrDefault(); // return InnerHtml
+
+
+                if (!string.IsNullOrEmpty(rank))
+                {
+                    result = rank;
+
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return "No rank";
-
+                // do nothing
             }
-
-
+            return result;
         }
 
         /// <summary>
@@ -664,13 +690,16 @@ namespace VirtualFlowers
             return returnvalue;
         }
 
-        private object GetMatchIDS(string innerHtml)
+        private int GetMatchIDS(string innerHtml)
         {
             int id = 0;
             string[] stringSeperators = { "/" };
             var IdArray = innerHtml.Split(stringSeperators, StringSplitOptions.None);
 
-            return IdArray[4];
+            if (int.TryParse(IdArray[4], out id))
+                return id;
+            else
+                return 0;
         }
 
         private string GetMatchUrl(string innerHtml)

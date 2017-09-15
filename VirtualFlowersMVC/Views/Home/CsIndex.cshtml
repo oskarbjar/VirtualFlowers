@@ -1,0 +1,45 @@
+﻿
+@{
+    ViewBag.Title = "Betsack";
+    Layout = "~/Views/Shared/_LayoutNew.cshtml";
+}
+
+@model IEnumerable<Models.ScrapedMatches>
+
+
+<h2>Cs:Go Matches</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Start)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Event)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @item.Start.ToString("dd.MMMMM hh:mm")
+            </td>
+            <td>
+                <a href="@Url.Action("LoadCompare", "Home", new { id = item.Id })">
+                    @item.Name
+                </a>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Event)
+            </td>
+        </tr>
+    }
+
+</table>
+
+

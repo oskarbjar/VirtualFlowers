@@ -16,6 +16,8 @@ namespace VirtualFlowersMVC.Models
         public bool Scrape { get; set; }
         public bool NoCache { get; set; }
         public int MinFullTeamRanking { get; set; }
+        public bool FromJson { get; set; }
+        public int ScrapeMatchId { get; set; }
         public List<TeamStatisticPeriodModel> Teams { get; set; }
         public ExpectedLineUp ExpectedLineUp { get; set; }
 

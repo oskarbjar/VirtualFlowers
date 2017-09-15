@@ -153,7 +153,7 @@ namespace VirtualFlowersMVC.Data
             List<Match> fixedMatches = null;
 
             // Create Cachekey from parameters
-            var CACHEKEY = "cacheKey:TeamId=" + TeamId + "-DateFrom=" + dFrom.ToString() + "-dTo=" + dTo.ToString();
+            var CACHEKEY = "cacheKey:TeamId=" + TeamId + "-DateFrom=" + dFrom.Date.ToString() + "-dTo=" + dTo.Date.ToString();
 
             // If we have object in cache, return it
             if (NoCache && Cache.Exists(CACHEKEY))
@@ -605,11 +605,25 @@ namespace VirtualFlowersMVC.Data
                 return Map.WinPercent;
         }
 
-        public bool AddScrapedMatch(ScrapedMatches scrapedMatch)
+        public bool AddScrapedMatch(ScrapedMatches scrapedMatch, int MinFTR)
         {
             bool Result = false;
-            //_db.ScrapedMatches.Add(scrapedMatch);
-            //_db.SaveChanges();
+            var model = new ScrapedMatches();
+            if (_db.ScrapedMatches.Any(p => p.MatchId == scrapedMatch.MatchId))
+            {
+                model = _db.ScrapedMatches.Single(p => p.MatchId == scrapedMatch.MatchId);
+                model.MatchId = scrapedMatch.MatchId;
+                model.MatchUrl = scrapedMatch.MatchUrl;
+                model.Name = scrapedMatch.Name;
+                model.SportName = scrapedMatch.SportName;
+                model.Start = scrapedMatch.Start;
+                model.Json = MinFTR==0 || MinFTR ==-1? scrapedMatch.Json : model.Json;
+                model.Json4MinFTR = MinFTR == 4 || MinFTR == -1 ? scrapedMatch.Json4MinFTR : model.Json4MinFTR;
+                model.Json5MinFTR = MinFTR == 5 || MinFTR == -1 ? scrapedMatch.Json5MinFTR : model.Json5MinFTR;
+            }
+            else
+                _db.ScrapedMatches.Add(scrapedMatch);
+            _db.SaveChanges();
 
             return Result;
         }
@@ -629,6 +643,27 @@ namespace VirtualFlowersMVC.Data
                     TeamName = _db.Team.FirstOrDefault(k => k.TeamId == rank.TeamId).TeamName,
                     Points = rank.Points
                 }).ToList();
+
+            return result;
+        }
+
+        #endregion
+
+        #region SCRAPED MATCHES
+
+        public List<ScrapedMatches> GetScrapedMatches(int days)
+        {
+            List<ScrapedMatches> result = new List<ScrapedMatches>();
+            DateTime dDate = DateTime.Now.AddDays(days * -1);
+            result = _db.ScrapedMatches.Where(p => p.Start > dDate).ToList();
+
+            return result;
+        }
+
+        public ScrapedMatches GetScrapedMatch(int id)
+        {
+            ScrapedMatches result = new ScrapedMatches();
+            result = _db.ScrapedMatches.Single(p => p.Id == id);
 
             return result;
         }

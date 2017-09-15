@@ -46,11 +46,14 @@
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
                         <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                        <li>@Html.ActionLink("Cs:Go", "Compare", "Home")</li>
                         <li>@Html.ActionLink("About", "About", "Home")</li>
                         <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
                     </ul>
-                    @Html.Partial("_LoginPartial")
-                </div><!--/.navbar-collapse -->
+                    <ul style="float:right">
+                        @Html.Partial("_LoginPartial")
+                    </ul>
+</div><!--/.navbar-collapse -->
             </div>
         </div>
         <div class="mini-menu">

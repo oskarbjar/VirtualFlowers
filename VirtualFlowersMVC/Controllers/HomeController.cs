@@ -124,6 +124,7 @@ namespace VirtualFlowersMVC.Controllers
 
             var PeriodSelection = new List<string>();
             PeriodSelection.Add("3");
+            PeriodSelection.Add("6");
             var model = new CompareStatisticModel();
 
             if (!url.Contains("http://www.hltv.org/"))
@@ -142,10 +143,9 @@ namespace VirtualFlowersMVC.Controllers
             if (url.Length > 0)
             {
                 var result = _program.GetTeamIdsFromUrl(url);
-                string eventName = "";
-                model.ExpectedLineUp = _program.GetTeamLineup(model.MatchUrl, ref eventName);
                 model.Team1Id = result.Item1;
                 model.Team2Id = result.Item2;
+                model.ExpectedLineUp = _program.GetTeamLineup(model.MatchUrl, model.Team1Id, model.Team2Id);
             }
 
             #region "Hægt að nota svona til að scrapa allt"
@@ -168,24 +168,58 @@ namespace VirtualFlowersMVC.Controllers
 
             if (model.Team1Id > 0)
             {
-                var secondaryTeamId = _dataWorker.GetSecondaryTeamId(model.Team1Id);
 
                 if (model.Scrape)
                     await _program.GetTeamDetails(model.Team1Id);
-                model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team1Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeamId, model.NoCache, model.MinFullTeamRanking, _program.Team1Rank));
+                //model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team1Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeamId, model.NoCache, model.MinFullTeamRanking, _program.Team1Rank));
             }
             if (model.Team2Id > 0)
             {
-                var secondaryTeamId = _dataWorker.GetSecondaryTeamId(model.Team2Id);
+                //var secondaryTeamId = _dataWorker.GetSecondaryTeamId(model.Team2Id);
 
                 if (model.Scrape)
                     await _program.GetTeamDetails(model.Team2Id);
-                model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team2Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeamId, model.NoCache, model.MinFullTeamRanking, _program.Team2Rank));
+                //model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team2Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeamId, model.NoCache, model.MinFullTeamRanking, _program.Team2Rank));
             }
 
-            if (model.Teams != null && model.Teams.Count > 0)
+            if (model.Team1Id > 0 && model.Team2Id > 0)
             {
-                _dataWorker.GenerateSuggestedMaps(ref model);
+                var secondaryTeam1Id = _dataWorker.GetSecondaryTeamId(model.Team1Id);
+                var secondaryTeam2Id = _dataWorker.GetSecondaryTeamId(model.Team2Id);
+
+                List<int> FTR = new List<int> { 0, 4, 5 };
+                List<Tuple<int, string>> jsonlist = new List<Tuple<int, string>>();
+                foreach (int ftr in FTR)
+                {
+                    model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team1Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeam1Id, model.NoCache, ftr, _program.Team1Rank));
+                    model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team2Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeam2Id, model.NoCache, ftr, _program.Team2Rank));
+                    if (model.Teams != null && model.Teams.Count > 0)
+                    {
+                        _dataWorker.GenerateSuggestedMaps(ref model);
+                    }
+                    if (model != null)
+                    {
+                        jsonlist.Add(new Tuple<int, string>(ftr, JsonConvert.SerializeObject(model)));
+                    }
+
+                }
+                if (jsonlist.Count > 0)
+                {
+                    ScrapedMatches scrapedMatch = new ScrapedMatches();
+                    scrapedMatch.SportName = "CS:GO";
+                    scrapedMatch.Event = model.ExpectedLineUp.EventName;
+                    scrapedMatch.MatchId = model.ExpectedLineUp.MatchId;
+                    scrapedMatch.Start = model.ExpectedLineUp.Start;
+                    scrapedMatch.MatchUrl = model.MatchUrl;
+                    scrapedMatch.Name = $"{model.Teams[0].TeamName} - {model.Teams[1].TeamName}";
+                    if (jsonlist.Any(p => p.Item1 == 4))
+                        scrapedMatch.Json4MinFTR = jsonlist.Single(p => p.Item1 == 4).Item2;
+                    if (jsonlist.Any(p => p.Item1 == 5))
+                        scrapedMatch.Json5MinFTR = jsonlist.Single(p => p.Item1 == 5).Item2;
+                    if (jsonlist.Any(p => p.Item1 == 0))
+                        scrapedMatch.Json = jsonlist.Single(p => p.Item1 == 0).Item2;
+                    _dataWorker.AddScrapedMatch(scrapedMatch, -1);
+                }
             }
 
             return View(model);
@@ -207,9 +241,7 @@ namespace VirtualFlowersMVC.Controllers
 
                             model.Team1Id = result.Item1;
                             model.Team2Id = result.Item2;
-                            string EventName = "";
-                            model.ExpectedLineUp = _program.GetTeamLineup(model.MatchUrl, ref EventName, model.Team1Id, model.Team2Id);
-                            model.EventName = EventName;
+                            model.ExpectedLineUp = _program.GetTeamLineup(model.MatchUrl, model.Team1Id, model.Team2Id);
                         }
                         else
                             model.ExpectedLineUp = new ExpectedLineUp();
@@ -240,11 +272,18 @@ namespace VirtualFlowersMVC.Controllers
                         {
                             ScrapedMatches scrapedMatch = new ScrapedMatches();
                             scrapedMatch.SportName = "CS:GO";
-                            scrapedMatch.Event = model.EventName;
+                            scrapedMatch.Event = model.ExpectedLineUp.EventName;
+                            scrapedMatch.MatchId = model.ExpectedLineUp.MatchId;
+                            scrapedMatch.Start = model.ExpectedLineUp.Start;
                             scrapedMatch.MatchUrl = model.MatchUrl;
-                            scrapedMatch.Name = $"{model.Teams[0].TeamName} - {model.Teams[1].TeamName} {model.EventName}";
-                            scrapedMatch.Json = JsonConvert.SerializeObject(model);
-                            _dataWorker.AddScrapedMatch(scrapedMatch);
+                            scrapedMatch.Name = $"{model.Teams[0].TeamName} - {model.Teams[1].TeamName}";
+                            if(model.MinFullTeamRanking == 4)
+                                scrapedMatch.Json4MinFTR = JsonConvert.SerializeObject(model);
+                            else if(model.MinFullTeamRanking == 5)
+                                scrapedMatch.Json5MinFTR = JsonConvert.SerializeObject(model);
+                            else
+                                scrapedMatch.Json = JsonConvert.SerializeObject(model);
+                            _dataWorker.AddScrapedMatch(scrapedMatch, model.MinFullTeamRanking);
                         }
                     }
                 }
@@ -258,6 +297,35 @@ namespace VirtualFlowersMVC.Controllers
                 ModelState.AddModelError("", ex.Message);
                 return new CompareStatisticModel();
             }
+        }
+
+
+        // GET: CsIndex
+        public ActionResult CsIndex()
+        {
+            var result = _dataWorker.GetScrapedMatches(100);
+
+            return View(result);
+        }
+
+        // GET: LoadCompare
+        public ActionResult LoadCompare(int id, int MinFTR = 0)
+        {
+            CompareStatisticModel model = new CompareStatisticModel();
+            var match = _dataWorker.GetScrapedMatch(id);
+            if (match != null)
+            {
+                if (MinFTR == 5)
+                    model = JsonConvert.DeserializeObject<CompareStatisticModel>(match.Json5MinFTR);
+                else if (MinFTR == 4)
+                    model = JsonConvert.DeserializeObject<CompareStatisticModel>(match.Json4MinFTR);
+                else
+                    model = JsonConvert.DeserializeObject<CompareStatisticModel>(match.Json);
+            }
+            model.FromJson = true;
+            model.ScrapeMatchId = id;
+            model.MinFullTeamRanking = MinFTR;
+            return View(model);
         }
     }
 }

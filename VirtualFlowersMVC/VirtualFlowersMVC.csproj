@@ -363,6 +363,8 @@
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="Views\Home\CsIndex.cshtml" />
+    <Content Include="Views\Home\LoadCompare.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

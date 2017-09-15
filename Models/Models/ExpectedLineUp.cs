@@ -10,6 +10,9 @@ namespace Models
     [NotMapped]
     public class ExpectedLineUp
     {
+        public DateTime Start { get; set; }
+        public int MatchId { get; set; }
+        public string EventName { get; set; }
         public List<Player> Players { get; set; }
 
         public ExpectedLineUp()

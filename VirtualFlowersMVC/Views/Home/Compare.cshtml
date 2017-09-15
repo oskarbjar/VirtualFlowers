@@ -9,13 +9,23 @@
         color: black;
         font-family: 'source_sans_prolight';
     }
+    .FTRButton {
+        color: #fff; 
+        background: #34b091; 
+        font-size: 12px; 
+        font-family: 'source_sans_problack'; 
+        border-radius: 30px; 
+        text-transform: uppercase; 
+        line-height: 13px;
+    }
 </style>
 
 <div class="featured-item">
     <div class="block">
         <div class="block-title">
             <h1>@Html.ActionLink("Compare", "Compare", new { }, new { style = "text-decoration:none; color: #454855;" })</h1>
-            <h2>Compare cs go teams by teamid or match-url (hltv.org)</h2>
+            @if (Model != null && Model.ExpectedLineUp != null && Model.ExpectedLineUp.EventName != null)
+            { <h4>@Model.ExpectedLineUp.EventName</h4>}
         </div>
     </div>
     
@@ -65,7 +75,7 @@
     <script>
         $(document).ready(function () {
             $('.loading').fadeOut('slow');
-            
+
             $("#CompareBtn").click(function () {
                 // Loading spinner
                 $('.loading').fadeIn('fast');
@@ -80,6 +90,5 @@
                 var trClass = this.className.replace('mapline ', '');
                 $("." + trClass).css("background-color", "");
             });
-
         });
     </script>
