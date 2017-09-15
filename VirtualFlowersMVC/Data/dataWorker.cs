@@ -605,13 +605,13 @@ namespace VirtualFlowersMVC.Data
                 return Map.WinPercent;
         }
 
-        public bool AddScrapedMatch(ScrapedMatches scrapedMatch, int MinFTR)
+        public int AddScrapedMatch(ScrapedMatches scrapedMatch, int MinFTR)
         {
-            bool Result = false;
             var model = new ScrapedMatches();
             if (_db.ScrapedMatches.Any(p => p.MatchId == scrapedMatch.MatchId))
             {
                 model = _db.ScrapedMatches.Single(p => p.MatchId == scrapedMatch.MatchId);
+                scrapedMatch.Id = model.Id;
                 model.MatchId = scrapedMatch.MatchId;
                 model.MatchUrl = scrapedMatch.MatchUrl;
                 model.Name = scrapedMatch.Name;
@@ -625,7 +625,7 @@ namespace VirtualFlowersMVC.Data
                 _db.ScrapedMatches.Add(scrapedMatch);
             _db.SaveChanges();
 
-            return Result;
+            return scrapedMatch.Id;
         }
 
         #endregion

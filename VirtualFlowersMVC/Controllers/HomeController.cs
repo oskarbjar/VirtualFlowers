@@ -120,8 +120,8 @@ namespace VirtualFlowersMVC.Controllers
 
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult> SendToCompare(string url)
-        {          
-
+        {
+            var scrapedmatchid = 0;
             var PeriodSelection = new List<string>();
             PeriodSelection.Add("3");
             PeriodSelection.Add("6");
@@ -191,6 +191,7 @@ namespace VirtualFlowersMVC.Controllers
                 List<Tuple<int, string>> jsonlist = new List<Tuple<int, string>>();
                 foreach (int ftr in FTR)
                 {
+                    model.Teams = new List<TeamStatisticPeriodModel>();
                     model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team1Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeam1Id, model.NoCache, ftr, _program.Team1Rank));
                     model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team2Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeam2Id, model.NoCache, ftr, _program.Team2Rank));
                     if (model.Teams != null && model.Teams.Count > 0)
@@ -218,11 +219,11 @@ namespace VirtualFlowersMVC.Controllers
                         scrapedMatch.Json5MinFTR = jsonlist.Single(p => p.Item1 == 5).Item2;
                     if (jsonlist.Any(p => p.Item1 == 0))
                         scrapedMatch.Json = jsonlist.Single(p => p.Item1 == 0).Item2;
-                    _dataWorker.AddScrapedMatch(scrapedMatch, -1);
+                    scrapedmatchid = _dataWorker.AddScrapedMatch(scrapedMatch, -1);
                 }
             }
 
-            return View(model);
+            return RedirectToAction("LoadCompare", new { id = scrapedmatchid, MinFTR = 0});
   
         }
 
