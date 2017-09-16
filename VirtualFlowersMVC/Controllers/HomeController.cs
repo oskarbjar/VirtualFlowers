@@ -304,7 +304,8 @@ namespace VirtualFlowersMVC.Controllers
         // GET: CsIndex
         public ActionResult CsIndex()
         {
-            var result = _dataWorker.GetScrapedMatches(100);
+            int ShowHourHistory = -6;
+            var result = _dataWorker.GetScrapedMatches(ShowHourHistory);
 
             return View(result);
         }
@@ -313,17 +314,35 @@ namespace VirtualFlowersMVC.Controllers
         public ActionResult LoadCompare(int id, int MinFTR = 0)
         {
             CompareStatisticModel model = new CompareStatisticModel();
-            var match = _dataWorker.GetScrapedMatch(id);
-            if (match != null)
+            ScrapedMatches match = new ScrapedMatches();
+            // Create Cachekey from parameters
+            var CACHEKEY = $"cacheKey:MatchId={id}-MinFTR={MinFTR}";
+
+            // If we have object in cache, return it
+            if (Cache.Exists(CACHEKEY))
+                model = (CompareStatisticModel)Cache.Get(CACHEKEY);
+            else
             {
-                if (MinFTR == 5)
-                    model = JsonConvert.DeserializeObject<CompareStatisticModel>(match.Json5MinFTR);
-                else if (MinFTR == 4)
-                    model = JsonConvert.DeserializeObject<CompareStatisticModel>(match.Json4MinFTR);
-                else
-                    model = JsonConvert.DeserializeObject<CompareStatisticModel>(match.Json);
+                match = _dataWorker.GetScrapedMatch(id);
+
+                if (match != null)
+                {
+                    if (MinFTR == 5)
+                        model = JsonConvert.DeserializeObject<CompareStatisticModel>(match.Json5MinFTR);
+                    else if (MinFTR == 4)
+                        model = JsonConvert.DeserializeObject<CompareStatisticModel>(match.Json4MinFTR);
+                    else
+                        model = JsonConvert.DeserializeObject<CompareStatisticModel>(match.Json);
+                }
+
+                // Save in cache
+                if (!string.IsNullOrEmpty(CACHEKEY) && !Cache.Exists(CACHEKEY))
+                {
+                    int storeTime = 1000 * 3600 * 24 * 2; // store 2 days
+                    Cache.Store(CACHEKEY, model, storeTime);
+                }
             }
-            model.FromJson = true;
+           
             model.ScrapeMatchId = id;
             model.MinFullTeamRanking = MinFTR;
             return View(model);

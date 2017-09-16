@@ -7,6 +7,7 @@ using System.Web;
 using VirtualFlowers;
 using System.Threading.Tasks;
 using MemoryCache;
+using Newtonsoft.Json;
 
 namespace VirtualFlowersMVC.Data
 {
@@ -608,8 +609,10 @@ namespace VirtualFlowersMVC.Data
         public int AddScrapedMatch(ScrapedMatches scrapedMatch, int MinFTR)
         {
             var model = new ScrapedMatches();
+            bool bOldRecord = false;
             if (_db.ScrapedMatches.Any(p => p.MatchId == scrapedMatch.MatchId))
             {
+                bOldRecord = true;
                 model = _db.ScrapedMatches.Single(p => p.MatchId == scrapedMatch.MatchId);
                 scrapedMatch.Id = model.Id;
                 model.MatchId = scrapedMatch.MatchId;
@@ -624,6 +627,34 @@ namespace VirtualFlowersMVC.Data
             else
                 _db.ScrapedMatches.Add(scrapedMatch);
             _db.SaveChanges();
+
+
+            if(bOldRecord && MinFTR == -1 && scrapedMatch.Id > 0)
+            {
+                int storeTime = 1000 * 3600 * 24 * 2; // store 2 days
+                // Remove all cachekeys, since we got new data
+                var CACHEKEY = $"cacheKey:MatchId={scrapedMatch.Id}-MinFTR=0";
+                if (Cache.Exists(CACHEKEY))
+                {
+                    Cache.Update(CACHEKEY, JsonConvert.DeserializeObject<CompareStatisticModel>(model.Json));
+                }
+                else
+                    Cache.Store(CACHEKEY, JsonConvert.DeserializeObject<CompareStatisticModel>(model.Json), storeTime);
+                CACHEKEY = $"cacheKey:MatchId={scrapedMatch.Id}-MinFTR=4";
+                if (Cache.Exists(CACHEKEY))
+                {
+                    Cache.Update(CACHEKEY, JsonConvert.DeserializeObject<CompareStatisticModel>(model.Json4MinFTR));
+                }
+                else
+                    Cache.Store(CACHEKEY, JsonConvert.DeserializeObject<CompareStatisticModel>(model.Json4MinFTR), storeTime);
+                CACHEKEY = $"cacheKey:MatchId={scrapedMatch.Id}-MinFTR=5";
+                if (Cache.Exists(CACHEKEY))
+                {
+                    Cache.Update(CACHEKEY, JsonConvert.DeserializeObject<CompareStatisticModel>(model.Json5MinFTR));
+                }
+                else
+                    Cache.Store(CACHEKEY, JsonConvert.DeserializeObject<CompareStatisticModel>(model.Json5MinFTR), storeTime);
+            }
 
             return scrapedMatch.Id;
         }
@@ -651,11 +682,11 @@ namespace VirtualFlowersMVC.Data
 
         #region SCRAPED MATCHES
 
-        public List<ScrapedMatches> GetScrapedMatches(int days)
+        public List<ScrapedMatches> GetScrapedMatches(int hours)
         {
             List<ScrapedMatches> result = new List<ScrapedMatches>();
-            DateTime dDate = DateTime.Now.AddDays(days * -1);
-            result = _db.ScrapedMatches.Where(p => p.Start > dDate).ToList();
+            DateTime dDate = DateTime.Now.AddHours(hours);
+            result = _db.ScrapedMatches.Where(p => p.Start > dDate).OrderBy(p => p.Start).ToList();
 
             return result;
         }
