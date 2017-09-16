@@ -62,14 +62,14 @@ namespace VirtualFlowersMVC.Controllers
 
         public ActionResult About()
         {
-            ViewBag.Message = "Your application description page.";
+            //ViewBag.Message = "Abot us.";
 
             return View();
         }
 
         public ActionResult Contact()
         {
-            ViewBag.Message = "Your contact page.";
+            ViewBag.Message = "See some error, some ideas or just tell us how awesome we are, contact below :)";
 
             return View();
         }
