@@ -1,46 +1,60 @@
-﻿@model IEnumerable<VirtualFlowersMVC.Models.OverViewViewModel>
-
+﻿@model List<VirtualFlowersMVC.Models.OverViewViewModel>
 @{
-    ViewBag.Title = "Overview";
+    ViewBag.Title = "Index";
+
+
 }
 
-<h2>Overview</h2>
-<form action="Overview" method="post" class="form-inline">
-    <input type="submit" class="btn btn-primary" id="CompareBtn" value="Scrape All" />
-    <img class="loading" src="~/Content/ajax-loader.gif" alt="loader" style="display:none" />
-</form>
+<h2>Index</h2>
 
-<table class="table">
-    <tr>
-        <th>
-            Cached
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Url)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.BestOf3)
-        </th>
-        <th></th>
-    </tr>
+@using (Html.BeginForm())
+{
+    @*foreach (var item in Model)
+    {
+        <table>
+            <tr>
+                <td>
+                    @Html.DisplayFor(var => item.Id)
+                </td>
+                <td>
+                    <a href="@item.Url">@item.Url</a>
+                </td>
+                @*<td>
+                        @Html.DisplayFor(modelItem => item.BestOf3)
+                    </td>*@
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-           @Html.DisplayFor(modelItem => item.Cached)
-        </td>
-        <td>
-          <a href="@item.Url">@item.Url</a>
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.BestOf3)
-        </td>
-        <td>
-            @*@Html.ActionLink("Edit", "Edit", new { id=item.Id }) |*@
-            @Html.ActionLink("Scrape", "SendToCompare", new { url=item.Url })
-           @* @Html.ActionLink("Delete", "Delete", new { id=item.Id })*@
-        </td>
-    </tr>
-}
+                @*<td>
+                    @Html.CheckBoxFor(modelItem => item.Checked)
+                </td>
+            </tr>
+        </table>
+    }*@
 
-</table>
+
+    for (var i = 0; i < Model.Count(); i++)
+    {
+
+
+        <table>
+            <tr>
+                <td>
+                    @Html.HiddenFor(it => it[i].Id)
+                    @Html.HiddenFor(it => it[i].Name)
+                  @*  @Html.DisplayFor(it => it[i].Url)*@
+
+                </td>
+
+                <td>
+                    <a href="@Model[i].Url">@Model[i].Url</a>
+                   @* <a href="@item.Url">@item.Url</a>*@
+                </td>
+                <td>
+                    @Html.CheckBoxFor(it => it[i].Checked, new { Style = "vertical-            align:3px}" })
+                </td>
+            </tr>
+        </table>
+
+    }
+    <input id="Submit1" type="submit" value="submit" />
+
+} 

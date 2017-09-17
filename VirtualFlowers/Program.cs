@@ -134,9 +134,6 @@ namespace VirtualFlowers
                     //var team1IdHtmlString = $"//*[@class='team1-gradient']";
                     span1 = $"//*[@class='lineup standard-box']";
                     span1Name = matchHtml.DocumentNode.SelectNodes(span1);
-                   //var lineup = MoreInfo.DocumentNode.SelectNodes(spantest);
-
-                    //var href = lineup[0].ChildNodes[13].OuterHtml;
     
                     /*Get players from lineup*/
                     var counter = 0;

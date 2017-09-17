@@ -18,7 +18,7 @@ namespace VirtualFlowersMVC.Controllers
     {
         private dataWorker _dataWorker = new dataWorker();
         private Program _program = new Program();
-        
+
         public ActionResult Index()
         {
             return View();
@@ -73,50 +73,94 @@ namespace VirtualFlowersMVC.Controllers
 
             return View();
         }
-        
-        public List<string> overviewurls = new List<string>();
+
+       // public List<string> overviewurls = new List<string>();
         [Authorize(Roles = "Admin")]
+        [HttpGet]
         public ActionResult Overview()
         {
 
-            var OverViewList = new List<OverViewViewModel>();
+            //var OverViewList = new List<OverViewViewModel>();
 
             var result = _program.GetMatches();
+            //foreach (var item in result.Take(52))
+            //{
+            //    var overview = new OverViewViewModel
+            //    {
+            //        Url = "http://www.hltv.org" + item.Url,
+            //        //overview.Cached = Cache.Exists(overview.Url);
+            //        //overview.BestOf3 = item.BestOf3;
+            //        Checked = false
+            //    };
+            //    OverViewList.Add(overview);
+            //   // overviewurls.Add(item.Url);
 
-            foreach (var item in result)
+            //}
+            ////TempData["UrlList"] = overviewurls;
+            //return View(OverViewList);
+
+            var list = new List<OverViewViewModel>();
+            var counter = 0;
+
+
+            foreach (var item in result.Take(52))
             {
-                var overview = new OverViewViewModel();
 
-                overview.Url = "http://www.hltv.org" + item.Url;
-                overview.Cached = Cache.Exists(overview.Url);
-                overview.BestOf3 = item.BestOf3;
-                OverViewList.Add(overview);
-                overviewurls.Add(item.Url);
+                var bla = new OverViewViewModel { Id = counter++, Url = "http://www.hltv.org"+item.Url, Checked = false, Name = item.Url  };
+
+                list.Add(bla);
+
             }
-            TempData["UrlList"] = overviewurls;
-            return View(OverViewList);
+            return View(list);
+
+
 
         }
 
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<ActionResult> Overview(List<OverViewViewModel> model)
+        public async Task<ActionResult> Overview(List<OverViewViewModel> list)
         {
-            var result = _program.GetMatches();
+
             var PeriodSelection = new List<string>();
             PeriodSelection.Add("3");
             PeriodSelection.Add("6");
 
-            foreach (var item in result)
+
+            var checkedGames = (from games in list
+                                where games.Checked == true
+                                select games).ToList();
+
+
+            foreach (var item in checkedGames)
             {
+                
+
                 var statsModel = new CompareStatisticModel();
-                statsModel.MatchUrl = "http://www.hltv.org" + item.Url;
-                statsModel.Scrape = true;
-                statsModel.PeriodSelection = PeriodSelection;
-                await runCompare(statsModel);
+                   statsModel.MatchUrl = "http://www.hltv.org" + item.Name;
+                    statsModel.Scrape = true;
+                    statsModel.PeriodSelection = PeriodSelection;
+                    await runCompare(statsModel);
+
+
             }
-            return View(model);
+
+            return View(list);
+
+           
+          
+            //foreach (var item in result)
+            //{
+            //    var statsModel = new CompareStatisticModel();
+            //    statsModel.MatchUrl = "http://www.hltv.org" + item.Url;
+            //    statsModel.Scrape = true;
+            //    statsModel.PeriodSelection = PeriodSelection;
+            //    //await runCompare(statsModel);
+            //}
+            //return new EmptyResult();
         }
+
+
 
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult> SendToCompare(string url)
@@ -349,3 +393,6 @@ namespace VirtualFlowersMVC.Controllers
         }
     }
 }
+
+
+
