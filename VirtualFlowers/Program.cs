@@ -43,16 +43,44 @@ namespace VirtualFlowers
            var MatchesCollectionNodes = matchesHtml.DocumentNode.SelectNodes(selection2);           
 
             var MatchesCollection = MatchesCollectionNodes[0].ChildNodes[1].SelectNodes(".//div[@class='match-day']//@href");
-            foreach (var item in MatchesCollection)
+            
+
+            var counter = 1;
+            foreach (var item in MatchesCollection.Take(52))
             {
+                counter++;
+                var BestOf3 = "";
                 var objectToAdd = new UrlViewModel();
 
-                // var htmlString = $"//*[@id='back']/div[3]/div[3]//div/div[{i}]/div[1]";
+
+                var bo3 = item.SelectNodes(".//div[@class='map-text']");
+
+                if (bo3 == null)
+                {
+                    var Mop3Value = item.SelectNodes(".//div[@class='map map-text']");
+                    //If this is null, then the match is undecided ( As in winner of match x, faces the winner of match y)
+                    if (Mop3Value == null)
+                    {
+                        BestOf3 = "";
+                    }
+                    else
+                    {
+                        BestOf3 = Mop3Value[0].InnerHtml;
+                    }
+                    
+                }
+                else
+                {
+                    var bo3Value = bo3[0].InnerHtml;
+                    BestOf3 = bo3Value;
+                }
+                
                 var urls = item.Attributes[0].Value;
                 objectToAdd.Url = urls;
+                objectToAdd.BestOf3 = (BestOf3 == "bo3") ? true : false; 
 
                 Models.Add(objectToAdd);
-                
+               
             }            
 
             return Models;
@@ -60,17 +88,17 @@ namespace VirtualFlowers
 
         }
 
-        private static string GetMatchHref(string innerHtml)
-        {
-            string[] stringSeperator = { "<a href=" };
-            string[] secondSplit = { ">" };
+        //private static string GetMatchHref(string innerHtml)
+        //{
+        //    string[] stringSeperator = { "<a href=" };
+        //    string[] secondSplit = { ">" };
 
-            var result1 = innerHtml.Split(stringSeperator, StringSplitOptions.None);
-            var result2 = result1[1].Split(secondSplit, StringSplitOptions.None);
+        //    var result1 = innerHtml.Split(stringSeperator, StringSplitOptions.None);
+        //    var result2 = result1[1].Split(secondSplit, StringSplitOptions.None);
 
-            return result2[0];
+        //    return result2[0];
 
-        }
+        //}
 
         public ExpectedLineUp GetTeamLineup(string matchUrls, int team1Id = 0, int team2ID=0)
         {

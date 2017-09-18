@@ -74,7 +74,7 @@ namespace VirtualFlowersMVC.Controllers
             return View();
         }
 
-       // public List<string> overviewurls = new List<string>();
+        // public List<string> overviewurls = new List<string>();
         [Authorize(Roles = "Admin")]
         [HttpGet]
         public ActionResult Overview()
@@ -106,9 +106,9 @@ namespace VirtualFlowersMVC.Controllers
             foreach (var item in result.Take(52))
             {
 
-                var bla = new OverViewViewModel { Id = counter++, Url = "http://www.hltv.org"+item.Url, Checked = false, Name = item.Url  };
+                var overViewViewModel = new OverViewViewModel { Id = counter++, Url = "http://www.hltv.org" + item.Url, UrlChecked = false, Name = item.Url, BestOf3 = item.BestOf3 };
 
-                list.Add(bla);
+                list.Add(overViewViewModel);
 
             }
             return View(list);
@@ -119,7 +119,7 @@ namespace VirtualFlowersMVC.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<ActionResult> Overview(List<OverViewViewModel> list)
+        public async Task<ActionResult> Overview(List<VirtualFlowersMVC.Models.OverViewViewModel> list)
         {
 
             var PeriodSelection = new List<string>();
@@ -128,27 +128,26 @@ namespace VirtualFlowersMVC.Controllers
 
 
             var checkedGames = (from games in list
-                                where games.Checked == true
+                                where games.UrlChecked == true
                                 select games).ToList();
 
 
             foreach (var item in checkedGames)
             {
-                
 
                 var statsModel = new CompareStatisticModel();
-                   statsModel.MatchUrl = "http://www.hltv.org" + item.Name;
-                    statsModel.Scrape = true;
-                    statsModel.PeriodSelection = PeriodSelection;
-                    await runCompare(statsModel);
+                statsModel.MatchUrl = "http://www.hltv.org" + item.Name;
+                statsModel.Scrape = true;
+                statsModel.PeriodSelection = PeriodSelection;
+                await runCompare(statsModel);
 
 
             }
 
             return View(list);
 
-           
-          
+
+
             //foreach (var item in result)
             //{
             //    var statsModel = new CompareStatisticModel();
@@ -179,8 +178,8 @@ namespace VirtualFlowersMVC.Controllers
             {
                 model.MatchUrl = url;
             }
-            
-          
+
+
             model.Scrape = true;
             model.PeriodSelection = PeriodSelection;
 
@@ -267,8 +266,8 @@ namespace VirtualFlowersMVC.Controllers
                 }
             }
 
-            return RedirectToAction("LoadCompare", new { id = scrapedmatchid, MinFTR = 0});
-  
+            return RedirectToAction("LoadCompare", new { id = scrapedmatchid, MinFTR = 0 });
+
         }
 
         public async Task<CompareStatisticModel> runCompare(CompareStatisticModel model)
@@ -322,9 +321,9 @@ namespace VirtualFlowersMVC.Controllers
                             scrapedMatch.Start = model.ExpectedLineUp.Start;
                             scrapedMatch.MatchUrl = model.MatchUrl;
                             scrapedMatch.Name = $"{model.Teams[0].TeamName} - {model.Teams[1].TeamName}";
-                            if(model.MinFullTeamRanking == 4)
+                            if (model.MinFullTeamRanking == 4)
                                 scrapedMatch.Json4MinFTR = JsonConvert.SerializeObject(model);
-                            else if(model.MinFullTeamRanking == 5)
+                            else if (model.MinFullTeamRanking == 5)
                                 scrapedMatch.Json5MinFTR = JsonConvert.SerializeObject(model);
                             else
                                 scrapedMatch.Json = JsonConvert.SerializeObject(model);
@@ -386,7 +385,7 @@ namespace VirtualFlowersMVC.Controllers
                     Cache.Store(CACHEKEY, model, storeTime);
                 }
             }
-           
+
             model.ScrapeMatchId = id;
             model.MinFullTeamRanking = MinFTR;
             return View(model);

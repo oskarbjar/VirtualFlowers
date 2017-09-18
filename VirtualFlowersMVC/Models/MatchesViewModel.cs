@@ -48,7 +48,7 @@ namespace VirtualFlowersMVC.Models
 
         public bool BestOf3 { get; set; }
 
-        public bool Checked { get; set; }
+        public bool UrlChecked { get; set; }
 
         public string Name { get; set; }
 
