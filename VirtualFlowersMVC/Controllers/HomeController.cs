@@ -144,19 +144,7 @@ namespace VirtualFlowersMVC.Controllers
 
             }
 
-            return View(list);
-
-
-
-            //foreach (var item in result)
-            //{
-            //    var statsModel = new CompareStatisticModel();
-            //    statsModel.MatchUrl = "http://www.hltv.org" + item.Url;
-            //    statsModel.Scrape = true;
-            //    statsModel.PeriodSelection = PeriodSelection;
-            //    //await runCompare(statsModel);
-            //}
-            //return new EmptyResult();
+            return RedirectToAction("CsIndex");
         }
 
 
