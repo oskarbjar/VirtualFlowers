@@ -119,7 +119,7 @@ namespace VirtualFlowersMVC.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<ActionResult> Overview(List<VirtualFlowersMVC.Models.OverViewViewModel> list)
+        public async Task<ActionResult> Overview(List<OverViewViewModel> list)
         {
             foreach (var item in list.Where(p => p.UrlChecked).ToList())
             {

@@ -23,8 +23,15 @@
         <th></th>
     </tr>
 
+
+    @{ DateTime dDate = DateTime.Now.AddDays(-2); }
     @foreach (var item in Model)
     {
+        if (dDate.Date != item.Start.Date)
+        {
+            <tr><th colspan="4" style="text-align:center;">@item.Start.ToString("dd.MMMM")</th></tr>
+            dDate = item.Start;
+        }
         <tr>
             <td>
                 @item.Start.ToString("dd.MMMMM HH:mm")
