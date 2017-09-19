@@ -699,6 +699,11 @@ namespace VirtualFlowersMVC.Data
             return result;
         }
 
+        public bool IsMatchScraped(int matchid)
+        {
+            return _db.ScrapedMatches.Any(p => p.MatchId == matchid);
+        }
+
         #endregion
     }
 

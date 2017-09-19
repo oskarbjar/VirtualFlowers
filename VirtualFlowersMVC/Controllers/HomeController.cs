@@ -105,8 +105,8 @@ namespace VirtualFlowersMVC.Controllers
 
             foreach (var item in result.Take(52))
             {
-
-                var overViewViewModel = new OverViewViewModel { Id = counter++, Url = "http://www.hltv.org" + item.Url, UrlChecked = false, Name = item.Url, BestOf3 = item.BestOf3 };
+                var matchId = _program.GetTeamIdFromUrl(item.Url); 
+                var overViewViewModel = new OverViewViewModel { Id = counter++, Url = "http://www.hltv.org" + item.Url, UrlChecked = false, Name = item.Url, BestOf3 = item.BestOf3, ScrapedMatch = _dataWorker.IsMatchScraped(matchId) };
 
                 list.Add(overViewViewModel);
 
@@ -121,27 +121,9 @@ namespace VirtualFlowersMVC.Controllers
         [HttpPost]
         public async Task<ActionResult> Overview(List<VirtualFlowersMVC.Models.OverViewViewModel> list)
         {
-
-            var PeriodSelection = new List<string>();
-            PeriodSelection.Add("3");
-            PeriodSelection.Add("6");
-
-
-            var checkedGames = (from games in list
-                                where games.UrlChecked == true
-                                select games).ToList();
-
-
-            foreach (var item in checkedGames)
+            foreach (var item in list.Where(p => p.UrlChecked).ToList())
             {
-
-                var statsModel = new CompareStatisticModel();
-                statsModel.MatchUrl = "http://www.hltv.org" + item.Name;
-                statsModel.Scrape = true;
-                statsModel.PeriodSelection = PeriodSelection;
-                await runCompare(statsModel);
-
-
+                await SendToCompare(item.Name);
             }
 
             return RedirectToAction("CsIndex");
@@ -171,46 +153,25 @@ namespace VirtualFlowersMVC.Controllers
             model.Scrape = true;
             model.PeriodSelection = PeriodSelection;
 
+            // ******* Get Ids and teamlineup *******
             if (url.Length > 0)
             {
-                var result = _program.GetTeamIdsFromUrl(url);
+                var result = _program.GetTeamIdsFromUrl(model.MatchUrl);
                 model.Team1Id = result.Item1;
                 model.Team2Id = result.Item2;
                 model.ExpectedLineUp = _program.GetTeamLineup(model.MatchUrl, model.Team1Id, model.Team2Id);
             }
 
-            #region "Hægt að nota svona til að scrapa allt"
-
-            /*
-            foreach (var item in str.Take(3))
-            {
-                List<string> str = TempData["UrlList"] as List<string>;
-                var model = new CompareStatisticModel();
-                model.MatchUrl = "http://www.hltv.org/" + item;
-                model.Scrape = true;
-                model.PeriodSelection = PeriodSelection;
-
-                var result = Program.GetTeamIdsFromUrl(url);
-                model.ExpectedLineUp = Program.GetTeamLineup(model.MatchUrl);
-                model.Team1Id = result.Item1;
-                model.Team2Id = result.Item2;
-            }*/
-            #endregion
-
+            // ******* Scrape *******
             if (model.Team1Id > 0)
             {
-
                 if (model.Scrape)
                     await _program.GetTeamDetails(model.Team1Id);
-                //model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team1Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeamId, model.NoCache, model.MinFullTeamRanking, _program.Team1Rank));
             }
             if (model.Team2Id > 0)
             {
-                //var secondaryTeamId = _dataWorker.GetSecondaryTeamId(model.Team2Id);
-
                 if (model.Scrape)
                     await _program.GetTeamDetails(model.Team2Id);
-                //model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team2Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeamId, model.NoCache, model.MinFullTeamRanking, _program.Team2Rank));
             }
 
             if (model.Team1Id > 0 && model.Team2Id > 0)
@@ -220,6 +181,8 @@ namespace VirtualFlowersMVC.Controllers
 
                 List<int> FTR = new List<int> { 0, 4, 5 };
                 List<Tuple<int, string>> jsonlist = new List<Tuple<int, string>>();
+
+                // ******* Create model result for each MinFtr and save as json *******
                 foreach (int ftr in FTR)
                 {
                     model.Teams = new List<TeamStatisticPeriodModel>();
@@ -233,8 +196,9 @@ namespace VirtualFlowersMVC.Controllers
                     {
                         jsonlist.Add(new Tuple<int, string>(ftr, JsonConvert.SerializeObject(model)));
                     }
-
                 }
+
+                // ******* If we have any json result we create ScrapedMatch and fill in info *******
                 if (jsonlist.Count > 0)
                 {
                     ScrapedMatches scrapedMatch = new ScrapedMatches();

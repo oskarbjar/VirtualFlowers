@@ -51,8 +51,7 @@ namespace VirtualFlowersMVC.Models
         public bool UrlChecked { get; set; }
 
         public string Name { get; set; }
-
-
+        public bool ScrapedMatch { get; set; }
     }
 
     public class UrlViewModel

@@ -243,6 +243,7 @@
     <Content Include="Content\Image\arm-wrestling.jpg" />
     <Content Include="Content\Image\arm-wrestling640.jpg" />
     <Content Include="Content\Image\banner-image.jpg" />
+    <Content Include="Content\Image\checked.jpg" />
     <Content Include="Content\Image\chessking.jpeg" />
     <Content Include="Content\Image\csgo.jpg" />
     <Content Include="Content\Image\darts.jpg" />

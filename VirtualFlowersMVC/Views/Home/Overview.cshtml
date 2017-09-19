@@ -16,12 +16,12 @@
                 Scrape
             </td>
 
+            <td>Scraped</td>
+
             <td style="padding-right:15px">
                 Link to game
             </td>
             <td></td>
-
-
             <td align="center">
                 Best of three
             </td>
@@ -33,7 +33,11 @@
 
             <tr>
                 <td>
-                    @Html.CheckBoxFor(it => it[i].UrlChecked, new { Style = "vertical-            align:3px}" })
+                    @Html.CheckBoxFor(it => it[i].UrlChecked, new { Style = "vertical-align: middle" })
+                </td>
+                <td>
+                    @if (Model[i].ScrapedMatch)
+                    { <img src="../../Content/Image/checked.jpg" height="12" width="12" />}
                 </td>
 
                 <td style="padding-right:15px">

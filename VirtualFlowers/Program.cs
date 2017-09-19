@@ -132,19 +132,7 @@ namespace VirtualFlowers
                     expectedLineUp.EventName = eventnode.Count > 0 ? eventnode[0].InnerHtml : "";
 
                     // Get MatchId
-                    var urlSplit = url.Split('/');
-                    bool next = false;
-                    int matchid = 0;
-                    foreach (var str in urlSplit)
-                    {
-                        if (next && int.TryParse(str, out matchid))
-                        {
-                            expectedLineUp.MatchId = matchid;
-                            break;
-                        }
-                        if (str == "matches")
-                            next = true;
-                    }
+                    expectedLineUp.MatchId = GetTeamIdFromUrl(url);
 
                     // Get Start
                     var startUnix = matchHtml.DocumentNode.Descendants("div") // All <a links
@@ -1102,6 +1090,22 @@ namespace VirtualFlowers
             var thirdSpilts = team1Spilt[0].Split(thirdSplilt, StringSplitOptions.None);
             var team11Id = thirdSpilts[0];
             return team11Id;
+        }
+
+        public int GetTeamIdFromUrl(string url)
+        {
+            // Get MatchId
+            var urlSplit = url.Split('/');
+            bool next = false;
+            int matchid = 0;
+            foreach (var str in urlSplit)
+            {
+                if (next && int.TryParse(str, out matchid))
+                    return matchid;
+                if (str == "matches")
+                    next = true;
+            }
+            return matchid;
         }
 
         public class UrlViewModel
