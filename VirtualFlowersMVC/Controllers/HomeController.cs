@@ -135,91 +135,98 @@ namespace VirtualFlowersMVC.Controllers
         public async Task<ActionResult> SendToCompare(string url)
         {
             var scrapedmatchid = 0;
-            var PeriodSelection = new List<string>();
-            PeriodSelection.Add("3");
-            PeriodSelection.Add("6");
-            var model = new CompareStatisticModel();
-
-            if (!url.Contains("http://www.hltv.org/"))
+            try
             {
-                model.MatchUrl = "http://www.hltv.org/" + url;
-            }
-            else
-            {
-                model.MatchUrl = url;
-            }
+                var PeriodSelection = new List<string>();
+                PeriodSelection.Add("3");
+                PeriodSelection.Add("6");
+                var model = new CompareStatisticModel();
 
-
-            model.Scrape = true;
-            model.PeriodSelection = PeriodSelection;
-
-            // ******* Get Ids and teamlineup *******
-            if (url.Length > 0)
-            {
-                var result = _program.GetTeamIdsFromUrl(model.MatchUrl);
-                model.Team1Id = result.Item1;
-                model.Team2Id = result.Item2;
-                model.ExpectedLineUp = _program.GetTeamLineup(model.MatchUrl, model.Team1Id, model.Team2Id);
-            }
-
-            // ******* Scrape *******
-            if (model.Team1Id > 0)
-            {
-                if (model.Scrape)
-                    await _program.GetTeamDetails(model.Team1Id);
-            }
-            if (model.Team2Id > 0)
-            {
-                if (model.Scrape)
-                    await _program.GetTeamDetails(model.Team2Id);
-            }
-
-            if (model.Team1Id > 0 && model.Team2Id > 0)
-            {
-                var secondaryTeam1Id = _dataWorker.GetSecondaryTeamId(model.Team1Id);
-                var secondaryTeam2Id = _dataWorker.GetSecondaryTeamId(model.Team2Id);
-
-                List<int> FTR = new List<int> { 0, 4, 5 };
-                List<Tuple<int, string>> jsonlist = new List<Tuple<int, string>>();
-
-                // ******* Create model result for each MinFtr and save as json *******
-                foreach (int ftr in FTR)
+                if (!url.Contains("http://www.hltv.org/"))
                 {
-                    model.Teams = new List<TeamStatisticPeriodModel>();
-                    model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team1Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeam1Id, model.NoCache, ftr, _program.Team1Rank));
-                    model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team2Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeam2Id, model.NoCache, ftr, _program.Team2Rank));
-                    if (model.Teams != null && model.Teams.Count > 0)
+                    model.MatchUrl = "http://www.hltv.org/" + url;
+                }
+                else
+                {
+                    model.MatchUrl = url;
+                }
+
+
+                model.Scrape = true;
+                model.PeriodSelection = PeriodSelection;
+
+                // ******* Get Ids and teamlineup *******
+                if (url.Length > 0)
+                {
+                    var result = _program.GetTeamIdsFromUrl(model.MatchUrl);
+                    model.Team1Id = result.Item1;
+                    model.Team2Id = result.Item2;
+                    model.ExpectedLineUp = _program.GetTeamLineup(model.MatchUrl, model.Team1Id, model.Team2Id);
+                }
+
+                // ******* Scrape *******
+                if (model.Team1Id > 0)
+                {
+                    if (model.Scrape)
+                        await _program.GetTeamDetails(model.Team1Id);
+                }
+                if (model.Team2Id > 0)
+                {
+                    if (model.Scrape)
+                        await _program.GetTeamDetails(model.Team2Id);
+                }
+
+                if (model.Team1Id > 0 && model.Team2Id > 0)
+                {
+                    var secondaryTeam1Id = _dataWorker.GetSecondaryTeamId(model.Team1Id);
+                    var secondaryTeam2Id = _dataWorker.GetSecondaryTeamId(model.Team2Id);
+
+                    List<int> FTR = new List<int> { 0, 4, 5 };
+                    List<Tuple<int, string>> jsonlist = new List<Tuple<int, string>>();
+
+                    // ******* Create model result for each MinFtr and save as json *******
+                    foreach (int ftr in FTR)
                     {
-                        _dataWorker.GenerateSuggestedMaps(ref model);
+                        model.Teams = new List<TeamStatisticPeriodModel>();
+                        model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team1Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeam1Id, model.NoCache, ftr, _program.Team1Rank));
+                        model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team2Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeam2Id, model.NoCache, ftr, _program.Team2Rank));
+                        if (model.Teams != null && model.Teams.Count > 0)
+                        {
+                            _dataWorker.GenerateSuggestedMaps(ref model);
+                        }
+                        if (model != null)
+                        {
+                            jsonlist.Add(new Tuple<int, string>(ftr, JsonConvert.SerializeObject(model)));
+                        }
                     }
-                    if (model != null)
+
+                    // ******* If we have any json result we create ScrapedMatch and fill in info *******
+                    if (jsonlist.Count > 0)
                     {
-                        jsonlist.Add(new Tuple<int, string>(ftr, JsonConvert.SerializeObject(model)));
+                        ScrapedMatches scrapedMatch = new ScrapedMatches();
+                        scrapedMatch.SportName = "CS:GO";
+                        scrapedMatch.Event = model.ExpectedLineUp.EventName;
+                        scrapedMatch.MatchId = model.ExpectedLineUp.MatchId;
+                        scrapedMatch.Start = model.ExpectedLineUp.Start;
+                        scrapedMatch.MatchUrl = model.MatchUrl;
+                        scrapedMatch.Name = $"{model.Teams[0].TeamName} - {model.Teams[1].TeamName}";
+                        if (jsonlist.Any(p => p.Item1 == 4))
+                            scrapedMatch.Json4MinFTR = jsonlist.Single(p => p.Item1 == 4).Item2;
+                        if (jsonlist.Any(p => p.Item1 == 5))
+                            scrapedMatch.Json5MinFTR = jsonlist.Single(p => p.Item1 == 5).Item2;
+                        if (jsonlist.Any(p => p.Item1 == 0))
+                            scrapedMatch.Json = jsonlist.Single(p => p.Item1 == 0).Item2;
+                        scrapedmatchid = _dataWorker.AddScrapedMatch(scrapedMatch, -1);
                     }
                 }
 
-                // ******* If we have any json result we create ScrapedMatch and fill in info *******
-                if (jsonlist.Count > 0)
-                {
-                    ScrapedMatches scrapedMatch = new ScrapedMatches();
-                    scrapedMatch.SportName = "CS:GO";
-                    scrapedMatch.Event = model.ExpectedLineUp.EventName;
-                    scrapedMatch.MatchId = model.ExpectedLineUp.MatchId;
-                    scrapedMatch.Start = model.ExpectedLineUp.Start;
-                    scrapedMatch.MatchUrl = model.MatchUrl;
-                    scrapedMatch.Name = $"{model.Teams[0].TeamName} - {model.Teams[1].TeamName}";
-                    if (jsonlist.Any(p => p.Item1 == 4))
-                        scrapedMatch.Json4MinFTR = jsonlist.Single(p => p.Item1 == 4).Item2;
-                    if (jsonlist.Any(p => p.Item1 == 5))
-                        scrapedMatch.Json5MinFTR = jsonlist.Single(p => p.Item1 == 5).Item2;
-                    if (jsonlist.Any(p => p.Item1 == 0))
-                        scrapedMatch.Json = jsonlist.Single(p => p.Item1 == 0).Item2;
-                    scrapedmatchid = _dataWorker.AddScrapedMatch(scrapedMatch, -1);
-                }
             }
-
+            catch(Exception ex)
+            {
+                // Do nothing
+            }
+            
             return RedirectToAction("LoadCompare", new { id = scrapedmatchid, MinFTR = 0 });
-
         }
 
         public async Task<CompareStatisticModel> runCompare(CompareStatisticModel model)
