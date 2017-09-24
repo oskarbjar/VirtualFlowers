@@ -79,25 +79,7 @@ namespace VirtualFlowersMVC.Controllers
         [HttpGet]
         public ActionResult Overview()
         {
-
-            //var OverViewList = new List<OverViewViewModel>();
-
             var result = _program.GetMatches();
-            //foreach (var item in result.Take(52))
-            //{
-            //    var overview = new OverViewViewModel
-            //    {
-            //        Url = "http://www.hltv.org" + item.Url,
-            //        //overview.Cached = Cache.Exists(overview.Url);
-            //        //overview.BestOf3 = item.BestOf3;
-            //        Checked = false
-            //    };
-            //    OverViewList.Add(overview);
-            //   // overviewurls.Add(item.Url);
-
-            //}
-            ////TempData["UrlList"] = overviewurls;
-            //return View(OverViewList);
 
             var list = new List<OverViewViewModel>();
             var counter = 0;
@@ -112,9 +94,6 @@ namespace VirtualFlowersMVC.Controllers
 
             }
             return View(list);
-
-
-
         }
 
         [Authorize(Roles = "Admin")]
@@ -130,6 +109,20 @@ namespace VirtualFlowersMVC.Controllers
         }
 
 
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public async Task<bool> ScrapeMatches(int Num = 0)
+        {
+            bool result = false;
+
+            var matches = _program.GetMatches();
+            foreach (var item in matches.Take(Num))
+            {
+                await SendToCompare("http://www.hltv.org" + item.Url);
+            }
+
+            return result;
+        }
 
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult> SendToCompare(string url)
