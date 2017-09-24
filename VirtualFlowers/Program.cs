@@ -252,7 +252,6 @@ namespace VirtualFlowers
                 var url = matchUrls;
 
                 var MoreInfo = HWeb.Load(url);
-                var matchHtml = HWeb.Load(MatchUrl);
                 var span1Name = new HtmlNodeCollection(HtmlNode.CreateNode(""));
                 var span2Name = new HtmlNodeCollection(HtmlNode.CreateNode(""));
                
