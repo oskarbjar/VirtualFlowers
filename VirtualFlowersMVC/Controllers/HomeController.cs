@@ -107,21 +107,17 @@ namespace VirtualFlowersMVC.Controllers
 
             return RedirectToAction("CsIndex");
         }
-
-
-        [Authorize(Roles = "Admin")]
+        
         [HttpGet]
         public async Task<bool> ScrapeMatches(int Num = 0)
         {
-            bool result = false;
-
             var matches = _program.GetMatches();
             foreach (var item in matches.Take(Num))
             {
                 await SendToCompare("http://www.hltv.org" + item.Url);
             }
 
-            return result;
+            return true;
         }
 
         [Authorize(Roles = "Admin")]
