@@ -922,7 +922,7 @@ namespace VirtualFlowers
 
 
             string team2Id = GenerateTeamID(stringSeperators, SecondSpilt, thirdSplilt, htmlSectionsss);
-            int Team2Id = Convert.ToInt32(team11Id);
+            int Team2Id = Convert.ToInt32(team2Id);
             CheckIfNeedToCreateTeam(Team2Id, Team2Name);
             #endregion
 
