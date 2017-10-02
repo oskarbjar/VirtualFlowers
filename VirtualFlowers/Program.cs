@@ -908,6 +908,8 @@ namespace VirtualFlowers
 
 
             string team11Id = GenerateTeamID(stringSeperators, SecondSpilt, thirdSplilt, team1GradientSection);
+            int Team1Id = Convert.ToInt32(team11Id);
+            CheckIfNeedToCreateTeam(Team1Id, Team1Name);
             #endregion
             #region Team2
 
@@ -920,9 +922,11 @@ namespace VirtualFlowers
 
 
             string team2Id = GenerateTeamID(stringSeperators, SecondSpilt, thirdSplilt, htmlSectionsss);
+            int Team2Id = Convert.ToInt32(team11Id);
+            CheckIfNeedToCreateTeam(Team2Id, Team2Name);
             #endregion
 
-            var tupleString = new Tuple<int, int>(Convert.ToInt32(team11Id), Convert.ToInt32(team2Id));
+            var tupleString = new Tuple<int, int>(Team1Id, Team2Id);
             return tupleString;
         }
 
