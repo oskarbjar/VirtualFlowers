@@ -7,6 +7,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 using Match = Models.Match;
 using System.Threading.Tasks;
+using System.Net;
 
 namespace VirtualFlowers
 {
@@ -14,7 +15,6 @@ namespace VirtualFlowers
     {
         static readonly HtmlWeb HWeb = new HtmlAgilityPack.HtmlWeb();
         private readonly DatabaseContext db = new DatabaseContext();
-        private static bool quitTeamDetails;
 
         static void Main(string[] args)
         {
@@ -31,17 +31,30 @@ namespace VirtualFlowers
 
 
         }
+      
         /// <summary>
         /// This function goes through mathces page and fetches next 50 matches
         /// </summary>
         /// <returns>List of urls of matches</returns>
         public List<UrlViewModel> GetMatches()
         {
-            var Models = new List<UrlViewModel>();
-            string url = "http://www.hltv.org/matches";
-            List<string> urlsList = new List<string>();
 
-            var matchesHtml = HWeb.Load(url);          
+            var Models = new List<UrlViewModel>();
+            string url = "https://www.hltv.org/matches";
+
+            var page = new HtmlWeb()
+            {
+                PreRequest = request =>
+                {
+                    // Make any changes to the request object that will be used.
+                    request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
+                    return true;
+                }
+            };
+
+
+
+            var matchesHtml = page.Load(url);          
             var selection2 = "//div[@class='upcoming-matches']";
             var MatchesCollectionNodes = matchesHtml.DocumentNode.SelectNodes(selection2);
             var MatchesCollection = MatchesCollectionNodes[0].ChildNodes[1].SelectNodes(".//div[@class='match-day']//@href");
