@@ -46,12 +46,10 @@ namespace VirtualFlowersMVC.Models
     {
         public string Period { get; set; }
         public List<MapStatisticModel> Maps { get; set; }
-        public List<SuggestedMapModel> SuggestedMaps { get; set; }
 
         public TeamStatisticModel()
         {
             this.Maps = new List<MapStatisticModel>();
-            this.SuggestedMaps = new List<SuggestedMapModel>();
         }
     }
 
@@ -74,6 +72,7 @@ namespace VirtualFlowersMVC.Models
         public string TitleMapMatches { get; set; }
         public Tuple<double, string> FirstRound1HWinPercent { get; set; }
         public Tuple<double, string> FirstRound2HWinPercent { get; set; }
+        public SuggestedMapModel SuggestedMap { get; set; }
 
     }
 
@@ -86,6 +85,7 @@ namespace VirtualFlowersMVC.Models
         public double TFRating { get; set; }
         public int WinLossRecord { get; set; }
         public double SuggestedRank { get; set; }
+        public string SuggestiveMapClass { get; set; }
     }
 
 }

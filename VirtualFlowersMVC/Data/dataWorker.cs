@@ -498,14 +498,8 @@ namespace VirtualFlowersMVC.Data
                     var PeriodName = period.Period;
                     foreach (var map in period.Maps)
                     {
-                        var resultMap = FindMatchingMaps(map, PeriodName, model.Teams[1]);
-                        if (resultMap != null)
-                            period.SuggestedMaps.Add(resultMap);
+                        FindMatchingMaps(map, PeriodName, model.Teams[1]);
                     }
-
-                    // Order by highest rank
-                    if (period.SuggestedMaps != null && period.SuggestedMaps.Count > 1)
-                        period.SuggestedMaps = period.SuggestedMaps.OrderByDescending(p => p.SuggestedRank).ToList();
                 }
 
 
@@ -514,19 +508,13 @@ namespace VirtualFlowersMVC.Data
                     var PeriodName = period.Period;
                     foreach (var map in period.Maps)
                     {
-                        var resultMap = FindMatchingMaps(map, PeriodName, model.Teams[0]);
-                        if (resultMap != null)
-                            period.SuggestedMaps.Add(resultMap);
+                        FindMatchingMaps(map, PeriodName, model.Teams[0]);
                     }
-
-                    // Order by highest rank
-                    if (period.SuggestedMaps != null && period.SuggestedMaps.Count > 1)
-                        period.SuggestedMaps = period.SuggestedMaps.OrderByDescending(p => p.SuggestedRank).ToList();
                 }
             }
         }
 
-        public SuggestedMapModel FindMatchingMaps(MapStatisticModel MapA, string PeriodName, TeamStatisticPeriodModel TeamB)
+        public bool FindMatchingMaps(MapStatisticModel MapA, string PeriodName, TeamStatisticPeriodModel TeamB)
         {
             bool MapFound = false;
 
@@ -542,18 +530,18 @@ namespace VirtualFlowersMVC.Data
                         {
                             MapFound = true;
                             // If found compare maps
-                            return CompareStats(MapA, MapB);
+                            MapA.SuggestedMap = CompareStats(MapA, MapB);
                         }
                     }
                     if (MapFound == false)
                     {
                         // Compare with empty map
-                        return CompareStats(MapA, new MapStatisticModel());
+                        MapA.SuggestedMap = CompareStats(MapA, new MapStatisticModel());
                     }
                 }
             }
 
-            return null;
+            return true;
         }
 
         private SuggestedMapModel CompareStats(MapStatisticModel MapA, MapStatisticModel MapB)
@@ -585,6 +573,39 @@ namespace VirtualFlowersMVC.Data
                 result.WinPercent = Math.Round(WinPercentA - WinPercentB, 1);
                 result.DifficultyRating = Math.Round((MapA.DifficultyRating - MapB.DifficultyRating) * 10, 1);
                 result.TFRating = Math.Round(TFRPoints, 1);
+                result.SuggestiveMapClass = GetClassBySuggestedRank(result.SuggestedRank);
+            }
+
+            return result;
+        }
+
+        private string GetClassBySuggestedRank(double suggestedRank)
+        {
+            string result = "";
+
+            if (suggestedRank < 2)
+            {
+                result = "fi-die-one";
+            }
+            else if (suggestedRank == 2)
+            {
+                result = "fi-die-two";
+            }
+            else if (suggestedRank == 3)
+            {
+                result = "fi-die-three";
+            }
+            else if (suggestedRank == 4)
+            {
+                result = "fi-die-four";
+            }
+            else if (suggestedRank == 5)
+            {
+                result = "fi-die-five";
+            }
+            else
+            {
+                result = "fi-die-six";
             }
 
             return result;

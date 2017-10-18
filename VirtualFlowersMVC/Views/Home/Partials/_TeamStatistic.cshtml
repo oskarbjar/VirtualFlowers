@@ -5,12 +5,13 @@
 }
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/foundicons/3.0.0/foundation-icons.min.css" />
 
-<h2>@Model.TeamName (@Model.TeamDifficultyRating)</h2>
+
+<h2>@Model.TeamName @*(@Model.TeamDifficultyRating)*@</h2>
 <h3>@Model.TeamRank</h3>
 
     @foreach (var period in Model?.TeamStatistics)
     {
-        if (period.SuggestedMaps != null)
+        @*if (period.SuggestedMaps != null)
         {
             foreach (var suggestedMap in period.SuggestedMaps)
             {
@@ -40,10 +41,11 @@
                 }
                 <span> @suggestedMap.Map: +@suggestedMap.WinLossRecord wins - Win: @suggestedMap.WinPercent% - Diff.R: @suggestedMap.DifficultyRating - TFR: @suggestedMap.TFRating</span><br />
             };
-        }
+        }*@
         <h3>@period.Period</h3>
         <table class="table table-condensed table-hover">
             <tr>
+                <th></th>
                 <th>
                     Map
                 </th>
@@ -72,6 +74,12 @@
             @foreach (var map in period.Maps)
             {
                 <tr class="mapline @map.Map.ToLower()">
+                    <td>
+                        @if (map.SuggestedMap != null)
+                        {
+                            <i class="@map.SuggestedMap.SuggestiveMapClass" title="+@map.SuggestedMap.WinLossRecord wins - Win: @map.SuggestedMap.WinPercent% - Diff.R: @map.SuggestedMap.DifficultyRating - TFR: @map.SuggestedMap.TFRating"></i>
+                        }
+                    </td>
                     <td style="cursor: help" title="@Html.Raw(@map.TitleMapMatches)">
                         @map.Map.ToLower()
                     </td>
