@@ -294,6 +294,10 @@
     <Content Include="Content\fonts\sourcesanspro-regular-webfont.eot" />
     <Content Include="Content\fonts\sourcesanspro-regular-webfont.ttf" />
     <Content Include="Content\fonts\sourcesanspro-regular-webfont.woff" />
+    <None Include="Properties\PublishProfiles\betsack - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\betsack - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\BetsackRelease - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\BetsackRelease - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\virtualflowers - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\virtualflowers - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\VirtualFlowersMVC - FTP.pubxml" />
