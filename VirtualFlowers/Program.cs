@@ -244,6 +244,26 @@ namespace VirtualFlowers
                
                 try
                 {
+                    //*********** GET IDs FROM PAGE ***********
+                    int leftTeamID = 0;
+                    int rightTeamID = 0;
+                    string sLeftTeamId = "";
+                    string sRightTeamId = "";
+
+                    var LeftNode = MoreInfo.DocumentNode.SelectSingleNode("//div[@class='team-left']/a"); // divs of class="team-left"
+                    if (LeftNode.Attributes.Contains("href"))
+                        sLeftTeamId = LeftNode.Attributes["href"].Value;
+
+                    var RightNode = MoreInfo.DocumentNode.SelectSingleNode("//div[@class='team-right']/a"); // divs of class="team-left"
+                    if (RightNode.Attributes.Contains("href"))
+                        sRightTeamId = RightNode.Attributes["href"].Value;
+
+                    if (!string.IsNullOrEmpty(sLeftTeamId))
+                        leftTeamID = GetTeamIDFromUrl(sLeftTeamId);
+                    if (!string.IsNullOrEmpty(sRightTeamId))
+                        rightTeamID = GetTeamIDFromUrl(sRightTeamId);
+                    //*****************************************
+
                     string span1;
                     //var team1IdHtmlString = $"//*[@class='team1-gradient']";
                     span1 = $"//*[@class='lineup standard-box']";
@@ -287,29 +307,17 @@ namespace VirtualFlowers
 
                                 if (counter <= 4)
                                 {
-                                    if (team1Id > 0)
-                                    {
-                                        //teamID that comes from runcompare in home controller
-                                        pl.TeamID = team1Id;
-                                    }
+                                    if (leftTeamID > 0)
+                                        pl.TeamID = leftTeamID;
                                     else
-                                    {
                                         pl.TeamID = Team1ID;
-                                    }
-
                                 }
                                 else
                                 {
-                                    if (team1Id > 0)
-                                    {
-                                        //teamID that comes from runcompare in home controller
-                                        pl.TeamID = team2ID;
-                                    }
+                                    if (rightTeamID > 0)
+                                        pl.TeamID = rightTeamID;
                                     else
-                                    {
                                         pl.TeamID = Team2ID;
-                                    }
-
                                 }
 
                                 var plexists = expectedLineUp.Players.Any(x => x.PlayerId == ids);
@@ -831,6 +839,20 @@ namespace VirtualFlowers
             var datetime = new DateTime(dateTimeValue.Year, dateTimeValue.Month, dateTimeValue.Day);
             return datetime;
 
+        }
+
+        private int GetTeamIDFromUrl(string url)
+        {
+            string[] stringSeperators = { "/teams/" };
+            var result = url.Split(stringSeperators, StringSplitOptions.None);
+
+            string[] stringsep = { "/" };
+            var results = result[1].Split(stringsep, StringSplitOptions.None);
+
+            int teamId = 0;
+            Int32.TryParse(results[0], out teamId);
+
+            return teamId;
         }
 
         private void CheckIfNeedToCreateTeam(int TeamId, string TeamName)
