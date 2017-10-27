@@ -244,26 +244,11 @@ namespace VirtualFlowers
                
                 try
                 {
-                    //*********** GET IDs FROM PAGE ***********
                     int leftTeamID = 0;
                     int rightTeamID = 0;
                     string sLeftTeamId = "";
                     string sRightTeamId = "";
-
-                    var LeftNode = MoreInfo.DocumentNode.SelectSingleNode("//div[@class='team-left']/a"); // divs of class="team-left"
-                    if (LeftNode.Attributes.Contains("href"))
-                        sLeftTeamId = LeftNode.Attributes["href"].Value;
-
-                    var RightNode = MoreInfo.DocumentNode.SelectSingleNode("//div[@class='team-right']/a"); // divs of class="team-left"
-                    if (RightNode.Attributes.Contains("href"))
-                        sRightTeamId = RightNode.Attributes["href"].Value;
-
-                    if (!string.IsNullOrEmpty(sLeftTeamId))
-                        leftTeamID = GetTeamIDFromUrl(sLeftTeamId);
-                    if (!string.IsNullOrEmpty(sRightTeamId))
-                        rightTeamID = GetTeamIDFromUrl(sRightTeamId);
-                    //*****************************************
-
+                    
                     string span1;
                     //var team1IdHtmlString = $"//*[@class='team1-gradient']";
                     span1 = $"//*[@class='lineup standard-box']";
@@ -280,11 +265,24 @@ namespace VirtualFlowers
                     var externalUrl = "http://www.hltv.org" + externalLink;
 
                      MoreInfo = HWeb.Load(externalUrl);
+                    
+                    //*********** GET IDs FROM PAGE ***********
+                    var LeftNode = MoreInfo.DocumentNode.SelectSingleNode("//div[@class='team1-gradient']/a"); // divs of class="team-left"
+                    if (LeftNode.Attributes.Contains("href"))
+                        sLeftTeamId = LeftNode.Attributes["href"].Value;
+
+                    var RightNode = MoreInfo.DocumentNode.SelectSingleNode("//div[@class='team2-gradient']/a"); // divs of class="team-left"
+                    if (RightNode.Attributes.Contains("href"))
+                        sRightTeamId = RightNode.Attributes["href"].Value;
+
+                    if (!string.IsNullOrEmpty(sLeftTeamId))
+                        leftTeamID = GetTeamIDFromUrl(sLeftTeamId);
+                    if (!string.IsNullOrEmpty(sRightTeamId))
+                        rightTeamID = GetTeamIDFromUrl(sRightTeamId);
+                    //*****************************************
+
                     span1Name = MoreInfo.DocumentNode.SelectNodes(span1);
-
-
-
-
+                    
                     /*Get players from lineup*/
                     var counter = 0;
                     foreach (var item in span1Name)
@@ -843,7 +841,7 @@ namespace VirtualFlowers
 
         private int GetTeamIDFromUrl(string url)
         {
-            string[] stringSeperators = { "/teams/" };
+            string[] stringSeperators = { "/team/" };
             var result = url.Split(stringSeperators, StringSplitOptions.None);
 
             string[] stringsep = { "/" };
