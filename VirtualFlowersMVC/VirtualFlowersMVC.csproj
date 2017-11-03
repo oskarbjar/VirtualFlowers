@@ -298,6 +298,8 @@
     <None Include="Properties\PublishProfiles\betsack - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\BetsackRelease - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BetsackRelease - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\BetsackScr - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\BetsackScr - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\virtualflowers - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\virtualflowers - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\VirtualFlowersMVC - FTP.pubxml" />
