@@ -19,6 +19,10 @@
         text-transform: uppercase;
         line-height: 13px;
     }
+    .tooltiptext {
+        display: none;
+        font-size:14px;
+    }
 </style>
 
 <div class="featured-item">
@@ -92,6 +96,16 @@
         $("tr.mapline").mouseleave(function () {
             var trClass = this.className.replace('mapline ', '');
             $("." + trClass).css("background-color", "");
+        });
+
+        $('.htmlTooltip').each(function () {
+            $(this).qtip({
+                content: {
+                    text: $(this).children('.tooltiptext')
+                },
+                show: 'click mouseenter',
+                hide: 'unfocus mouseleave'
+            });
         });
     });
 </script>

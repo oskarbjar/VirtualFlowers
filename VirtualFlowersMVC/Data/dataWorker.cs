@@ -372,7 +372,7 @@ namespace VirtualFlowersMVC.Data
         { 
             var rankList = new List<Tuple<double, string>>();
             var FTRankList = Map.GroupBy(p => p.T1FTR).ToList();
-            var returnSymbol = "&#010;";
+            var returnSymbol = "<br>";//"&#010;";
             var Title = "";
 
             // Group by FTRating.
@@ -392,7 +392,7 @@ namespace VirtualFlowersMVC.Data
             // Create the title "hover" list
             foreach (Tuple<double, string> tup in orderedList)
             {
-                Title += string.IsNullOrEmpty(Title) ? " " : " " + returnSymbol + " ";
+                Title += string.IsNullOrEmpty(Title) ? "<b>Full Team Rating:</b><br> " : " " + returnSymbol + " ";
                 Title += tup.Item1 + " - " + tup.Item2;
             }
             
@@ -403,7 +403,7 @@ namespace VirtualFlowersMVC.Data
         {
             var result = "";
             var diffList = new List<Tuple<double, string>>();
-            var returnSymbol = "&#010;";
+            var returnSymbol = "<br>";//"&#010;";
 
             // Group by Difficulty rating.
             var diffRankList = Map.GroupBy(p => p.Team2RankValue).ToList();
@@ -423,7 +423,7 @@ namespace VirtualFlowersMVC.Data
             // Create the title "hover" list
             foreach (Tuple<double,string> tup in orderedList)
             {
-                result += string.IsNullOrEmpty(result) ? " " : " " + returnSymbol + " ";
+                result += string.IsNullOrEmpty(result) ? "<b>Difficulty Rating:</b><br> " : " " + returnSymbol + " ";
                 result += tup.Item1 == 1? tup.Item1 + ".0" + " - " + tup.Item2 : tup.Item1 + " - " + tup.Item2;
             }
 
@@ -433,15 +433,17 @@ namespace VirtualFlowersMVC.Data
         private string GetTitleMapMatches(List<Match> MapMatches)
         {
             var result = "";
-            var returnSymbol = "&#010;";
+            var returnSymbol = "<br>";//"&#010;";
+            var allTeams = _db.Team.Where(p => p.TeamId > 0).ToList();
             
             foreach (var match in MapMatches)
             {
                 var opponentName = "";
-                if(_db.Team.Any(p => p.TeamId == match.Team2Id))
-                    opponentName = _db.Team.SingleOrDefault(p => p.TeamId == match.Team2Id).TeamName;
-                result += string.IsNullOrEmpty(result) ? " " : " " + returnSymbol + " ";
-                result += match.Date.ToShortDateString() + " - " + match.ResultT1 + " - " + match.ResultT2 + " " + opponentName + " (" + match.Team2RankValue + ")";
+                if(allTeams.Any(p => p.TeamId == match.Team2Id))
+                    opponentName = allTeams.SingleOrDefault(p => p.TeamId == match.Team2Id).TeamName;
+                result += string.IsNullOrEmpty(result) ? "<b>" + match.Map + " games:</b><br> " : " " + returnSymbol + " ";
+                var colorspan = match.ResultT1 > match.ResultT2 ? "<span style='color:green'>" : "<span style='color:red'>";
+                result += match.Date.ToShortDateString() + " - " + colorspan + match.ResultT1 + " - " + match.ResultT2 + "</span> " + opponentName + " (" + match.Team2RankValue + ")";
             }
             
             return result;
