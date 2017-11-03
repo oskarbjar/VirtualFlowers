@@ -306,9 +306,9 @@ namespace VirtualFlowersMVC.Data
                 WinTerr = Map.Count(p => p.FirstRound2HWinTerr == true && p.FirstRound2HWinTeamId == TeamId);
                 LossTerr = Map.Count(p => p.FirstRound2HWinTerr == false && p.FirstRound2HWinTeamId != TeamId);
             }
-            
-            var returnSymbol = "&#010;";
-            var Title = $"CT: {WinCt} / {LossCt}{returnSymbol}Terr: {WinTerr} / {LossTerr}";
+
+            var returnSymbol = "<br>"; // "&#010;";
+            var Title = $"<b>CT:</b> {WinCt} / {LossCt}{returnSymbol}<b>Terr:</b> {WinTerr} / {LossTerr}";
             
             result = new Tuple<double, string>(WinPercent, Title);
             return result;
@@ -443,7 +443,7 @@ namespace VirtualFlowersMVC.Data
                     opponentName = allTeams.SingleOrDefault(p => p.TeamId == match.Team2Id).TeamName;
                 result += string.IsNullOrEmpty(result) ? "<b>" + match.Map + " games:</b><br> " : " " + returnSymbol + " ";
                 var colorspan = match.ResultT1 > match.ResultT2 ? "<span style='color:green'>" : "<span style='color:red'>";
-                result += match.Date.ToShortDateString() + " - " + colorspan + match.ResultT1 + " - " + match.ResultT2 + "</span> " + opponentName + " (" + match.Team2RankValue + ")";
+                result += match.Date.ToString("dd.MM.yyyy") + " - " + colorspan + match.ResultT1 + " - " + match.ResultT2 + "</span> " + opponentName + " (" + match.Team2RankValue + ")";
             }
             
             return result;
