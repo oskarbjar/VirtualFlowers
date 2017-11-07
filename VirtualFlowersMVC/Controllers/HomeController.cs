@@ -83,12 +83,13 @@ namespace VirtualFlowersMVC.Controllers
 
             var list = new List<OverViewViewModel>();
             var counter = 0;
+            var allScrapedMatches = _dataWorker.GetAllScrapedMatches();
 
 
             foreach (var item in result.Take(52))
             {
                 var matchId = _program.GetTeamIdFromUrl(item.Url); 
-                var overViewViewModel = new OverViewViewModel { Id = counter++, Url = "https://www.hltv.org" + item.Url, UrlChecked = false, Name = item.Url, BestOf3 = item.BestOf3, ScrapedMatch = _dataWorker.IsMatchScraped(matchId) };
+                var overViewViewModel = new OverViewViewModel { Id = counter++, Url = "https://www.hltv.org" + item.Url, UrlChecked = false, Name = item.Url, BestOf3 = item.BestOf3, ScrapedMatch = _dataWorker.IsMatchScraped(ref allScrapedMatches, matchId) };
 
                 list.Add(overViewViewModel);
 
@@ -169,6 +170,7 @@ namespace VirtualFlowersMVC.Controllers
                 {
                     var secondaryTeam1Id = _dataWorker.GetSecondaryTeamId(model.Team1Id);
                     var secondaryTeam2Id = _dataWorker.GetSecondaryTeamId(model.Team2Id);
+                    model.HeadToHead = _dataWorker.GetHeadToHeadMatches(model.Team1Id, model.Team2Id);
 
                     List<int> FTR = new List<int> { 0, 4, 5 };
                     List<Tuple<int, string>> jsonlist = new List<Tuple<int, string>>();

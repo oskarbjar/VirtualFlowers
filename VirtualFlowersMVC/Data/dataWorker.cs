@@ -449,6 +449,43 @@ namespace VirtualFlowersMVC.Data
             return result;
         }
 
+        public HeadToHeadStatisticModel GetHeadToHeadMatches(int Team1ID, int Team2ID)
+        {
+            HeadToHeadStatisticModel result = new HeadToHeadStatisticModel();
+            try
+            {
+                var returnSymbol = "<br>";//"&#010;";
+                string Team1Name = "", Team2Name = "";
+                DateTime dDate = DateTime.Now.AddMonths(-6).Date;
+                // Get matches
+                var matches = _db.Match.Where(p => (p.Team1Id == Team1ID || p.Team1Id == Team2ID) && (p.Team2Id == Team1ID || p.Team2Id == Team2ID) && p.Date > dDate).OrderByDescending(p => p.Date).ToList();
+                var fixedMatches = FixTeamMatches(matches, Team1ID);
+                result.Team1Win = fixedMatches.Count(p => p.ResultT1 > p.ResultT2);
+                result.Team2Win = fixedMatches.Count(p => p.ResultT1 < p.ResultT2);
+
+                // Get names
+                var allTeams = _db.Team.Where(p => p.TeamId > 0).ToList();
+                if (allTeams.Any(p => p.TeamId == Team1ID))
+                    Team1Name = allTeams.SingleOrDefault(p => p.TeamId == Team1ID).TeamName;
+                if (allTeams.Any(p => p.TeamId == Team2ID))
+                    Team2Name = allTeams.SingleOrDefault(p => p.TeamId == Team2ID).TeamName;
+
+                foreach (var match in fixedMatches)
+                {
+                    var T1colorspan = match.ResultT1 > match.ResultT2 ? "<span style='color:green'>" : "<span style='color:red'>";
+                    var T2colorspan = match.ResultT1 < match.ResultT2 ? "<span style='color:green'>" : "<span style='color:red'>";
+                    result.Title += string.IsNullOrEmpty(result.Title) ? "<b>H2H games (last 6 months) " + returnSymbol + Team1Name + " - " + Team2Name + ":</b><br> " : " " + returnSymbol + " ";
+                    result.Title += match.Date.ToString("dd.MM") + " <b>" + T1colorspan + match.ResultT1 + "</span> - " + T2colorspan + match.ResultT2 + "</span></b> (" + match.Map + ")";
+                }
+            }
+            catch(Exception ex)
+            {
+                // do nothing
+            }
+
+            return result;
+        }
+
         /// <summary>
         /// Take matches query and set "our" (TeamId) team always as Team1
         /// </summary>
@@ -722,9 +759,15 @@ namespace VirtualFlowersMVC.Data
             return result;
         }
 
-        public bool IsMatchScraped(int matchid)
+        public bool IsMatchScraped(ref List<ScrapedMatches> allScrapedMatches, int matchid)
         {
-            return _db.ScrapedMatches.Any(p => p.MatchId == matchid);
+            return allScrapedMatches.Any(p => p.MatchId == matchid);
+        }
+
+        public List<ScrapedMatches> GetAllScrapedMatches()
+        {
+            DateTime dDate = DateTime.Now.Date;
+            return _db.ScrapedMatches.Where(p => p.Start > dDate).ToList();
         }
 
         #endregion

@@ -19,43 +19,53 @@
         text-transform: uppercase;
         line-height: 13px;
     }
+
     .tooltiptext {
         display: none;
-        font-size:12px;
-        font-family:"verdana";
+        font-size: 12px;
+        font-family: "verdana";
     }
 </style>
 
 <div class="featured-item">
     <div class="block">
         <div class="block-title">
-            <h1 style="text-decoration:none; color: #454855;">Compare</h1>
-            @if (Model != null && Model.ExpectedLineUp != null && Model.ExpectedLineUp.EventName != null)
+            <div class="col-md-3">
+                <h1 style="text-decoration:none; color: #454855;">Compare</h1>
+                @if (Model != null && Model.ExpectedLineUp != null && Model.ExpectedLineUp.EventName != null)
             { <h4>@Model.ExpectedLineUp.EventName</h4>}
-            @if (Model.MinFullTeamRanking == 0)
+                @if (Model.MinFullTeamRanking == 0)
             {
-                <a style="border:3px solid black" class="btn FTRButton" href="/Home/LoadCompare/@Model.ScrapeMatchId?MinFTR=0">All</a>
-            }
-            else
+                    <a style="border:3px solid black" class="btn FTRButton" href="/Home/LoadCompare/@Model.ScrapeMatchId?MinFTR=0">All</a>
+                }
+                else
+                {
+                    <a class="btn FTRButton" href="/Home/LoadCompare/@Model.ScrapeMatchId?MinFTR=0">All</a>
+                }
+                @if (Model.MinFullTeamRanking == 4)
             {
-                <a class="btn FTRButton" href="/Home/LoadCompare/@Model.ScrapeMatchId?MinFTR=0">All</a>
-            }
-            @if (Model.MinFullTeamRanking == 4)
+                    <a style="border:3px solid black" class="btn FTRButton" href="/Home/LoadCompare/@Model.ScrapeMatchId?MinFTR=4">Min FTR 4</a>
+                }
+                else
+                {
+                    <a class="btn FTRButton" href="/Home/LoadCompare/@Model.ScrapeMatchId?MinFTR=4">Min FTR 4</a>
+                }
+                @if (Model.MinFullTeamRanking == 5)
             {
-                <a style="border:3px solid black" class="btn FTRButton" href="/Home/LoadCompare/@Model.ScrapeMatchId?MinFTR=4">Min FTR 4</a>
-            }
-            else
-            {
-                <a class="btn FTRButton" href="/Home/LoadCompare/@Model.ScrapeMatchId?MinFTR=4">Min FTR 4</a>
-            }
-            @if (Model.MinFullTeamRanking == 5)
-            {
-                <a style="border:3px solid black" class="btn FTRButton" href="/Home/LoadCompare/@Model.ScrapeMatchId?MinFTR=5">Min FTR 5</a>
-            }
-            else
-            {
-                <a class="btn FTRButton" href="/Home/LoadCompare/@Model.ScrapeMatchId?MinFTR=5">Min FTR 5</a>
-            }
+                    <a style="border:3px solid black" class="btn FTRButton" href="/Home/LoadCompare/@Model.ScrapeMatchId?MinFTR=5">Min FTR 5</a>
+                }
+                else
+                {
+                    <a class="btn FTRButton" href="/Home/LoadCompare/@Model.ScrapeMatchId?MinFTR=5">Min FTR 5</a>
+                }
+            </div>
+            <div class="col-md-offset-3 col-md-3 htmlTooltipCenter">
+                <div class="tooltiptext">@if (Model.HeadToHead != null) {@Html.Raw(Model.HeadToHead.Title)}</div>
+                @if (Model.Teams.Any() && Model.Teams.Count > 1 && Model.HeadToHead != null)
+                {
+                    <br /><h1><span class="label label-success" style="background-color: #34b091;">H2H: @Model.Teams[0].TeamName @Model.HeadToHead.Team1Win - @Model.HeadToHead.Team2Win @Model.Teams[1].TeamName</span></h1>
+                }
+            </div>
         </div>
     </div>
 
@@ -103,9 +113,45 @@
             $(this).qtip({
                 content: {
                     text: $(this).children('.tooltiptext')
-                },  
+                },
                 style: {
                     classes: "qtip-green qtip-rounded"
+                },
+                show: 'click mouseenter',
+                hide: 'unfocus mouseleave'
+            });
+        });
+
+        $('.htmlTooltipCenter').each(function () {
+            $(this).qtip({
+                content: {
+                    text: $(this).children('.tooltiptext')
+                },
+                style: {
+                    classes: "qtip-green qtip-rounded"
+                },
+                position: {
+                    my: 'top center',  // Position my top left...
+                    at: 'bottom center', // at the bottom right of...
+                    target: $(this) // my target
+                },
+                show: 'click mouseenter',
+                hide: 'unfocus mouseleave'
+            });
+        });
+
+        $('.htmlTooltipLeft').each(function () {
+            $(this).qtip({
+                content: {
+                    text: $(this).children('.tooltiptext')
+                },
+                style: {
+                    classes: "qtip-green qtip-rounded"
+                },
+                position: {
+                    my: 'top right',  // Position my top left...
+                    at: 'bottom left', // at the bottom right of...
+                    target: $(this) // my target
                 },
                 show: 'click mouseenter',
                 hide: 'unfocus mouseleave'

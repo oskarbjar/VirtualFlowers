@@ -59,19 +59,19 @@
                     <div class="tooltiptext"><b>Average rounds</b></div>
                     Av. rounds
                 </th>
-                <th style="cursor: help" class="htmlTooltip">
+                <th style="cursor: help" class="htmlTooltipCenter">
                     <div class="tooltiptext"><b>Team won 1st round % of time.</b></div>
                     1st
                 </th>
-                <th style="cursor: help" class="htmlTooltip">
+                <th style="cursor: help" class="htmlTooltipCenter">
                     <div class="tooltiptext"><b>Team won 16th round % of time.</b></div>
                     16th
                 </th>
-                <th style="cursor: help" class="htmlTooltip">
+                <th style="cursor: help" class="htmlTooltipLeft">
                     <div class="tooltiptext"><b>Difficulty Rating:</b> <br />Opponents were on average <br /> 1.0: Top 6 rank <br /> 0.9: 7-12 rank <br /> 0.8: 13-18 rank <br /> 0.7: 19-24 rank <br /> 0.6: 25-30 rank <br /> 0.5: 30+ rank</div>
                     Diff.R
                 </th>
-                <th style="cursor: help" class="htmlTooltip">
+                <th style="cursor: help" class="htmlTooltipLeft">
                     <div class="tooltiptext"><b>Full Team Ranking:</b> <br /> 5: All 5 from expected linup own this history stats <br /> 4: 4 of 5 <br /> 3: 3 of 5 <br /> 0-2: History stats pretty much useless.</div>
                     FTR
                 </th>
@@ -95,23 +95,23 @@
                     <td>
                         @map.WinPercent%
                     </td>
-                    <td style="cursor: help" class="htmlTooltip">
+                    <td style="cursor: help" class="htmlTooltipCenter">
                         <div class="tooltiptext"><b>Av.(win):</b> @map.AverageWinRoundsWhenWin / @map.AverageLossRoundsWhenWin <br /><b>Av.(loss):</b> @map.AverageWinRoundsWhenLoss / @map.AverageLossRoundsWhenLoss</div>
                         @map.AverageWinRounds / @map.AverageLossRounds
                     </td>
-                    <td style="cursor: help" class="htmlTooltip">
+                    <td style="cursor: help" class="htmlTooltipCenter">
                         <div class="tooltiptext">@Html.Raw(@map.FirstRound1HWinPercent.Item2)</div>
                         @map.FirstRound1HWinPercent.Item1%
                     </td>
-                    <td style="cursor: help" class="htmlTooltip">
+                    <td style="cursor: help" class="htmlTooltipCenter">
                         <div class="tooltiptext">@Html.Raw(@map.FirstRound2HWinPercent.Item2)</div>
                         @map.FirstRound2HWinPercent.Item1%
                     </td>
-                    <td style="cursor: help" class="htmlTooltip">
+                    <td style="cursor: help" class="htmlTooltipLeft">
                         <div class="tooltiptext">@Html.Raw(@map.DiffTitleGroupBy)</div>
                         @map.DifficultyRating
                     </td>
-                    <td style="cursor: help" class="htmlTooltip">
+                    <td style="cursor: help" class="htmlTooltipLeft">
                         <div class="tooltiptext">@Html.Raw(@map.FullTeamGroupBy)</div>
                         @Math.Round(@map.FullTeamRanking,1)
                     </td>

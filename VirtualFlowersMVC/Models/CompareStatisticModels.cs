@@ -20,6 +20,7 @@ namespace VirtualFlowersMVC.Models
         public int ScrapeMatchId { get; set; }
         public List<TeamStatisticPeriodModel> Teams { get; set; }
         public ExpectedLineUp ExpectedLineUp { get; set; }
+        public HeadToHeadStatisticModel HeadToHead { get; set; }
 
         public CompareStatisticModel()
         {
@@ -86,6 +87,14 @@ namespace VirtualFlowersMVC.Models
         public int WinLossRecord { get; set; }
         public double SuggestedRank { get; set; }
         public string SuggestiveMapClass { get; set; }
+    }
+
+    public class HeadToHeadStatisticModel
+    {
+        public int Team1Win { get; set; }
+        public int Team2Win { get; set; }
+        public string Title { get; set; }
+
     }
 
 }
