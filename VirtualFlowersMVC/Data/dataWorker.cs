@@ -76,7 +76,7 @@ namespace VirtualFlowersMVC.Data
         {
             var result = "";
 
-            result = _db.Team.SingleOrDefault(p => p.TeamId == id)?.TeamName;
+            result = _db.Team.FirstOrDefault(p => p.TeamId == id)?.TeamName;
 
             return result ?? "";
         }
@@ -440,7 +440,7 @@ namespace VirtualFlowersMVC.Data
             {
                 var opponentName = "";
                 if(allTeams.Any(p => p.TeamId == match.Team2Id))
-                    opponentName = allTeams.SingleOrDefault(p => p.TeamId == match.Team2Id).TeamName;
+                    opponentName = allTeams.FirstOrDefault(p => p.TeamId == match.Team2Id).TeamName;
                 result += string.IsNullOrEmpty(result) ? "<b>" + match.Map + " games:</b><br> " : " " + returnSymbol + " ";
                 var colorspan = match.ResultT1 > match.ResultT2 ? "<span style='color:green'>" : "<span style='color:red'>";
                 result += match.Date.ToString("dd.MM.yyyy") + " - " + colorspan + match.ResultT1 + " - " + match.ResultT2 + "</span> " + opponentName + " (" + match.Team2RankValue + ")";
@@ -466,9 +466,9 @@ namespace VirtualFlowersMVC.Data
                 // Get names
                 var allTeams = _db.Team.Where(p => p.TeamId > 0).ToList();
                 if (allTeams.Any(p => p.TeamId == Team1ID))
-                    Team1Name = allTeams.SingleOrDefault(p => p.TeamId == Team1ID).TeamName;
+                    Team1Name = allTeams.FirstOrDefault(p => p.TeamId == Team1ID).TeamName;
                 if (allTeams.Any(p => p.TeamId == Team2ID))
-                    Team2Name = allTeams.SingleOrDefault(p => p.TeamId == Team2ID).TeamName;
+                    Team2Name = allTeams.FirstOrDefault(p => p.TeamId == Team2ID).TeamName;
 
                 foreach (var match in fixedMatches)
                 {
