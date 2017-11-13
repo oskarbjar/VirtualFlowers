@@ -94,13 +94,14 @@ namespace VirtualFlowersMVC.Data
 
         #region COMPARE
 
-        public async Task<TeamStatisticPeriodModel> GetTeamPeriodStatistics(int TeamId, List<string> PeriodSelection, ExpectedLineUp expectedLinup, int secondaryTeamId, bool NoCache, int MinFullTeamRanking, string teamRank)
+        public async Task<TeamStatisticPeriodModel> GetTeamPeriodStatistics(int TeamId, List<string> PeriodSelection, ExpectedLineUp expectedLinup, int secondaryTeamId, bool NoCache, int MinFullTeamRanking, string teamRank, string logo)
         {
             var result = new TeamStatisticPeriodModel();
             result.TeamId = TeamId;
             result.TeamName = GetTeamName(TeamId);
             result.TeamDifficultyRating = _program.GetRankingValueForTeam(TeamId, DateTime.Now);
             result.TeamRank = teamRank;
+            result.Logo = logo;
             foreach (var period in PeriodSelection)
             {
                 await Task.Run(() => result.TeamStatistics.Add(GetTeamPeriodStatistics(TeamId, (PeriodEnum)int.Parse(period), expectedLinup, secondaryTeamId, NoCache, MinFullTeamRanking))).ConfigureAwait(false);

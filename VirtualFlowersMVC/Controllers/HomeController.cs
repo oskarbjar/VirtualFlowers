@@ -179,8 +179,10 @@ namespace VirtualFlowersMVC.Controllers
                     foreach (int ftr in FTR)
                     {
                         model.Teams = new List<TeamStatisticPeriodModel>();
-                        model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team1Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeam1Id, model.NoCache, ftr, _program.Team1Rank));
-                        model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team2Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeam2Id, model.NoCache, ftr, _program.Team2Rank));
+                        var logo = CheckIfLogoExist(model.Team1Id);
+                        model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team1Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeam1Id, model.NoCache, ftr, _program.Team1Rank, logo));
+                        var logo2 = CheckIfLogoExist(model.Team2Id);
+                        model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team2Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeam2Id, model.NoCache, ftr, _program.Team2Rank, logo2));
                         if (model.Teams != null && model.Teams.Count > 0)
                         {
                             _dataWorker.GenerateSuggestedMaps(ref model);
@@ -190,7 +192,7 @@ namespace VirtualFlowersMVC.Controllers
                             jsonlist.Add(new Tuple<int, string>(ftr, JsonConvert.SerializeObject(model)));
                         }
                     }
-
+                    
                     // ******* If we have any json result we create ScrapedMatch and fill in info *******
                     if (jsonlist.Count > 0)
                     {
@@ -245,7 +247,9 @@ namespace VirtualFlowersMVC.Controllers
 
                             if (model.Scrape)
                                 await _program.GetTeamDetails(model.Team1Id);
-                            model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team1Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeamId, model.NoCache, model.MinFullTeamRanking, _program.Team1Rank));
+
+                            var logo = CheckIfLogoExist(model.Team1Id);
+                            model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team1Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeamId, model.NoCache, model.MinFullTeamRanking, _program.Team1Rank, logo));
                         }
                         if (model.Team2Id > 0)
                         {
@@ -253,7 +257,8 @@ namespace VirtualFlowersMVC.Controllers
 
                             if (model.Scrape)
                                 await _program.GetTeamDetails(model.Team2Id);
-                            model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team2Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeamId, model.NoCache, model.MinFullTeamRanking, _program.Team2Rank));
+                            var logo = CheckIfLogoExist(model.Team2Id);
+                            model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team2Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeamId, model.NoCache, model.MinFullTeamRanking, _program.Team2Rank, logo));
                         }
 
                         if (model.Teams != null && model.Teams.Count > 0)
@@ -339,6 +344,31 @@ namespace VirtualFlowersMVC.Controllers
             model.ScrapeMatchId = id;
             model.MinFullTeamRanking = MinFTR;
             return View(model);
+        }
+
+        private string CheckIfLogoExist(int TeamId)
+        {
+            var result = "";
+            var relativePath = "~/Content/Image/teamlogo/" + TeamId + ".svg";
+            var absolutePath = HttpContext.Server.MapPath(relativePath);
+            if (System.IO.File.Exists(absolutePath))
+                result = relativePath;
+            else
+            {
+                relativePath = "~/Content/Image/teamlogo/" + TeamId + ".png";
+                absolutePath = HttpContext.Server.MapPath(relativePath);
+                if (System.IO.File.Exists(absolutePath))
+                    result = relativePath;
+                else
+                {
+                    relativePath = "~/Content/Image/teamlogo/0.svg";
+                    absolutePath = HttpContext.Server.MapPath(relativePath);
+                    if (System.IO.File.Exists(absolutePath))
+                        result = relativePath;
+                }
+            }
+
+            return result;
         }
     }
 }
