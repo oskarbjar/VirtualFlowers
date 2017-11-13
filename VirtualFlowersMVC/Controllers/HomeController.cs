@@ -86,7 +86,7 @@ namespace VirtualFlowersMVC.Controllers
             var allScrapedMatches = _dataWorker.GetAllScrapedMatches();
 
 
-            foreach (var item in result.Take(52))
+            foreach (var item in result.Take(58))
             {
                 var matchId = _program.GetTeamIdFromUrl(item.Url); 
                 var overViewViewModel = new OverViewViewModel { Id = counter++, Url = "https://www.hltv.org" + item.Url, UrlChecked = false, Name = item.Url, BestOf3 = item.BestOf3, ScrapedMatch = _dataWorker.IsMatchScraped(ref allScrapedMatches, matchId) };
