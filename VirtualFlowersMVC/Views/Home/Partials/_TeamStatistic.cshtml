@@ -7,7 +7,7 @@
 
 
 <h2>@if (!string.IsNullOrEmpty(Model.Logo))
-{<img src="@Url.Content(Model.Logo)" title="@Model.TeamName" style="height:25px; width:25px; margin-bottom:5px" />}@Model.TeamName @*(@Model.TeamDifficultyRating)*@</h2>
+{<img src="@Url.Content(Model.Logo)" title="@Model.TeamName" style="height:50px; width:50px; margin-bottom:5px" />}@Model.TeamName @*(@Model.TeamDifficultyRating)*@</h2>
 <h3>@Model.TeamRank</h3>
 
     @foreach (var period in Model?.TeamStatistics)
