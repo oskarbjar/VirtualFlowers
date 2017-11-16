@@ -171,6 +171,8 @@ namespace VirtualFlowersMVC.Controllers
                     var secondaryTeam1Id = _dataWorker.GetSecondaryTeamId(model.Team1Id);
                     var secondaryTeam2Id = _dataWorker.GetSecondaryTeamId(model.Team2Id);
                     model.HeadToHead = _dataWorker.GetHeadToHeadMatches(model.Team1Id, model.Team2Id);
+                    var Team1Form = _dataWorker.GetTeamForm(model.Team1Id);
+                    var Team2Form = _dataWorker.GetTeamForm(model.Team2Id);
 
                     List<int> FTR = new List<int> { 0, 4, 5 };
                     List<Tuple<int, string>> jsonlist = new List<Tuple<int, string>>();
@@ -186,6 +188,11 @@ namespace VirtualFlowersMVC.Controllers
                         if (model.Teams != null && model.Teams.Count > 0)
                         {
                             _dataWorker.GenerateSuggestedMaps(ref model);
+                            if (model.Teams.Count > 1)
+                            {
+                                model.Teams[0].Form = Team1Form;
+                                model.Teams[1].Form = Team2Form;
+                            }
                         }
                         if (model != null)
                         {

@@ -37,6 +37,7 @@ namespace VirtualFlowersMVC.Models
         public string Logo { get; set; }
         public List<TeamStatisticModel> TeamStatistics { get; set; }
         public string TeamRank { get; set; }
+        public TeamFormModel Form { get; set; }
 
         public TeamStatisticPeriodModel()
         {
@@ -96,6 +97,18 @@ namespace VirtualFlowersMVC.Models
         public int Team2Win { get; set; }
         public string Title { get; set; }
 
+    }
+
+    public class TeamFormModel
+    {
+        public List<FormUnitModel> FormUnits { get; set; }
+        public string TitleHtml { get; set; }
+    }
+
+    public class FormUnitModel
+    {
+        public string Letter { get; set; }
+        public string Color { get; set; }
     }
 
 }

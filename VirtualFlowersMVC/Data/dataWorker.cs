@@ -487,6 +487,41 @@ namespace VirtualFlowersMVC.Data
             return result;
         }
 
+        public TeamFormModel GetTeamForm(int TeamId)
+        {
+            TeamFormModel result = new TeamFormModel();
+            result.FormUnits = new List<FormUnitModel>();
+            try
+            {
+                var returnSymbol = "<br>";//"&#010;";
+                string opponentName = "";
+                DateTime dDate = DateTime.Now.AddMonths(-6).Date;
+                var matches = _db.Match.Where(p => (p.Team1Id == TeamId || p.Team2Id == TeamId) && p.Date > dDate).OrderByDescending(p => p.Date).Take(10).ToList();
+                var fixedMatches = FixTeamMatches(matches, TeamId);
+                var ids = fixedMatches.Select(k => k.Team2Id).ToList();
+                // Get names
+                var allTeams = _db.Team.Where(p => ids.Contains(p.TeamId)).ToList();
+
+                foreach (var match in fixedMatches)
+                {
+                    // Find name of team
+                    if (allTeams.Any(p => p.TeamId == match.Team2Id))
+                        opponentName = allTeams.FirstOrDefault(p => p.TeamId == match.Team2Id).TeamName;
+                    bool bWin = match.ResultT1 > match.ResultT2;
+                    result.FormUnits.Add(new FormUnitModel() { Letter = bWin ? "W" : "L", Color = bWin ? "#5cb85c" : "#d9534f" });
+                    result.TitleHtml += string.IsNullOrEmpty(result.TitleHtml) ? "<b>Most recent games:</b><br> " : " " + returnSymbol + " ";
+                    var colorspan = bWin ? "<span style='color:green'>" : "<span style='color:red'>";
+                    result.TitleHtml += match.Date.ToString("dd.MM.yyyy") + " - " + colorspan + match.ResultT1 + " - " + match.ResultT2 + "</span> " + opponentName + " (" + match.Team2RankValue + ")";
+                }
+            }
+            catch(Exception ex)
+            {
+                // do nothing
+            }
+            
+            return result;
+        }
+
         /// <summary>
         /// Take matches query and set "our" (TeamId) team always as Team1
         /// </summary>
