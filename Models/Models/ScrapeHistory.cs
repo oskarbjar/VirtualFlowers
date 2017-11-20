@@ -40,6 +40,12 @@ namespace Models
     {
         public int Id { get; set; }
         public int MatchId { get; set; }
+        public int Team1Id { get; set; }
+        public string Team1Name { get; set; }
+        public string Team1Logo { get; set; }
+        public int Team2Id { get; set; }
+        public string Team2Name { get; set; }
+        public string Team2Logo { get; set; }
         public string MatchUrl { get; set; }
         public string Name { get; set; }
         public string Event { get; set; }

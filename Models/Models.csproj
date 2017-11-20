@@ -76,6 +76,14 @@
     <Compile Include="Migrations\201709141525081_ScrapedMatches.Designer.cs">
       <DependentUpon>201709141525081_ScrapedMatches.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201711201552225_ScrapedMatchesExtraInfo.cs" />
+    <Compile Include="Migrations\201711201552225_ScrapedMatchesExtraInfo.Designer.cs">
+      <DependentUpon>201711201552225_ScrapedMatchesExtraInfo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201711201603044_ScrapedMatchesLogoAdded.cs" />
+    <Compile Include="Migrations\201711201603044_ScrapedMatchesLogoAdded.Designer.cs">
+      <DependentUpon>201711201603044_ScrapedMatchesLogoAdded.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\FootballTips.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ExpectedLineUp.cs" />
@@ -111,6 +119,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201709141525081_ScrapedMatches.resx">
       <DependentUpon>201709141525081_ScrapedMatches.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201711201552225_ScrapedMatchesExtraInfo.resx">
+      <DependentUpon>201711201552225_ScrapedMatchesExtraInfo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201711201603044_ScrapedMatchesLogoAdded.resx">
+      <DependentUpon>201711201603044_ScrapedMatchesLogoAdded.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

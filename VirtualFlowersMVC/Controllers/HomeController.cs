@@ -209,6 +209,12 @@ namespace VirtualFlowersMVC.Controllers
                         scrapedMatch.MatchId = model.ExpectedLineUp.MatchId;
                         scrapedMatch.Start = model.ExpectedLineUp.Start;
                         scrapedMatch.MatchUrl = model.MatchUrl;
+                        scrapedMatch.Team1Id = model.Teams[0].TeamId;
+                        scrapedMatch.Team1Name = model.Teams[0].TeamName;
+                        scrapedMatch.Team1Logo = CheckIfLogoExist(model.Teams[0].TeamId);
+                        scrapedMatch.Team2Id = model.Teams[1].TeamId;
+                        scrapedMatch.Team2Name = model.Teams[1].TeamName;
+                        scrapedMatch.Team2Logo = CheckIfLogoExist(model.Teams[1].TeamId);
                         scrapedMatch.Name = $"{model.Teams[0].TeamName} - {model.Teams[1].TeamName}";
                         if (jsonlist.Any(p => p.Item1 == 4))
                             scrapedMatch.Json4MinFTR = jsonlist.Single(p => p.Item1 == 4).Item2;
@@ -352,6 +358,16 @@ namespace VirtualFlowersMVC.Controllers
             model.MinFullTeamRanking = MinFTR;
             return View(model);
         }
+
+        [HttpGet]
+        public bool ScrapeRankingList(string secretkey)
+        {
+            if(secretkey == "hvadbyrjaraoskarogvillfathadirassinn")
+                _program.ScrapeRankingListIfNeeded();
+
+            return true;
+        }
+
 
         private string CheckIfLogoExist(int TeamId)
         {

@@ -9,14 +9,16 @@
 
 <h2>Cs:Go Matches</h2>
 
-<table class="table">
+<table class="table table-condensed table-hover">
     <tr>
         <th>
             @Html.DisplayNameFor(model => model.Start)
         </th>
+        <th></th>
         <th>
             @Html.DisplayNameFor(model => model.Name)
         </th>
+        <th></th>
         <th>
             @Html.DisplayNameFor(model => model.Event)
         </th>
@@ -32,15 +34,30 @@
             <tr><th colspan="4" style="text-align:center;">@item.Start.ToString("dd.MMMM")</th></tr>
             dDate = item.Start;
         }
-        <tr>
+        <tr class="clickable" id="@item.Id" style="cursor:pointer">
             <td>
                 @item.Start.ToString("dd.MMMMM HH:mm")
             </td>
-            <td>
-                <a href="@Url.Action("LoadCompare", "Home", new { id = item.Id })">
-                    @item.Name
-                </a>
+            @if (!string.IsNullOrEmpty(item.Team1Name))
+            {
+                <td>
+                        @if (!string.IsNullOrEmpty(item.Team1Logo))
+                    {<img src="@Url.Content(item.Team1Logo)" title="@item.Team1Name" style="height:25px; width:25px; margin-bottom:5px" />} @item.Team1Name
             </td>
+            <td style="text-align:center">-</td>
+            <td>
+                    @if (!string.IsNullOrEmpty(item.Team2Logo))
+                    {<img src="@Url.Content(item.Team2Logo)" title="@item.Team1Name" style="height:25px; width:25px; margin-bottom:5px" />} @item.Team2Name
+            </td>
+            }
+            else
+            {
+            <td></td>
+            <td>
+                @item.Name
+            </td>
+                <td></td>
+            }
             <td>
                 @Html.DisplayFor(modelItem => item.Event)
             </td>
@@ -50,3 +67,14 @@
 </table>
 
 
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+            $('.clickable').on('click', function () {
+                var scrapeId = $(this).attr("id");
+                window.location = window.location.origin + "/Home/LoadCompare/" + scrapeId
+            });
+        });
+    </script>
+}

@@ -511,7 +511,7 @@ namespace VirtualFlowersMVC.Data
                     result.FormUnits.Add(new FormUnitModel() { Letter = bWin ? "W" : "L", Color = bWin ? "#5cb85c" : "#d9534f" });
                     result.TitleHtml += string.IsNullOrEmpty(result.TitleHtml) ? "<b>Most recent games:</b><br> " : " " + returnSymbol + " ";
                     var colorspan = bWin ? "<span style='color:green'>" : "<span style='color:red'>";
-                    result.TitleHtml += match.Date.ToString("dd.MM.yyyy") + " - " + colorspan + match.ResultT1 + " - " + match.ResultT2 + "</span> " + opponentName + " (" + match.Team2RankValue + ")";
+                    result.TitleHtml += match.Date.ToString("dd.MM") + " - " + colorspan + match.ResultT1 + " - " + match.ResultT2 + "</span> <b>" + opponentName + "</b>" + " (" + match.Team2RankValue + ") <i>" + GetShortMap(match.Map) + "</i>";
                 }
             }
             catch(Exception ex)
@@ -520,6 +520,29 @@ namespace VirtualFlowersMVC.Data
             }
             
             return result;
+        }
+
+        private string GetShortMap(string Map)
+        {
+            switch (Map.ToLower())
+            {
+                case "cobblestone":
+                    return "cbl";
+                case "nuke":
+                    return "nuke";
+                case "inferno":
+                    return "inf";
+                case "overpass":
+                    return "ovp";
+                case "train":
+                    return "trn";
+                case "mirage":
+                    return "mrg";
+                case "cache":
+                    return "cch";
+                default:
+                    return "";
+            }
         }
 
         /// <summary>
@@ -716,6 +739,12 @@ namespace VirtualFlowersMVC.Data
                 model.Name = scrapedMatch.Name;
                 model.SportName = scrapedMatch.SportName;
                 model.Start = scrapedMatch.Start;
+                model.Team1Id = scrapedMatch.Team1Id;
+                model.Team1Name = scrapedMatch.Team1Name;
+                model.Team1Logo = scrapedMatch.Team1Logo;
+                model.Team2Id = scrapedMatch.Team2Id;
+                model.Team2Name = scrapedMatch.Team2Name;
+                model.Team2Logo = scrapedMatch.Team2Logo;
                 model.Json = MinFTR==0 || MinFTR ==-1? scrapedMatch.Json : model.Json;
                 model.Json4MinFTR = MinFTR == 4 || MinFTR == -1 ? scrapedMatch.Json4MinFTR : model.Json4MinFTR;
                 model.Json5MinFTR = MinFTR == 5 || MinFTR == -1 ? scrapedMatch.Json5MinFTR : model.Json5MinFTR;
