@@ -121,6 +121,13 @@ namespace VirtualFlowersMVC.Controllers
             return true;
         }
 
+        // Temp to get logos from hltv
+        public bool GetImages()
+        {
+            //_program.GetImages();
+            return true;
+        }
+
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult> SendToCompare(string url)
         {

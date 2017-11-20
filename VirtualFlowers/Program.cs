@@ -818,6 +818,44 @@ namespace VirtualFlowers
             }
         }
 
+        // Temp to get logos
+        public void GetImages()
+        {
+            using (WebClient wc = new WebClient())
+            {
+                string emptyurl = "https://static.hltv.org/images/team/logo/7002";
+                byte[] emptyFileBytes = wc.DownloadData(emptyurl);
+                var teamids = db.Team.Where(p => p.TeamId > 7000).OrderBy(s => s.TeamId).Select(k => k.TeamId).ToList();
+                foreach (var item in teamids)
+                {
+                    string remoteFileUrl = "https://static.hltv.org/images/team/logo/" + item;
+                    byte[] fileBytes = wc.DownloadData(remoteFileUrl);
+                    if (!fileBytes.SequenceEqual(emptyFileBytes))
+                    {
+                        var extension = "";
+                        string fileType = wc.ResponseHeaders[HttpResponseHeader.ContentType];
+                        switch (fileType)
+                        {
+                            case "image/jpeg":
+                                extension += ".jpg";
+                                break;
+                            case "image/svg+xml":
+                                extension += ".svg";
+                                break;
+                            case "image/png":
+                                extension += ".png";
+                                break;
+                            default:
+                                break;
+                        }
+
+                        string localFileName = @"C:\Users\eysteinne\Source\Repos\VirtualFlowers\VirtualFlowersMVC\Content\Image\teamlogo\" + item + extension;
+                        System.IO.File.WriteAllBytes(localFileName, fileBytes);
+                    }
+                }
+            }
+        }
+
         public string GrtUrl(string url)
         {
             string result = "";
