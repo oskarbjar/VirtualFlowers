@@ -1095,6 +1095,7 @@
     <Content Include="Content\Image\teamlogo\8450.png" />
     <Content Include="Content\Image\teamlogo\8451.png" />
     <Content Include="Content\Image\teamlogo\8452.png" />
+    <Content Include="Content\Image\teamlogo\8462.svg" />
     <Content Include="Content\Image\teamlogo\8473.png" />
     <Content Include="Content\Image\teamlogo\8481.svg" />
     <Content Include="Content\Image\teamlogo\8485.png" />
@@ -1123,6 +1124,8 @@
     <Content Include="Content\Image\teamlogo\8558.png" />
     <Content Include="Content\Image\teamlogo\8569.png" />
     <Content Include="Content\Image\teamlogo\8572.png" />
+    <Content Include="Content\Image\teamlogo\8587.png" />
+    <Content Include="Content\Image\teamlogo\8589.svg" />
     <Content Include="Content\Image\transfer.png" />
     <Content Include="Scripts\html5shiv.js" />
     <Content Include="favicon.ico" />
