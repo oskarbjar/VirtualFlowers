@@ -546,7 +546,7 @@ namespace VirtualFlowers
                 var rank = rankHtml.DocumentNode.Descendants("a") // All <a links
                                       .Where(d => d.Attributes.Contains("href") // contains href attribute
                                         && d.Attributes["href"].Value.Contains("/ranking/teams") // with this value
-                                        && d.InnerHtml.Contains("Ranked")) // and this text in innerHtml
+                                        && d.InnerHtml.Contains("#")) // and this text in innerHtml
                                       .Select(p => p.InnerHtml).FirstOrDefault(); // return InnerHtml
 
 
