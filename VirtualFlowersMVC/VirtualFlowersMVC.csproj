@@ -1156,6 +1156,7 @@
     <Content Include="Content\fonts\sourcesanspro-regular-webfont.eot" />
     <Content Include="Content\fonts\sourcesanspro-regular-webfont.ttf" />
     <Content Include="Content\fonts\sourcesanspro-regular-webfont.woff" />
+    <Content Include="Web.config" />
     <None Include="Properties\PublishProfiles\betsack - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\betsack - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\BetsackRelease - FTP.pubxml" />
@@ -1233,9 +1234,6 @@
     <Content Include="Views\Shared\_LayoutNew.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\FootballTips\Index.cshtml" />
-    <Content Include="Web.config">
-      <SubType>Designer</SubType>
-    </Content>
     <Content Include="Views\Home\CsIndex.cshtml" />
     <Content Include="Views\Home\LoadCompare.cshtml" />
   </ItemGroup>
