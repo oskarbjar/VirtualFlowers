@@ -328,6 +328,11 @@ namespace VirtualFlowersMVC.Controllers
             return View(result);
         }
 
+        public ActionResult LoadCompare2(int id, int MinFTR = 0)
+        {
+            return LoadCompare(id, MinFTR);
+        }
+
         // GET: LoadCompare
         public ActionResult LoadCompare(int id, int MinFTR = 0)
         {

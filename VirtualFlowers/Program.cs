@@ -293,6 +293,11 @@ namespace VirtualFlowers
                         foreach (var player in players)
                         {
                             var names = player.InnerText.Trim();
+                            //if(string.IsNullOrEmpty(names))
+                            //{
+                            //    var title = player.Descendants("img").Where(p => p.Attributes["title"].Value.Length > 0).FirstOrDefault();
+                            //    names = title.Attributes["title"].Value;
+                            //}
 
                             if (names != "")
                             {
@@ -480,14 +485,19 @@ namespace VirtualFlowers
                         Team2Id = Team2ID,
                         Team2RankValue = GetRankingValueForTeam(Team2ID, dDate),
 
+                        FirstRound1HWinTeamId = rounds.R1WinTeamId,
+                        FirstRound1HWinTerr = rounds.R1WinCt ? false : true,
+                        FirstRound1HWinCt = rounds.R1WinCt ? true : false,
+                        FirstRound2HWinTeamId = rounds.R16WinTeamId,
+                        FirstRound2HWinTerr = rounds.R16WinCt ? false : true,
+                        FirstRound2HWinCT = rounds.R16WinCt ? true : false,
 
-                        FirstRound1HWinTeamId = rounds.Count > 0 ? rounds.Where(x => x.Round1 == true).FirstOrDefault().TeamId : 0,
-                        FirstRound1HWinTerr = rounds.Count > 0 ? rounds.Where(x => x.Round1).FirstOrDefault().Terrorist:false,
-                        FirstRound1HWinCt = rounds.Count > 0 ? rounds.Where(x => x.Round1).FirstOrDefault().CounterTerrorist : false,
-                        FirstRound2HWinTeamId = rounds.Count > 0 ? rounds.Where(x => x.Round16).FirstOrDefault().TeamId:0,
-                        FirstRound2HWinTerr = rounds.Count > 0 ? rounds.Where(x => x.Round16).FirstOrDefault().Terrorist:false,
-                        FirstRound2HWinCT = rounds.Count > 0 ? rounds.Where(x => x.Round16).FirstOrDefault().CounterTerrorist:false
-
+                        BombExplosions = rounds.BombExplosions,
+                        BombDefuses = rounds.BombDefuses,
+                        TimeOut = rounds.TimeOut,
+                        GrenadeKill = rounds.GrenadeKill,
+                        MolotovKill = rounds.MolotovKill,
+                        ZuesKill = rounds.ZuesKill
                     };
 
                     var t1Players = players.Players.Where(x => x.TeamID == Team1ID).ToArray();
@@ -553,7 +563,6 @@ namespace VirtualFlowers
                 if (!string.IsNullOrEmpty(rank))
                 {
                     result = rank;
-
                 }
             }
             catch (Exception ex)
@@ -630,16 +639,18 @@ namespace VirtualFlowers
             return newdatetime;
         }
 
-        private List<RoundHistory> GetRoundsV2(string gameUrl, int TeamId)
+        private RoundHistory GetRoundsV2(string gameUrl, int TeamId)
         {
-            var roundWinner = new List<RoundHistory>();
+            RoundHistory rounds = default(RoundHistory);
             var xx = gameUrl.Substring(1);
             var prefix = "https://www.hltv.org";
 
             var fullUrl = prefix + xx;
             bool team1Round1Win = false;
+            bool team1CtWin = false;
             bool team1Round16Win = false;
-
+            bool team16CtWin = false;
+            int NrBombExplosion = 0, NrDefuses = 0, NrTimeout = 0, NrGrenadeKill= 0, NrMolotovKill = 0, NrZeusKill = 0, NrKnifeKill = 0;
 
             HtmlDocument gameHtml = HWeb.Load(fullUrl);
             var teamNameHtml = "//*[@class='round-history-team-row']";
@@ -647,77 +658,94 @@ namespace VirtualFlowers
             var results = gameHtml.DocumentNode.SelectNodes(resultHtml);
             var teamnames = gameHtml.DocumentNode.SelectNodes(teamNameHtml);
 
-            if ( teamnames != null)
-            { 
-            Team1Name = teamnames[0].FirstChild.Attributes["Title"].Value;
-            Team2Name = teamnames[1].FirstChild.Attributes["Title"].Value;
-
-
-            var Team1Firsthalf = results[0].ChildNodes;
-            var Team1FirstChildNodes = Team1Firsthalf[0].Attributes["title"].Value;
-
-            var team1Secondhalf = results[1].ChildNodes;
-            var team1SecondhalfChildNodes = team1Secondhalf[0].Attributes["title"].Value;
-
-            var team2Firsthalf = results[2].ChildNodes;
-            var Team2FirstChildNodes = team2Firsthalf[0].Attributes["title"].Value;
-
-            var team2Secondhalf = results[3].ChildNodes;
-            var Team2SecondChildNodes = team2Secondhalf[0].Attributes["title"].Value;
-
-            if (Team1FirstChildNodes.Length > 0)
+            if (teamnames != null)
             {
-                team1Round1Win = true;
+                // Get team names and ids
+                var Team1Name = teamnames[0].FirstChild.Attributes["Title"].Value;
+                var Team2Name = teamnames[1].FirstChild.Attributes["Title"].Value;
+                Team1ID = GetTeamID(teamnames[0].FirstChild.Attributes["src"].Value);
+                Team2ID = GetTeamID(teamnames[1].FirstChild.Attributes["src"].Value);
+
+                // Count explosion, defuses and timout wins in all history halfs
+                foreach (var half in results)
+                {
+                    NrBombExplosion += half.Descendants("img").Count(p => p.Attributes["src"].Value.Contains("bomb_exploded"));
+                    NrDefuses += half.Descendants("img").Count(p => p.Attributes["src"].Value.Contains("bomb_defused"));
+                    NrTimeout += half.Descendants("img").Count(p => p.Attributes["src"].Value.Contains("stopwatch"));
+                }
+
+                // Get which team won 1st and 16th round
+                if (results[0].ChildNodes[0].Attributes["title"].Value.Length > 0) // ef ekki length!
+                {
+                    team1Round1Win = true;
+                }
+
+                if (results[0].ChildNodes[0].Attributes["src"].Value.Contains("bomb_exploded") || results[0].ChildNodes[0].Attributes["src"].Value.Contains("t_win") ||
+                    results[2].ChildNodes[0].Attributes["src"].Value.Contains("bomb_exploded") || results[2].ChildNodes[0].Attributes["src"].Value.Contains("t_win"))
+                    team1CtWin = false;
+                else
+                    team1CtWin = true;
+
+                if (results[1].ChildNodes[0].Attributes["title"].Value.Length > 0)
+                {
+                    team1Round16Win = true;
+                }
+
+                if (results[1].ChildNodes[0].Attributes["src"].Value.Contains("bomb_exploded") || results[1].ChildNodes[0].Attributes["src"].Value.Contains("t_win") ||
+                    results[3].ChildNodes[0].Attributes["src"].Value.Contains("bomb_exploded") || results[3].ChildNodes[0].Attributes["src"].Value.Contains("t_win"))
+                    team16CtWin = false;
+                else
+                    team16CtWin = true;
+
+                // ************* Get Kills *************
+                var sHeatMapUrl = "?showKills=true&showDeaths=false&firstKillsOnly=false&allowEmpty=false&showKillDataset=true&showDeathDataset=false";
+                var heatmapUrl = fullUrl.Remove(fullUrl.IndexOf('?')).Replace("/mapstatsid", "/heatmap/mapstatsid") + sHeatMapUrl;
+                gameHtml = HWeb.Load(heatmapUrl);
+                var playersHtml = "//*[@class='player']";
+                var playerResult = gameHtml.DocumentNode.SelectNodes(playersHtml);
+                foreach (var player in playerResult)
+                {
+                    if (player.Descendants("select").Any(p => p.InnerText.Contains("hegrenade")))
+                    {
+                        var hegrenade = player.Descendants("select").Where(p => p.InnerText.Contains("hegrenade")).FirstOrDefault().InnerText;
+                        int.TryParse(hegrenade.Substring(hegrenade.IndexOf("hegrenade (") + "hegrenade (".Length, 1), out int nrHegrenade);
+                        NrGrenadeKill += nrHegrenade;
+                    }
+                    if (player.Descendants("select").Any(p => p.InnerText.Contains("inferno")))
+                    {
+                        var inferno = player.Descendants("select").Where(p => p.InnerText.Contains("inferno")).FirstOrDefault().InnerText;
+                        int.TryParse(inferno.Substring(inferno.IndexOf("inferno (")+ "inferno (".Length, 1), out int nrInferno);
+                        NrMolotovKill += nrInferno;
+                    }
+                    if (player.Descendants("select").Any(p => p.InnerText.Contains("taser")))
+                    {
+                        var taser = player.Descendants("select").Where(p => p.InnerText.Contains("taser")).FirstOrDefault().InnerText;
+                        int.TryParse(taser.Substring(taser.IndexOf("taser (") + "taser (".Length, 1), out int nrTaser);
+                        NrZeusKill += nrTaser;
+                    }
+                    if (player.Descendants("select").Any(p => p.InnerText.Contains("knife")))
+                    {
+                        // Different kind of knifes, we just increase by 1
+                        NrKnifeKill += 1;
+                    }
+                }
+
+                // Set 
+                rounds = new RoundHistory()
+                {
+                    R1WinTeamId = team1Round1Win ? Team1ID : Team2ID,
+                    R1WinCt = team1CtWin,
+                    R16WinTeamId = team1Round16Win ? Team1ID : Team2ID,
+                    R16WinCt = team16CtWin,
+                    BombExplosions = NrBombExplosion,
+                    BombDefuses = NrDefuses,
+                    TimeOut = NrTimeout,
+                    GrenadeKill = NrGrenadeKill,
+                    MolotovKill = NrMolotovKill,
+                    ZuesKill = NrZeusKill
+                };
             }
-            if (team1SecondhalfChildNodes.Length > 0)
-            {
-                team1Round16Win = true;
-            }
-            var FirstRoundScore = Team1FirstChildNodes.Length > 0 ? Team1FirstChildNodes : Team2FirstChildNodes;
-            var SixteenRoundScore = team1SecondhalfChildNodes.Length > 0 ? team1SecondhalfChildNodes : Team2SecondChildNodes;
-
-            Team1ID = GetTeamID(teamnames[0].FirstChild.Attributes["src"].Value); 
-            Team2ID = GetTeamID(teamnames[1].FirstChild.Attributes["src"].Value);
-
-
-            var rounds = new RoundHistory();
-            var round1Teamid = team1Round1Win ? Team1ID : Team2ID;
-            var round16Teamid = team1Round16Win ? Team1ID : Team2ID;
-
-            rounds.TeamId = round1Teamid;
-            if (team1Round1Win)
-            {
-                rounds.CounterTerrorist = true;
-
-            }
-            else
-            {
-                rounds.Terrorist = true;
-            }
-            rounds.Round1 = true;
-            rounds.round = 0;
-            roundWinner.Add(rounds);
-
-            var round16 = new RoundHistory();
-
-            round16.TeamId = round16Teamid;
-            if (team1Round16Win)
-            {
-                round16.CounterTerrorist = true;
-
-            }
-            else
-            {
-                round16.Terrorist = true;
-            }
-            round16.Round16 = true;
-            round16.round = 0;
-            roundWinner.Add(round16);
-
-            }
-
-
-            return roundWinner;
+            return rounds;
         }
 
         private int GetTeamID(string innerHtml)
@@ -785,14 +813,21 @@ namespace VirtualFlowers
                 var tablesHtml = "//*[@class='ranked-team standard-box']";
                 var results = rankingHtmlDocument.DocumentNode.SelectNodes(tablesHtml);
                
-                for (int i = 0; i < results.Count; i++)                {
-                    var sTeamId = results[i].SelectNodes(".//*[@class='name js-link']");
-                    var teamID = GetTeamIDs(sTeamId[0].OuterHtml);
-                    var points = GetPoints(results[i].SelectNodes(".//*[@class='points']")[0].InnerHtml);
+                for (int i = 0; i < results.Count; i++)
+                {
+                    var position = results[i].Descendants("span").Where(d => d.Attributes.Contains("class") && d.Attributes["class"].Value.Contains("position")).Select(p => p.InnerHtml).FirstOrDefault();
+                    var name = results[i].Descendants("span").Where(d => d.Attributes.Contains("class") && d.Attributes["class"].Value.Contains("name")).Select(p => p.InnerHtml).FirstOrDefault();
+                    var teamlogourl = results[i].Descendants("img").Where(d => d.Attributes.Contains("title") && d.Attributes["title"].Value.Contains(name)).Select(p => p.Attributes["src"].Value).FirstOrDefault();
+                    var points = results[i].Descendants("span").Where(d => d.Attributes.Contains("class") && d.Attributes["class"].Value.Contains("points")).Select(p => p.InnerHtml).FirstOrDefault();
+
+                    var teamID = int.Parse(teamlogourl.Replace("https://static.hltv.org/images/team/logo/", ""));
+                    //var sTeamId = results[i].SelectNodes(".//*[@class='name js-link']");
+                    //var teamID = GetTeamIDs(sTeamId[0].OuterHtml);
+                    //var points = GetPoints(results[i].SelectNodes(".//*[@class='points']")[0].InnerHtml);
                     var ranking = new Rank
                     {
-                        RankPosition = i +1,
-                        Points = points,
+                        RankPosition = int.Parse(position.Replace("#", "")),
+                        Points = int.Parse(points.Replace("(", "").Replace(" points)", "")),
                         TeamId = teamID,
                         RankingListId = rankingListId
                     };

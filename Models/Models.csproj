@@ -84,6 +84,14 @@
     <Compile Include="Migrations\201711201603044_ScrapedMatchesLogoAdded.Designer.cs">
       <DependentUpon>201711201603044_ScrapedMatchesLogoAdded.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201903011602096_extracolums.cs" />
+    <Compile Include="Migrations\201903011602096_extracolums.Designer.cs">
+      <DependentUpon>201903011602096_extracolums.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903011644191_RemoveRoundHistory.cs" />
+    <Compile Include="Migrations\201903011644191_RemoveRoundHistory.Designer.cs">
+      <DependentUpon>201903011644191_RemoveRoundHistory.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\FootballTips.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ExpectedLineUp.cs" />
@@ -125,6 +133,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201711201603044_ScrapedMatchesLogoAdded.resx">
       <DependentUpon>201711201603044_ScrapedMatchesLogoAdded.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903011602096_extracolums.resx">
+      <DependentUpon>201903011602096_extracolums.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903011644191_RemoveRoundHistory.resx">
+      <DependentUpon>201903011644191_RemoveRoundHistory.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

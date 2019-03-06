@@ -276,7 +276,20 @@ namespace VirtualFlowersMVC.Data
                 FullTeamRanking = GetFullTeamPercent(TeamId, n.ToList(), expectedLinup, secondaryTeamId),
                 FullTeamGroupBy = GetFullTeamTitle(TeamId, n.ToList(), expectedLinup, secondaryTeamId),
                 FirstRound1HWinPercent = GetFirstRoundStats(TeamId, n.ToList(), true),
-                FirstRound2HWinPercent = GetFirstRoundStats(TeamId, n.ToList(), false)
+                FirstRound2HWinPercent = GetFirstRoundStats(TeamId, n.ToList(), false),
+                BombExplosions = Math.Round(n.Sum(p => p.BombExplosions) / (double)n.Count(), 1),
+                BombExplosionsWin = Math.Round((n.Count(p => p.BombExplosions > 4.5) / (double)n.Count()) * 100, 1),
+                BombDefuses = Math.Round(n.Sum(p => p.BombDefuses) / (double)n.Count(), 1),
+                BombDefusesWin = Math.Round((n.Count(p => p.BombDefuses > 3.5) / (double)n.Count()) * 100, 1),
+                TimeOut = Math.Round(n.Sum(p => p.TimeOut) / (double)n.Count(), 1),
+                TimeOutWin = Math.Round((n.Count(p => p.TimeOut > 0.5) / (double)n.Count()) * 100, 1),
+                GrenadeKill = Math.Round(n.Sum(p => p.GrenadeKill) / (double)n.Count(), 1),
+                GrenadeKillWin = Math.Round((n.Count(p => p.GrenadeKill > 0.5) / (double)n.Count()) * 100, 1),
+                MolotovKill = Math.Round(n.Sum(p => p.MolotovKill) / (double)n.Count(), 1),
+                MolotovKillWin = Math.Round((n.Count(p => p.MolotovKill > 0.5) / (double)n.Count()) * 100, 1),
+                ZuesKill = Math.Round(n.Sum(p => p.ZuesKill) / (double)n.Count(), 1),
+                ZuesKillWin = Math.Round((n.Count(p => p.ZuesKill > 0.5) / (double)n.Count()) * 100, 1),
+                KnifeKill = Math.Round(n.Sum(p => p.KnifeKill) / (double)n.Count(), 1)
             }).OrderByDescending(n => n.WinPercent).ToList();
 
             return result;
@@ -582,6 +595,13 @@ namespace VirtualFlowersMVC.Data
                 T2Player3Id = n.Team1Id == TeamId ? n.T2Player3Id : n.T1Player3Id,
                 T2Player4Id = n.Team1Id == TeamId ? n.T2Player4Id : n.T1Player4Id,
                 T2Player5Id = n.Team1Id == TeamId ? n.T2Player5Id : n.T1Player5Id,
+                BombExplosions = n.BombExplosions,
+                BombDefuses = n.BombDefuses,
+                TimeOut = n.TimeOut,
+                GrenadeKill = n.GrenadeKill,
+                MolotovKill = n.MolotovKill,
+                ZuesKill = n.ZuesKill,
+                KnifeKill = n.KnifeKill
             }).ToList();
 
             return result;
@@ -832,7 +852,10 @@ namespace VirtualFlowersMVC.Data
         public List<ScrapedMatches> GetAllScrapedMatches()
         {
             DateTime dDate = DateTime.Now.Date;
-            return _db.ScrapedMatches.Where(p => p.Start > dDate).ToList();
+            if (_db.ScrapedMatches.Where(p => p.Start > dDate).Any())
+                return _db.ScrapedMatches?.Where(p => p.Start > dDate).ToList();
+            else
+                return new List<ScrapedMatches>();
         }
 
         #endregion

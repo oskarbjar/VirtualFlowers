@@ -57,19 +57,30 @@ namespace Models
         public int    T2Player3Id    { get; set; }
         public int    T2Player4Id    { get; set; }
         public int    T2Player5Id    { get; set; }
+
+        public int BombExplosions { get; set; }
+        public int BombDefuses    { get; set; }
+        public int TimeOut        { get; set; }
+        public int KnifeKill      { get; set; }
+        public int MolotovKill    { get; set; }
+        public int GrenadeKill    { get; set; }
+        public int ZuesKill       { get; set; }
     }
 
+    [NotMapped]
     public class RoundHistory
     {
-        public int ID { get; set; }
-        public bool Round1 { get; set; }
-        public bool Round16 { get; set; }
-        public int TeamId { get; set; }
-        public bool Terrorist { get; set; }
+        public int R1WinTeamId { get; set; }
+        public bool R1WinCt { get; set; }
+        public int R16WinTeamId { get; set; }
+        public bool R16WinCt { get; set; }
 
-        public bool  CounterTerrorist { get; set; }
-
-        [NotMapped]
-        public int round { get; set; }
+        public int BombExplosions { get; set; }
+        public int BombDefuses { get; set; }
+        public int TimeOut { get; set; }
+        public int KnifeKill { get; set; }
+        public int MolotovKill { get; set; }
+        public int GrenadeKill { get; set; }
+        public int ZuesKill { get; set; }
     }
 }

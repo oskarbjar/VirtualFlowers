@@ -73,6 +73,19 @@ namespace VirtualFlowersMVC.Models
         public double FullTeamRanking { get; set; }
         public string FullTeamGroupBy { get; set; }
         public string TitleMapMatches { get; set; }
+        public double BombExplosions { get; set; }
+        public double BombExplosionsWin { get; set; }
+        public double BombDefuses { get; set; }
+        public double BombDefusesWin { get; set; }
+        public double TimeOut { get; set; }
+        public double TimeOutWin { get; set; }
+        public double KnifeKill { get; set; }
+        public double MolotovKill { get; set; }
+        public double MolotovKillWin { get; set; }
+        public double GrenadeKill { get; set; }
+        public double GrenadeKillWin { get; set; }
+        public double ZuesKill { get; set; }
+        public double ZuesKillWin { get; set; }
         public Tuple<double, string> FirstRound1HWinPercent { get; set; }
         public Tuple<double, string> FirstRound2HWinPercent { get; set; }
         public SuggestedMapModel SuggestedMap { get; set; }
