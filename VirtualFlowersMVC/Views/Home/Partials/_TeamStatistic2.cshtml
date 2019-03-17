@@ -139,15 +139,24 @@
                     @map.TimeOut
                 </td>
                 <td style="cursor: help" class="htmlTooltipLeft">
-                    <div class="tooltiptext">@Html.Raw(@map.GrenadeKillWin)% - Odds: @Html.Raw(Math.Round(1 / (@map.GrenadeKillWin / 100), 1))</div>
+                    <div class="tooltiptext">
+                        @Html.Raw(@map.GrenadeKillWin)% - Yes Odds: @Html.Raw(Math.Round(1 / (@map.GrenadeKillWin / 100), 1))<br />
+                        @Html.Raw(100 - @map.GrenadeKillWin)% - No Odds: @Html.Raw(Math.Round(1 / ((100 - @map.GrenadeKillWin) / 100), 1))
+                    </div>
                     @map.GrenadeKill
                 </td>
                 <td style="cursor: help" class="htmlTooltipLeft">
-                    <div class="tooltiptext">@Html.Raw(@map.MolotovKillWin)% - Odds: @Html.Raw(Math.Round(1 / (@map.MolotovKillWin / 100), 1))</div>
+                    <div class="tooltiptext">
+                        @Html.Raw(@map.MolotovKillWin)% - Yes Odds: @Html.Raw(Math.Round(1 / (@map.MolotovKillWin / 100), 1))<br />
+                        @Html.Raw(100 - @map.MolotovKillWin)% - No Odds: @Html.Raw(Math.Round(1 / ((100 - @map.MolotovKillWin) / 100), 1))
+                    </div>
                     @map.MolotovKill
                 </td>
                 <td style="cursor: help" class="htmlTooltipLeft">
-                    <div class="tooltiptext">@Html.Raw(@map.ZuesKillWin)% - Odds: @Html.Raw(Math.Round(1 / (@map.ZuesKillWin / 100), 1))</div>
+                    <div class="tooltiptext">
+                        @Html.Raw(@map.ZuesKillWin)% - Yes Odds: @Html.Raw(Math.Round(1 / (@map.ZuesKillWin / 100), 1))<br />
+                        @Html.Raw(100 - @map.ZuesKillWin)% - No Odds: @Html.Raw(Math.Round(1 / ((100 - @map.ZuesKillWin) / 100), 1))
+                    </div>
                     @map.ZuesKill
                 </td>
                 <td style="cursor: help" class="htmlTooltipLeft">

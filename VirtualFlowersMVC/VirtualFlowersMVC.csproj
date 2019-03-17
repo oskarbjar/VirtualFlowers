@@ -1133,10 +1133,12 @@
     <Content Include="Content\Image\teamlogo\8637.svg" />
     <Content Include="Content\Image\teamlogo\8668.svg" />
     <Content Include="Content\Image\teamlogo\8669.svg" />
+    <Content Include="Content\Image\teamlogo\8833.svg" />
     <Content Include="Content\Image\teamlogo\8840.png" />
     <Content Include="Content\Image\teamlogo\8846.svg" />
     <Content Include="Content\Image\teamlogo\8848.png" />
     <Content Include="Content\Image\teamlogo\8902.png" />
+    <Content Include="Content\Image\teamlogo\8930.svg" />
     <Content Include="Content\Image\teamlogo\9003.png" />
     <Content Include="Content\Image\teamlogo\9085.svg" />
     <Content Include="Content\Image\teamlogo\9100.png" />
@@ -1152,12 +1154,14 @@
     <Content Include="Content\Image\teamlogo\9484.svg" />
     <Content Include="Content\Image\teamlogo\9523.png" />
     <Content Include="Content\Image\teamlogo\9565.svg" />
+    <Content Include="Content\Image\teamlogo\9566.svg" />
     <Content Include="Content\Image\teamlogo\9679.svg" />
     <Content Include="Content\Image\teamlogo\9684.png" />
     <Content Include="Content\Image\teamlogo\9722.svg" />
     <Content Include="Content\Image\teamlogo\9747.png" />
     <Content Include="Content\Image\teamlogo\9750.svg" />
     <Content Include="Content\Image\teamlogo\9800.png" />
+    <Content Include="Content\Image\teamlogo\9838.png" />
     <Content Include="Content\Image\teamlogo\9849.png" />
     <Content Include="Content\Image\teamlogo\9862.svg" />
     <Content Include="Content\Image\teamlogo\9869.png" />

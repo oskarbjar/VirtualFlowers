@@ -60,7 +60,7 @@ namespace VirtualFlowers
             var MatchesCollection = MatchesCollectionNodes[0].ChildNodes[1].SelectNodes(".//div[@class='match-day']//@href");
             
             var counter = 1;
-            foreach (var item in MatchesCollection.Take(52))
+            foreach (var item in MatchesCollection.Take(100))
             {
                 counter++;
                 var BestOf3 = "";

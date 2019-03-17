@@ -86,7 +86,7 @@ namespace VirtualFlowersMVC.Controllers
             var allScrapedMatches = _dataWorker.GetAllScrapedMatches();
 
 
-            foreach (var item in result.Take(58))
+            foreach (var item in result.Take(100))
             {
                 var matchId = _program.GetTeamIdFromUrl(item.Url); 
                 var overViewViewModel = new OverViewViewModel { Id = counter++, Url = "https://www.hltv.org" + item.Url, UrlChecked = false, Name = item.Url, BestOf3 = item.BestOf3, ScrapedMatch = _dataWorker.IsMatchScraped(ref allScrapedMatches, matchId) };
@@ -116,6 +116,21 @@ namespace VirtualFlowersMVC.Controllers
             foreach (var item in matches.Take(Num))
             {
                 await SendToCompare("http://www.hltv.org" + item.Url);
+            }
+
+            return true;
+        }
+
+        [HttpGet]
+        public async Task<bool> ScrapeUnscraped()
+        {
+            var matches = _program.GetMatches();
+            var allScrapedMatches = _dataWorker.GetAllScrapedMatches();
+
+            foreach (var item in matches)
+            {
+                if(!allScrapedMatches.Any(p => p.MatchUrl.Contains(item.Url)))
+                    await SendToCompare("http://www.hltv.org" + item.Url);
             }
 
             return true;
