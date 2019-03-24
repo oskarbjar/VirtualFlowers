@@ -68,6 +68,16 @@ namespace Models
     }
 
     [NotMapped]
+    public class RoundDetail
+    {
+        public int Team1ID { get; set; }
+        public string Team1Name { get; set; }
+        public int Team2ID { get; set; }
+        public string Team2Name { get; set; }
+        public RoundHistory rounds { get; set; }
+    }
+
+    [NotMapped]
     public class RoundHistory
     {
         public int R1WinTeamId { get; set; }

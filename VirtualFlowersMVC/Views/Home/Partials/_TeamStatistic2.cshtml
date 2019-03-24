@@ -160,6 +160,10 @@
                     @map.ZuesKill
                 </td>
                 <td style="cursor: help" class="htmlTooltipLeft">
+                    <div class="tooltiptext">
+                        @Html.Raw(@map.KnifeKillWin)% - Yes Odds: @Html.Raw(Math.Round(1 / (@map.KnifeKillWin / 100), 1))<br />
+                        @Html.Raw(100 - @map.KnifeKillWin)% - No Odds: @Html.Raw(Math.Round(1 / ((100 - @map.KnifeKillWin) / 100), 1))
+                    </div>
                     @map.KnifeKill
                 </td>
                 <td style="cursor: help" class="htmlTooltipLeft">

@@ -67,7 +67,7 @@ namespace VirtualFlowersMVC.Data
 
         public Team GetTeamDetails(int? id)
         {
-            var result = _db.Team.Find(id);
+            var result = _db.Team.Where(p => p.TeamId == id).FirstOrDefault();
 
             return result;
         }
@@ -289,7 +289,8 @@ namespace VirtualFlowersMVC.Data
                 MolotovKillWin = Math.Round((n.Count(p => p.MolotovKill > 0.5) / (double)n.Count()) * 100, 1),
                 ZuesKill = Math.Round(n.Sum(p => p.ZuesKill) / (double)n.Count(), 1),
                 ZuesKillWin = Math.Round((n.Count(p => p.ZuesKill > 0.5) / (double)n.Count()) * 100, 1),
-                KnifeKill = Math.Round(n.Sum(p => p.KnifeKill) / (double)n.Count(), 1)
+                KnifeKill = Math.Round(n.Sum(p => p.KnifeKill) / (double)n.Count(), 1),
+                KnifeKillWin = Math.Round((n.Count(p => p.KnifeKill > 0.5) / (double)n.Count()) * 100, 1)
             }).OrderByDescending(n => n.WinPercent).ToList();
 
             return result;

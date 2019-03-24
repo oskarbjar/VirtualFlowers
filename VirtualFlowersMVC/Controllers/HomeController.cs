@@ -204,9 +204,13 @@ namespace VirtualFlowersMVC.Controllers
                     {
                         model.Teams = new List<TeamStatisticPeriodModel>();
                         var logo = CheckIfLogoExist(model.Team1Id);
-                        model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team1Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeam1Id, model.NoCache, ftr, _program.Team1Rank, logo));
+                        var team1Info = _dataWorker.GetTeamDetails(model.Team1Id);
+                        var team1Rank = _program.GetTeamRank(team1Info.TeamId, team1Info.TeamName);
+                        model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team1Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeam1Id, model.NoCache, ftr, team1Rank, logo));
                         var logo2 = CheckIfLogoExist(model.Team2Id);
-                        model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team2Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeam2Id, model.NoCache, ftr, _program.Team2Rank, logo2));
+                        var team2Info = _dataWorker.GetTeamDetails(model.Team2Id);
+                        var team2Rank = _program.GetTeamRank(team2Info.TeamId, team2Info.TeamName);
+                        model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team2Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeam2Id, model.NoCache, ftr, team2Rank, logo2));
                         if (model.Teams != null && model.Teams.Count > 0)
                         {
                             _dataWorker.GenerateSuggestedMaps(ref model);
@@ -267,7 +271,6 @@ namespace VirtualFlowersMVC.Controllers
                     {
                         if (!string.IsNullOrEmpty(model.MatchUrl))
                         {
-                            Program.MatchUrl = model.MatchUrl;
                             var result = _program.GetTeamIdsFromUrl(model.MatchUrl);
 
                             model.Team1Id = result.Item1;
@@ -284,7 +287,9 @@ namespace VirtualFlowersMVC.Controllers
                                 await _program.GetTeamDetails(model.Team1Id);
 
                             var logo = CheckIfLogoExist(model.Team1Id);
-                            model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team1Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeamId, model.NoCache, model.MinFullTeamRanking, _program.Team1Rank, logo));
+                            var teamInfo = _dataWorker.GetTeamDetails(model.Team1Id);
+                            var teamRank = _program.GetTeamRank(teamInfo.TeamId, teamInfo.TeamName);
+                            model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team1Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeamId, model.NoCache, model.MinFullTeamRanking, teamRank, logo));
                         }
                         if (model.Team2Id > 0)
                         {
@@ -293,7 +298,9 @@ namespace VirtualFlowersMVC.Controllers
                             if (model.Scrape)
                                 await _program.GetTeamDetails(model.Team2Id);
                             var logo = CheckIfLogoExist(model.Team2Id);
-                            model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team2Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeamId, model.NoCache, model.MinFullTeamRanking, _program.Team2Rank, logo));
+                            var teamInfo = _dataWorker.GetTeamDetails(model.Team2Id);
+                            var teamRank = _program.GetTeamRank(teamInfo.TeamId, teamInfo.TeamName);
+                            model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team2Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeamId, model.NoCache, model.MinFullTeamRanking, teamRank, logo));
                         }
 
                         if (model.Teams != null && model.Teams.Count > 0)

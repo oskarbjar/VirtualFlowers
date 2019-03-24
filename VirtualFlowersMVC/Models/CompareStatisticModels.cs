@@ -80,6 +80,7 @@ namespace VirtualFlowersMVC.Models
         public double TimeOut { get; set; }
         public double TimeOutWin { get; set; }
         public double KnifeKill { get; set; }
+        public double KnifeKillWin { get; set; }
         public double MolotovKill { get; set; }
         public double MolotovKillWin { get; set; }
         public double GrenadeKill { get; set; }
