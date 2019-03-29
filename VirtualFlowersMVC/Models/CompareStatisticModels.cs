@@ -59,6 +59,7 @@ namespace VirtualFlowersMVC.Models
     public class MapStatisticModel
     {
         public string Map { get; set; }
+        public int TotalMatches { get; set; }
         public int TotalWins { get; set; }
         public int TotalLosses { get; set; }
         public double WinPercent { get; set; }

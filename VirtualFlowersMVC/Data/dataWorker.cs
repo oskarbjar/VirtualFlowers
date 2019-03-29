@@ -248,6 +248,7 @@ namespace VirtualFlowersMVC.Data
             {
                 Map = n.Key,
                 TitleMapMatches = GetTitleMapMatches(fixedMatches.Where(p => p.Map == n.Key).OrderByDescending(p => p.Date).ToList()),
+                TotalMatches = n.Count(),
                 TotalWins = n.Count(p => p.ResultT1 > p.ResultT2),
                 TotalLosses = n.Count(p => p.ResultT2 > p.ResultT1),
                 WinPercent = Math.Round(n.Count(p => p.ResultT1 > p.ResultT2) / (double)n.Count() * 100, 1),
@@ -277,20 +278,20 @@ namespace VirtualFlowersMVC.Data
                 FullTeamGroupBy = GetFullTeamTitle(TeamId, n.ToList(), expectedLinup, secondaryTeamId),
                 FirstRound1HWinPercent = GetFirstRoundStats(TeamId, n.ToList(), true),
                 FirstRound2HWinPercent = GetFirstRoundStats(TeamId, n.ToList(), false),
-                BombExplosions = Math.Round(n.Sum(p => p.BombExplosions) / (double)n.Count(), 1),
-                BombExplosionsWin = Math.Round((n.Count(p => p.BombExplosions > 4.5) / (double)n.Count()) * 100, 1),
-                BombDefuses = Math.Round(n.Sum(p => p.BombDefuses) / (double)n.Count(), 1),
-                BombDefusesWin = Math.Round((n.Count(p => p.BombDefuses > 3.5) / (double)n.Count()) * 100, 1),
-                TimeOut = Math.Round(n.Sum(p => p.TimeOut) / (double)n.Count(), 1),
-                TimeOutWin = Math.Round((n.Count(p => p.TimeOut > 0.5) / (double)n.Count()) * 100, 1),
-                GrenadeKill = Math.Round(n.Sum(p => p.GrenadeKill) / (double)n.Count(), 1),
-                GrenadeKillWin = Math.Round((n.Count(p => p.GrenadeKill > 0.5) / (double)n.Count()) * 100, 1),
-                MolotovKill = Math.Round(n.Sum(p => p.MolotovKill) / (double)n.Count(), 1),
-                MolotovKillWin = Math.Round((n.Count(p => p.MolotovKill > 0.5) / (double)n.Count()) * 100, 1),
-                ZuesKill = Math.Round(n.Sum(p => p.ZuesKill) / (double)n.Count(), 1),
-                ZuesKillWin = Math.Round((n.Count(p => p.ZuesKill > 0.5) / (double)n.Count()) * 100, 1),
-                KnifeKill = Math.Round(n.Sum(p => p.KnifeKill) / (double)n.Count(), 1),
-                KnifeKillWin = Math.Round((n.Count(p => p.KnifeKill > 0.5) / (double)n.Count()) * 100, 1)
+                BombExplosions = n.Sum(p => p.BombExplosions), //Math.Round(n.Sum(p => p.BombExplosions) / (double)n.Count(), 1),
+                BombExplosionsWin = n.Count(p => p.BombExplosions > 4.5), //Math.Round((n.Count(p => p.BombExplosions > 4.5) / (double)n.Count()) * 100, 1),
+                BombDefuses = n.Sum(p => p.BombDefuses), //Math.Round(n.Sum(p => p.BombDefuses) / (double)n.Count(), 1),
+                BombDefusesWin = n.Count(p => p.BombDefuses > 3.5), //Math.Round((n.Count(p => p.BombDefuses > 3.5) / (double)n.Count()) * 100, 1),
+                TimeOut = n.Sum(p => p.TimeOut), //Math.Round(n.Sum(p => p.TimeOut) / (double)n.Count(), 1),
+                TimeOutWin = n.Count(p => p.TimeOut > 0.5), //Math.Round((n.Count(p => p.TimeOut > 0.5) / (double)n.Count()) * 100, 1),
+                GrenadeKill = n.Sum(p => p.GrenadeKill), //Math.Round(n.Sum(p => p.GrenadeKill) / (double)n.Count(), 1),
+                GrenadeKillWin = n.Count(p => p.GrenadeKill > 0.5), //Math.Round((n.Count(p => p.GrenadeKill > 0.5) / (double)n.Count()) * 100, 1),
+                MolotovKill = n.Sum(p => p.MolotovKill), //Math.Round(n.Sum(p => p.MolotovKill) / (double)n.Count(), 1),
+                MolotovKillWin = n.Count(p => p.MolotovKill > 0.5), //Math.Round((n.Count(p => p.MolotovKill > 0.5) / (double)n.Count()) * 100, 1),
+                ZuesKill = n.Sum(p => p.ZuesKill), //Math.Round(n.Sum(p => p.ZuesKill) / (double)n.Count(), 1),
+                ZuesKillWin = n.Count(p => p.ZuesKill > 0.5), //Math.Round((n.Count(p => p.ZuesKill > 0.5) / (double)n.Count()) * 100, 1),
+                KnifeKill = n.Sum(p => p.KnifeKill), //Math.Round(n.Sum(p => p.KnifeKill) / (double)n.Count(), 1),
+                KnifeKillWin = n.Count(p => p.KnifeKill > 0.5) //Math.Round((n.Count(p => p.KnifeKill > 0.5) / (double)n.Count()) * 100, 1)
             }).OrderByDescending(n => n.WinPercent).ToList();
 
             return result;
