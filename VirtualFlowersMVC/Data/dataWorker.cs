@@ -115,7 +115,7 @@ namespace VirtualFlowersMVC.Data
             var result = new TeamStatisticModel();
             var dTo = DateTime.Now;
             var dFrom = new DateTime();
-            var mapList = new List<string> { "nuke", "overpass", "cobblestone", "train", "inferno", "mirage", "cache" };
+            var mapList = new List<string> { "nuke", "overpass", "cobblestone", "train", "inferno", "mirage", "cache", "vertigo" };
 
             switch (period)
             {
@@ -555,6 +555,8 @@ namespace VirtualFlowersMVC.Data
                     return "mrg";
                 case "cache":
                     return "cch";
+                case "vertigo":
+                    return "ver";
                 default:
                     return "";
             }

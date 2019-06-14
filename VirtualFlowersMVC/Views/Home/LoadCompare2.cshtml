@@ -96,6 +96,7 @@
         maplist3M.Add(TeamsCombined3Months.Where(p => string.Equals(p.Map, "nuke", StringComparison.CurrentCultureIgnoreCase)).ToList());
         maplist3M.Add(TeamsCombined3Months.Where(p => string.Equals(p.Map, "overpass", StringComparison.CurrentCultureIgnoreCase)).ToList());
         maplist3M.Add(TeamsCombined3Months.Where(p => string.Equals(p.Map, "train", StringComparison.CurrentCultureIgnoreCase)).ToList());
+        maplist3M.Add(TeamsCombined3Months.Where(p => string.Equals(p.Map, "vertigo", StringComparison.CurrentCultureIgnoreCase)).ToList());
         maplist3M.Add(TeamsCombined3Months.Where(p => string.Equals(p.Map, "cobblestone", StringComparison.CurrentCultureIgnoreCase)).ToList());
 
         var TeamsCombined6Months = (from s in Model.Teams
@@ -111,6 +112,7 @@
         maplist6M.Add(TeamsCombined6Months.Where(p => string.Equals(p.Map, "nuke", StringComparison.CurrentCultureIgnoreCase)).ToList());
         maplist6M.Add(TeamsCombined6Months.Where(p => string.Equals(p.Map, "overpass", StringComparison.CurrentCultureIgnoreCase)).ToList());
         maplist6M.Add(TeamsCombined6Months.Where(p => string.Equals(p.Map, "train", StringComparison.CurrentCultureIgnoreCase)).ToList());
+        maplist6M.Add(TeamsCombined6Months.Where(p => string.Equals(p.Map, "vertigo", StringComparison.CurrentCultureIgnoreCase)).ToList());
         maplist6M.Add(TeamsCombined6Months.Where(p => string.Equals(p.Map, "cobblestone", StringComparison.CurrentCultureIgnoreCase)).ToList());
     }
 

@@ -749,7 +749,7 @@ namespace VirtualFlowers
         public double GetRankingValueForTeam(int TeamId, DateTime dDate)
         {
             var result = 0.5;
-            var dDateFrom = dDate.AddDays(-8);
+            var dDateFrom = dDate.AddDays(-14);
 
             // Check if we find RankingList within the last 7 days
             var RankingList = db.RankingList.Where(p => p.DateOfRank > dDateFrom && p.DateOfRank <= dDate).OrderByDescending(n => n.DateOfRank).FirstOrDefault();
