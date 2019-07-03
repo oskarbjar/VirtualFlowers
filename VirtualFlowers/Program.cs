@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using Match = Models.Match;
 using System.Threading.Tasks;
 using System.Net;
+using CsScraper;
 
 namespace VirtualFlowers
 {
@@ -15,6 +16,7 @@ namespace VirtualFlowers
     {
         static readonly HtmlWeb HWeb = new HtmlAgilityPack.HtmlWeb();
         private readonly DatabaseContext db = new DatabaseContext();
+        private WebClient _client = null;
 
         static void Main(string[] args)
         {
@@ -30,6 +32,19 @@ namespace VirtualFlowers
             // var stringList = GetMatches("http://www.hltv.org/matches");
 
 
+        }
+
+        public HtmlDocument GetHtmlDocument(string url)
+        {
+            while (_client == null)
+            {
+                Console.WriteLine("Trying..");
+                _client = CloudflareEvader.CreateBypassedWebClient("https://www.hltv.org");
+            }
+            var html = _client.DownloadString(url);
+            var matchesHtml = new HtmlDocument();
+            matchesHtml.LoadHtml(html);
+            return matchesHtml;
         }
       
         /// <summary>
@@ -51,10 +66,8 @@ namespace VirtualFlowers
                     return true;
                 }
             };
-
-
-
-            var matchesHtml = page.Load(url);          
+            var matchesHtml = GetHtmlDocument(url);
+            //var matchesHtml = page.Load(url);    
             var selection2 = "//div[@class='upcoming-matches']";
             var MatchesCollectionNodes = matchesHtml.DocumentNode.SelectNodes(selection2);
             var MatchesCollection = MatchesCollectionNodes[0].ChildNodes[1].SelectNodes(".//div[@class='match-day']//@href");
@@ -114,7 +127,8 @@ namespace VirtualFlowers
                
 
                 var url = matchUrls;
-                var matchHtml = HWeb.Load(matchUrls);
+                //var matchHtml = HWeb.Load(matchUrls);
+                var matchHtml = GetHtmlDocument(matchUrls);
                 var span1Name = new HtmlNodeCollection(HtmlNode.CreateNode(""));
                 var span2Name = new HtmlNodeCollection(HtmlNode.CreateNode(""));
 
@@ -230,7 +244,8 @@ namespace VirtualFlowers
                 //var teamIDs = GetTeamIdsFromUrl();
                 var urlHtml = $"[@class='//match-page-link button']";
                 var url = matchUrls;
-                var MoreInfo = HWeb.Load(url);
+                var MoreInfo = GetHtmlDocument(url);
+                //var MoreInfo = HWeb.Load(url);
                 var span1Name = new HtmlNodeCollection(HtmlNode.CreateNode(""));
                 var span2Name = new HtmlNodeCollection(HtmlNode.CreateNode(""));
                
@@ -256,8 +271,9 @@ namespace VirtualFlowers
 
                     var externalUrl = "http://www.hltv.org" + externalLink;
 
-                     MoreInfo = HWeb.Load(externalUrl);
-                    
+                    MoreInfo = GetHtmlDocument(externalUrl);
+                    //MoreInfo = HWeb.Load(externalUrl);
+
                     //*********** GET IDs FROM PAGE ***********
                     var LeftNode = MoreInfo.DocumentNode.SelectSingleNode("//div[@class='team1-gradient']/a"); // divs of class="team-left"
                     if (LeftNode.Attributes.Contains("href"))
@@ -384,9 +400,9 @@ namespace VirtualFlowers
                 $"http://www.hltv.org/?pageid=188&teamid={TeamId}";
 
             bool bHasCreatedCurrentTeam = false;
-            
-              
-            HtmlDocument teamhtml = HWeb.Load(url);
+
+            var teamhtml = GetHtmlDocument(url);
+            //HtmlDocument teamhtml = HWeb.Load(url);
 
             var StatsTable2 = teamhtml.DocumentNode.SelectNodes($"/ html / body / div[2] / div / div[2] / div[1] / div / table / tbody / tr[position()>0]");           
             if (StatsTable2 != null)
@@ -540,7 +556,8 @@ namespace VirtualFlowers
             {
                 var rankUrl = $"https://www.hltv.org/team/{teamID}/{teamName.Replace("#", "")}/";
 
-                HtmlDocument rankHtml = HWeb.Load(rankUrl);
+                var rankHtml = GetHtmlDocument(rankUrl);
+                //HtmlDocument rankHtml = HWeb.Load(rankUrl);
 
                 // Get ranked
                 var rank = rankHtml.DocumentNode.Descendants("a") // All <a links
@@ -642,7 +659,8 @@ namespace VirtualFlowers
             bool team16CtWin = false;
             int NrBombExplosion = 0, NrDefuses = 0, NrTimeout = 0, NrGrenadeKill= 0, NrMolotovKill = 0, NrZeusKill = 0, NrKnifeKill = 0;
 
-            HtmlDocument gameHtml = HWeb.Load(fullUrl);
+            var gameHtml = GetHtmlDocument(fullUrl);
+            //HtmlDocument gameHtml = HWeb.Load(fullUrl);
             var teamNameHtml = "//*[@class='round-history-team-row']";
             var resultHtml = "//*[@class='round-history-team-row']/*[@class='round-history-half']";
             var results = gameHtml.DocumentNode.SelectNodes(resultHtml);
@@ -690,7 +708,8 @@ namespace VirtualFlowers
                 // ************* Get Kills *************
                 var sHeatMapUrl = "?showKills=true&showDeaths=false&firstKillsOnly=false&allowEmpty=false&showKillDataset=true&showDeathDataset=false";
                 var heatmapUrl = fullUrl.Remove(fullUrl.IndexOf('?')).Replace("/mapstatsid", "/heatmap/mapstatsid") + sHeatMapUrl;
-                gameHtml = HWeb.Load(heatmapUrl);
+                gameHtml = GetHtmlDocument(heatmapUrl);
+                //gameHtml = HWeb.Load(heatmapUrl);
                 var playersHtml = "//*[@class='player']";
                 var playerResult = gameHtml.DocumentNode.SelectNodes(playersHtml);
                 foreach (var player in playerResult)
@@ -788,7 +807,8 @@ namespace VirtualFlowers
 
 
             var dateTime = GetDateTime(rankingUrl);
-            HtmlDocument rankingHtmlDocument = HWeb.Load(rankingUrl);
+            var rankingHtmlDocument = GetHtmlDocument(rankingUrl);
+            //HtmlDocument rankingHtmlDocument = HWeb.Load(rankingUrl);
             if (!db.RankingList.Any(s => s.DateOfRank == dateTime))
             {
                 var rankingListId = Guid.NewGuid();
@@ -1032,7 +1052,8 @@ namespace VirtualFlowers
 
             if (matchUrls.Length > 0)
             {
-                matchHtml = HWeb.Load(matchUrls);
+                matchHtml = GetHtmlDocument(matchUrls);
+                //matchHtml = HWeb.Load(matchUrls);
             }
 
 
