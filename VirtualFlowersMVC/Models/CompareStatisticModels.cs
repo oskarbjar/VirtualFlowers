@@ -75,11 +75,16 @@ namespace VirtualFlowersMVC.Models
         public string FullTeamGroupBy { get; set; }
         public string TitleMapMatches { get; set; }
         public double BombExplosions { get; set; }
-        public double BombExplosionsWin { get; set; }
+        public double BombExplosionsWin35 { get; set; }
+        public double BombExplosionsWin45 { get; set; }
+        public double BombExplosionsWin55 { get; set; }
         public double BombDefuses { get; set; }
-        public double BombDefusesWin { get; set; }
+        public double BombDefusesWin25 { get; set; }
+        public double BombDefusesWin35 { get; set; }
+        public double BombDefusesWin45 { get; set; }
         public double TimeOut { get; set; }
-        public double TimeOutWin { get; set; }
+        public double TimeOutWin05 { get; set; }
+        public double TimeOutWin15 { get; set; }
         public double KnifeKill { get; set; }
         public double KnifeKillWin { get; set; }
         public double MolotovKill { get; set; }

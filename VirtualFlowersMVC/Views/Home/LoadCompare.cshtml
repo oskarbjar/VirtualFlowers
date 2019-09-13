@@ -33,31 +33,32 @@
             <div class="col-md-3">
                 <h1 style="text-decoration:none; color: #454855;">Compare</h1>
                 @if (Model != null && Model.ExpectedLineUp != null && Model.ExpectedLineUp.EventName != null)
-            { <h4>@Model.ExpectedLineUp.EventName</h4>}
+    {<h4>@Model.ExpectedLineUp.EventName</h4>}
                 @if (Model.MinFullTeamRanking == 0)
-            {
-                    <a style="border:3px solid black" class="btn FTRButton" href="/Home/LoadCompare/@Model.ScrapeMatchId?MinFTR=0">All</a>
-                }
-                else
-                {
-                    <a class="btn FTRButton" href="/Home/LoadCompare/@Model.ScrapeMatchId?MinFTR=0">All</a>
-                }
+    {
+            <a style="border:3px solid black" class="btn FTRButton" href="/Home/LoadCompare/@Model.ScrapeMatchId?MinFTR=0">All</a>
+}
+else
+{
+            <a class="btn FTRButton" href="/Home/LoadCompare/@Model.ScrapeMatchId?MinFTR=0">All</a>
+}
                 @if (Model.MinFullTeamRanking == 4)
-            {
-                    <a style="border:3px solid black" class="btn FTRButton" href="/Home/LoadCompare/@Model.ScrapeMatchId?MinFTR=4">Min FTR 4</a>
-                }
-                else
-                {
-                    <a class="btn FTRButton" href="/Home/LoadCompare/@Model.ScrapeMatchId?MinFTR=4">Min FTR 4</a>
-                }
+    {
+            <a style="border:3px solid black" class="btn FTRButton" href="/Home/LoadCompare/@Model.ScrapeMatchId?MinFTR=4">Min FTR 4</a>
+}
+else
+{
+            <a class="btn FTRButton" href="/Home/LoadCompare/@Model.ScrapeMatchId?MinFTR=4">Min FTR 4</a>
+}
                 @if (Model.MinFullTeamRanking == 5)
-            {
-                    <a style="border:3px solid black" class="btn FTRButton" href="/Home/LoadCompare/@Model.ScrapeMatchId?MinFTR=5">Min FTR 5</a>
-                }
-                else
-                {
-                    <a class="btn FTRButton" href="/Home/LoadCompare/@Model.ScrapeMatchId?MinFTR=5">Min FTR 5</a>
-                }
+    {
+            <a style="border:3px solid black" class="btn FTRButton" href="/Home/LoadCompare/@Model.ScrapeMatchId?MinFTR=5">Min FTR 5</a>
+}
+else
+{
+            <a class="btn FTRButton" href="/Home/LoadCompare/@Model.ScrapeMatchId?MinFTR=5">Min FTR 5</a>
+}
+                <a class="btn FTRButton" href="/Home/LoadCompare2/@Model.ScrapeMatchId?MinFTR=4">Special</a>
             </div>
             <div class="col-md-offset-3 col-md-3 htmlTooltipCenter">
                 <div class="tooltiptext">@if (Model.HeadToHead != null) {@Html.Raw(Model.HeadToHead.Title)}</div>

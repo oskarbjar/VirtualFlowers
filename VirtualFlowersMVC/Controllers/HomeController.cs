@@ -364,10 +364,10 @@ namespace VirtualFlowersMVC.Controllers
             var CACHEKEY = $"cacheKey:MatchId={id}-MinFTR={MinFTR}";
 
             // If we have object in cache, return it
-            if (Cache.Exists(CACHEKEY))
-                model = (CompareStatisticModel)Cache.Get(CACHEKEY);
-            else
-            {
+            //if (Cache.Exists(CACHEKEY))
+            //    model = (CompareStatisticModel)Cache.Get(CACHEKEY);
+            //else
+            //{
                 match = _dataWorker.GetScrapedMatch(id);
 
                 if (match != null)
@@ -381,12 +381,12 @@ namespace VirtualFlowersMVC.Controllers
                 }
 
                 // Save in cache
-                if (!string.IsNullOrEmpty(CACHEKEY) && !Cache.Exists(CACHEKEY))
-                {
-                    int storeTime = 1000 * 3600 * 24 * 2; // store 2 days
-                    Cache.Store(CACHEKEY, model, storeTime);
-                }
-            }
+                //if (!string.IsNullOrEmpty(CACHEKEY) && !Cache.Exists(CACHEKEY))
+                //{
+                //    int storeTime = 1000 * 3600 * 24 * 2; // store 2 days
+                //    Cache.Store(CACHEKEY, model, storeTime);
+                //}
+            //}
 
             model.ScrapeMatchId = id;
             model.MinFullTeamRanking = MinFTR;

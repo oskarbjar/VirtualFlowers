@@ -165,8 +165,11 @@ namespace VirtualFlowers
                     var counter = 0;
                     foreach (var item in span1Name)
                     {
-                       /*Players line up box on match overview site*/
-                        var players = item.SelectNodes("//*[@class='players']/*[@class='table']//*[@class='player']//@href");
+                        /*Players line up box on match overview site*/
+                        //var players = item.SelectNodes("//*[@class='players']/*[@class='table']//*[@class='player']//@href");
+                        var players = item.Descendants("div")
+                            .Where(d => d.Attributes.Contains("class") // contains class attribute
+                        && d.Attributes["class"].Value.Contains("player-compare flagAlign")); // with this value
 
                         foreach (var player in players)
                         {
@@ -174,8 +177,9 @@ namespace VirtualFlowers
 
                             if (names != "")
                             {
-
-                                var ids = GetPlayerID(player.Attributes[0].Value);
+                                var sIds = player.Attributes["data-player-id"].Value.ToString();
+                                var ids = int.Parse(sIds);
+                                //var ids = GetPlayerID(player.Attributes[0].Value);
                                 var pl = new Player();
 
                                 pl.PlayerId = ids;
