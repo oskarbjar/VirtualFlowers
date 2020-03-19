@@ -5,10 +5,10 @@
 
 }
 
-<h2>Index</h2>
-
+<h2>Overview</h2>
 @using (Html.BeginForm("Overview", "Home", FormMethod.Post))
 {
+    <input id="Submit2" type="submit" value="submit" />
     <table>
 
         <tr>
@@ -32,11 +32,14 @@
         {
             <tr>
                 <td>
-                    @Html.CheckBoxFor(it => it[i].UrlChecked, new { Style = "vertical-align: middle" })
+                    @if (!Model[i].GameNotReady)
+                    {
+                        @Html.CheckBoxFor(it => it[i].UrlChecked, new { Style = "vertical-align: middle" })
+                    }
                 </td>
                 <td>
                     @if (Model[i].ScrapedMatch)
-                    { <img src="../../Content/Image/checked.jpg" height="12" width="12" />}
+                    {<img src="../../Content/Image/checked.jpg" height="12" width="12" />}
                 </td>
 
                 <td style="padding-right:15px">

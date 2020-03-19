@@ -92,6 +92,10 @@
     <Compile Include="Migrations\201903011644191_RemoveRoundHistory.Designer.cs">
       <DependentUpon>201903011644191_RemoveRoundHistory.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201911121929275_AddRoundWinMethods.cs" />
+    <Compile Include="Migrations\201911121929275_AddRoundWinMethods.Designer.cs">
+      <DependentUpon>201911121929275_AddRoundWinMethods.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\FootballTips.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ExpectedLineUp.cs" />
@@ -139,6 +143,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201903011644191_RemoveRoundHistory.resx">
       <DependentUpon>201903011644191_RemoveRoundHistory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911121929275_AddRoundWinMethods.resx">
+      <DependentUpon>201911121929275_AddRoundWinMethods.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

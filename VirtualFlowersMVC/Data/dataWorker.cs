@@ -281,7 +281,8 @@ namespace VirtualFlowersMVC.Data
                 BombExplosions = n.Sum(p => p.BombExplosions), //Math.Round(n.Sum(p => p.BombExplosions) / (double)n.Count(), 1),
                 BombExplosionsWin35 = n.Count(p => p.BombExplosions > 3.5),
                 BombExplosionsWin45 = n.Count(p => p.BombExplosions > 4.5),
-                BombExplosionsWin55 = n.Count(p => p.BombExplosions > 5.5),//Math.Round((n.Count(p => p.BombExplosions > 4.5) / (double)n.Count()) * 100, 1),
+                BombExplosionsWin55 = n.Count(p => p.BombExplosions > 5.5),
+                BombExplosionsWin65 = n.Count(p => p.BombExplosions > 6.5),//Math.Round((n.Count(p => p.BombExplosions > 4.5) / (double)n.Count()) * 100, 1),
                 BombDefuses = n.Sum(p => p.BombDefuses), //Math.Round(n.Sum(p => p.BombDefuses) / (double)n.Count(), 1),
                 BombDefusesWin25 = n.Count(p => p.BombDefuses > 2.5),
                 BombDefusesWin35 = n.Count(p => p.BombDefuses > 3.5),
@@ -296,7 +297,15 @@ namespace VirtualFlowersMVC.Data
                 ZuesKill = n.Sum(p => p.ZuesKill), //Math.Round(n.Sum(p => p.ZuesKill) / (double)n.Count(), 1),
                 ZuesKillWin = n.Count(p => p.ZuesKill > 0.5), //Math.Round((n.Count(p => p.ZuesKill > 0.5) / (double)n.Count()) * 100, 1),
                 KnifeKill = n.Sum(p => p.KnifeKill), //Math.Round(n.Sum(p => p.KnifeKill) / (double)n.Count(), 1),
-                KnifeKillWin = n.Count(p => p.KnifeKill > 0.5) //Math.Round((n.Count(p => p.KnifeKill > 0.5) / (double)n.Count()) * 100, 1)
+                KnifeKillWin = n.Count(p => p.KnifeKill > 0.5), //Math.Round((n.Count(p => p.KnifeKill > 0.5) / (double)n.Count()) * 100, 1)
+                Round1BombWin = n.Count(p => p.round1BombExplosion == true),
+                Round1DefuseWin = n.Count(p => p.round1Defuse == true),
+                Round1TimeoutWin = n.Count(p => p.round1Timout == true),
+                Round1KillWin = n.Count(p => p.round1KillWin == true),
+                Round16BombWin = n.Count(p => p.round16BombExplosion == true),
+                Round16DefuseWin = n.Count(p => p.round16Defuse == true),
+                Round16TimeoutWin = n.Count(p => p.round16Timout == true),
+                Round16KillWin = n.Count(p => p.round16KillWin == true)
             }).OrderByDescending(n => n.WinPercent).ToList();
 
             return result;
@@ -610,7 +619,15 @@ namespace VirtualFlowersMVC.Data
                 GrenadeKill = n.GrenadeKill,
                 MolotovKill = n.MolotovKill,
                 ZuesKill = n.ZuesKill,
-                KnifeKill = n.KnifeKill
+                KnifeKill = n.KnifeKill,
+                round1BombExplosion = n.round1BombExplosion,
+                round1Defuse = n.round1Defuse,
+                round1Timout = n.round1Timout,
+                round1KillWin = n.round1KillWin,
+                round16BombExplosion = n.round16BombExplosion,
+                round16Defuse = n.round16Defuse,
+                round16Timout = n.round16Timout,
+                round16KillWin = n.round16KillWin
             }).ToList();
 
             return result;

@@ -47,6 +47,7 @@ namespace VirtualFlowersMVC.Models
         public bool Cached { get; set; }
 
         public bool BestOf3 { get; set; }
+        public bool GameNotReady { get; set; }
 
         public bool UrlChecked { get; set; }
 

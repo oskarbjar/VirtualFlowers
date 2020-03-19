@@ -65,6 +65,15 @@ namespace Models
         public int MolotovKill    { get; set; }
         public int GrenadeKill    { get; set; }
         public int ZuesKill       { get; set; }
+
+        public bool round1BombExplosion  { get; set; }
+        public bool round1Defuse         { get; set; }
+        public bool round1Timout         { get; set; }
+        public bool round1KillWin        { get; set; }
+        public bool round16BombExplosion { get; set; }
+        public bool round16Defuse        { get; set; }
+        public bool round16Timout        { get; set; }
+        public bool round16KillWin       { get; set; }
     }
 
     [NotMapped]
@@ -92,5 +101,14 @@ namespace Models
         public int MolotovKill { get; set; }
         public int GrenadeKill { get; set; }
         public int ZuesKill { get; set; }
+
+        public bool round1BombExplosion { get; set; }
+        public bool round1Defuse { get; set; }
+        public bool round1Timout { get; set; }
+        public bool round1KillWin { get; set; }
+        public bool round16BombExplosion { get; set; }
+        public bool round16Defuse { get; set; }
+        public bool round16Timout { get; set; }
+        public bool round16KillWin { get; set; }
     }
 }

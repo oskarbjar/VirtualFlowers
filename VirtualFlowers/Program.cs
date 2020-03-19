@@ -18,6 +18,12 @@ namespace VirtualFlowers
         private readonly DatabaseContext db = new DatabaseContext();
         private WebClient _client = null;
 
+        public enum NodeEnum
+        {
+            InnerText = 1,
+            InnerHtml = 2
+        }
+
         static void Main(string[] args)
         {
             //GetTeamDetails(4501);
@@ -68,47 +74,93 @@ namespace VirtualFlowers
             };
             var matchesHtml = GetHtmlDocument(url);
             //var matchesHtml = page.Load(url);    
-            var selection2 = "//div[@class='upcoming-matches']";
-            var MatchesCollectionNodes = matchesHtml.DocumentNode.SelectNodes(selection2);
-            var MatchesCollection = MatchesCollectionNodes[0].ChildNodes[1].SelectNodes(".//div[@class='match-day']//@href");
             
-            var counter = 1;
-            foreach (var item in MatchesCollection.Take(100))
+            var liveMatchesSelection = "//div[@class='live-match']//@href";
+            var LiveMatchesCollectionNodes = matchesHtml.DocumentNode.SelectNodes(liveMatchesSelection);
+
+            var upcomingMatches = "//div[@class='upcoming-matches']";
+            var UpcomingMatchesCollectionNodes = matchesHtml.DocumentNode.SelectNodes(upcomingMatches);
+            var UpcomingMatchesCollection = UpcomingMatchesCollectionNodes[0].ChildNodes[1].SelectNodes("//div[@class='match']//@href");
+
+            // Go through live matches.
+            if (LiveMatchesCollectionNodes != null)
             {
-                counter++;
-                var BestOf3 = "";
+                foreach (var item in LiveMatchesCollectionNodes.Take(100))
+                {
+                    var objectToAdd = new UrlViewModel();
+                    var urls = item.Attributes[0].Value;
+                    objectToAdd.Url = urls;
+                    objectToAdd.BestOf3 = false;
+                    Models.Add(objectToAdd);
+                }
+            }
+
+            // Go through upcoming matches.
+            foreach (var item in UpcomingMatchesCollection.Take(100))
+            {
                 var objectToAdd = new UrlViewModel();
-                var bo3 = item.SelectNodes(".//div[@class='map-text']");
-
-                if (bo3 == null)
-                {
-                    var Mop3Value = item.SelectNodes(".//div[@class='map map-text']");
-                    //If this is null, then the match is undecided ( As in winner of match x, faces the winner of match y)
-                    if (Mop3Value == null)
-                    {
-                        BestOf3 = "";
-                    }
-                    else
-                    {
-                        BestOf3 = Mop3Value[0].InnerHtml;
-                    }
-
-
-                }
+                string classValue = item.GetAttributeValue("class", "");
+                if (classValue.Contains("analytics")) // don't show analytics link
+                    continue;
                 else
-                {
-                    var bo3Value = bo3[0].InnerHtml;
-                    BestOf3 = bo3Value;
-                }
+                    objectToAdd.Url = item.GetAttributeValue("href", "").ToString();
+
+                // Check on BO3 
+                bool bBo3 = false;
+                string bo3 = item.Descendants("div") // All div
+                    .Where(d => d.Attributes.Contains("class") // contains class attribute
+                    && d.Attributes["class"].Value.Contains("map-text")).Select(p => p.InnerText).FirstOrDefault();
                 
-                var urls = item.Attributes[0].Value;
-                objectToAdd.Url = urls;
-                objectToAdd.BestOf3 = (BestOf3 == "bo3") ? true : false; 
-                Models.Add(objectToAdd);               
-            }           
+                if (bo3 != null && bo3.Contains("bo3"))
+                    bBo3 = true;
+                objectToAdd.BestOf3 = bBo3;
+
+                // Check if Game is ready (or still waiting for opponents)
+                bool bGameNotReady = !item.Descendants("td") // All td
+                    .Any(d => d.Attributes.Contains("class") // contains class attribute
+                    && d.Attributes["class"].Value.Contains("team-cell")); // contains
+
+                if(!bGameNotReady)
+                { 
+                    // We can see from url, if its waiting for winner or loser
+                    if((objectToAdd.Url.Contains("-winner-") || objectToAdd.Url.Contains("-loser-")))
+                    {
+                        bGameNotReady = true;
+                    }
+                }
+                objectToAdd.GameNotReady = bGameNotReady;
+
+                Models.Add(objectToAdd);
+            }
 
             return Models;
 
+        }
+
+        public string GetNodes(HtmlNode item, string htmlObject, string attribute = null, string attributeValue = null)
+        {
+            var returnNodes = item.Descendants(htmlObject) // All div
+                    .Where(d => d.Attributes.Contains(attribute) // contains class attribute
+                    && d.Attributes[attribute].Value.Contains(attributeValue)).Select(p => p.InnerText).FirstOrDefault();
+            return returnNodes;
+        }
+
+        public List<string> GetValuesFromNodes(List<HtmlNode> nodes, NodeEnum returnNode)
+        {
+            var returnValue = new List<string>();
+            switch (returnNode)
+            {
+                case NodeEnum.InnerHtml:
+                    returnValue = nodes.Select(p => p.InnerHtml).ToList();
+                    break;
+                case NodeEnum.InnerText:
+                    returnValue = nodes.Select(p => p.InnerText).ToList();
+                    break;
+                default:
+                    break;
+            }
+
+            return returnValue;
         }
 
         public ExpectedLineUp GetTeamLineup(string matchUrls, int team1Id, int team2ID)
@@ -507,7 +559,16 @@ namespace VirtualFlowers
                         GrenadeKill = rounds.GrenadeKill,
                         MolotovKill = rounds.MolotovKill,
                         ZuesKill = rounds.ZuesKill,
-                        KnifeKill = rounds.KnifeKill
+                        KnifeKill = rounds.KnifeKill,
+
+                        round1BombExplosion = rounds.round1BombExplosion,
+                        round1Defuse = rounds.round1Defuse,
+                        round1Timout = rounds.round1Timout,
+                        round1KillWin = rounds.round1KillWin,
+                        round16BombExplosion = rounds.round16BombExplosion,
+                        round16Defuse = rounds.round16Defuse,
+                        round16Timout = rounds.round16Timout,
+                        round16KillWin = rounds.round16KillWin
                     };
 
                     var t1Players = players.Players.Where(x => x.TeamID == roundDetail.Team1ID).ToArray();
@@ -657,12 +718,12 @@ namespace VirtualFlowers
             var prefix = "https://www.hltv.org";
 
             var fullUrl = prefix + xx;
+            var roundHistory = new RoundHistory();
             bool team1Round1Win = false;
             bool team1CtWin = false;
             bool team1Round16Win = false;
             bool team16CtWin = false;
-            int NrBombExplosion = 0, NrDefuses = 0, NrTimeout = 0, NrGrenadeKill= 0, NrMolotovKill = 0, NrZeusKill = 0, NrKnifeKill = 0;
-
+            
             var gameHtml = GetHtmlDocument(fullUrl);
             //HtmlDocument gameHtml = HWeb.Load(fullUrl);
             var teamNameHtml = "//*[@class='round-history-team-row']";
@@ -681,9 +742,9 @@ namespace VirtualFlowers
                 // Count explosion, defuses and timout wins in all history halfs
                 foreach (var half in results)
                 {
-                    NrBombExplosion += half.Descendants("img").Count(p => p.Attributes["src"].Value.Contains("bomb_exploded"));
-                    NrDefuses += half.Descendants("img").Count(p => p.Attributes["src"].Value.Contains("bomb_defused"));
-                    NrTimeout += half.Descendants("img").Count(p => p.Attributes["src"].Value.Contains("stopwatch"));
+                    roundHistory.BombExplosions += half.Descendants("img").Count(p => p.Attributes["src"].Value.Contains("bomb_exploded"));
+                    roundHistory.BombDefuses += half.Descendants("img").Count(p => p.Attributes["src"].Value.Contains("bomb_defused"));
+                    roundHistory.TimeOut += half.Descendants("img").Count(p => p.Attributes["src"].Value.Contains("stopwatch"));
                 }
 
                 // Get which team won 1st and 16th round
@@ -709,6 +770,28 @@ namespace VirtualFlowers
                 else
                     team16CtWin = true;
 
+                // Get method of win 1 round
+                if (results[0].ChildNodes[0].Attributes["src"].Value.Contains("bomb_exploded") || results[2].ChildNodes[0].Attributes["src"].Value.Contains("bomb_exploded"))
+                    roundHistory.round1BombExplosion = true;
+                else if (results[0].ChildNodes[0].Attributes["src"].Value.Contains("bomb_defused") || results[2].ChildNodes[0].Attributes["src"].Value.Contains("bomb_defused"))
+                    roundHistory.round1Defuse = true;
+                else if (results[0].ChildNodes[0].Attributes["src"].Value.Contains("stopwatch") || results[2].ChildNodes[0].Attributes["src"].Value.Contains("stopwatch"))
+                    roundHistory.round1Timout = true;
+                else if (results[0].ChildNodes[0].Attributes["src"].Value.Contains("/t_win") || results[2].ChildNodes[0].Attributes["src"].Value.Contains("/t_win") ||
+                    results[0].ChildNodes[0].Attributes["src"].Value.Contains("/ct_win") || results[2].ChildNodes[0].Attributes["src"].Value.Contains("/ct_win"))
+                    roundHistory.round1KillWin = true;
+
+                // Get method of win 16 round
+                if (results[1].ChildNodes[0].Attributes["src"].Value.Contains("bomb_exploded") || results[3].ChildNodes[0].Attributes["src"].Value.Contains("bomb_exploded"))
+                    roundHistory.round16BombExplosion = true;
+                else if (results[1].ChildNodes[0].Attributes["src"].Value.Contains("bomb_defused") || results[3].ChildNodes[0].Attributes["src"].Value.Contains("bomb_defused"))
+                    roundHistory.round16Defuse = true;
+                else if (results[1].ChildNodes[0].Attributes["src"].Value.Contains("stopwatch") || results[3].ChildNodes[0].Attributes["src"].Value.Contains("stopwatch"))
+                    roundHistory.round16Timout = true;
+                else if (results[1].ChildNodes[0].Attributes["src"].Value.Contains("/t_win") || results[3].ChildNodes[0].Attributes["src"].Value.Contains("/t_win") ||
+                    results[1].ChildNodes[0].Attributes["src"].Value.Contains("/ct_win") || results[3].ChildNodes[0].Attributes["src"].Value.Contains("/ct_win"))
+                    roundHistory.round16KillWin = true;
+
                 // ************* Get Kills *************
                 var sHeatMapUrl = "?showKills=true&showDeaths=false&firstKillsOnly=false&allowEmpty=false&showKillDataset=true&showDeathDataset=false";
                 var heatmapUrl = fullUrl.Remove(fullUrl.IndexOf('?')).Replace("/mapstatsid", "/heatmap/mapstatsid") + sHeatMapUrl;
@@ -722,42 +805,33 @@ namespace VirtualFlowers
                     {
                         var hegrenade = player.Descendants("select").Where(p => p.InnerText.Contains("hegrenade")).FirstOrDefault().InnerText;
                         int.TryParse(hegrenade.Substring(hegrenade.IndexOf("hegrenade (") + "hegrenade (".Length, 1), out int nrHegrenade);
-                        NrGrenadeKill += nrHegrenade;
+                        roundHistory.GrenadeKill += nrHegrenade;
                     }
                     if (player.Descendants("select").Any(p => p.InnerText.Contains("inferno")))
                     {
                         var inferno = player.Descendants("select").Where(p => p.InnerText.Contains("inferno")).FirstOrDefault().InnerText;
                         int.TryParse(inferno.Substring(inferno.IndexOf("inferno (")+ "inferno (".Length, 1), out int nrInferno);
-                        NrMolotovKill += nrInferno;
+                        roundHistory.MolotovKill += nrInferno;
                     }
                     if (player.Descendants("select").Any(p => p.InnerText.Contains("taser")))
                     {
                         var taser = player.Descendants("select").Where(p => p.InnerText.Contains("taser")).FirstOrDefault().InnerText;
                         int.TryParse(taser.Substring(taser.IndexOf("taser (") + "taser (".Length, 1), out int nrTaser);
-                        NrZeusKill += nrTaser;
+                        roundHistory.ZuesKill += nrTaser;
                     }
                     if (player.Descendants("select").Any(p => p.InnerText.Contains("knife")))
                     {
                         // Different kind of knifes, we just increase by 1
-                        NrKnifeKill += 1;
+                        roundHistory.KnifeKill += 1;
                     }
                 }
 
                 // Set 
-                model.rounds = new RoundHistory()
-                {
-                    R1WinTeamId = team1Round1Win ? model.Team1ID : model.Team2ID,
-                    R1WinCt = team1CtWin,
-                    R16WinTeamId = team1Round16Win ? model.Team1ID : model.Team2ID,
-                    R16WinCt = team16CtWin,
-                    BombExplosions = NrBombExplosion,
-                    BombDefuses = NrDefuses,
-                    TimeOut = NrTimeout,
-                    GrenadeKill = NrGrenadeKill,
-                    MolotovKill = NrMolotovKill,
-                    ZuesKill = NrZeusKill,
-                    KnifeKill = NrKnifeKill
-                };
+                roundHistory.R1WinTeamId = team1Round1Win ? model.Team1ID : model.Team2ID;
+                roundHistory.R1WinCt = team1CtWin;
+                roundHistory.R16WinTeamId = team1Round16Win ? model.Team1ID : model.Team2ID;
+                roundHistory.R16WinCt = team16CtWin;
+                model.rounds = roundHistory;
             }
             return model;
         }
@@ -1126,7 +1200,7 @@ namespace VirtualFlowers
             public int id { get; set; }
             public string Url { get; set; }
             public bool BestOf3 { get; set; }
-
+            public bool GameNotReady{ get; set; }
         }
 
         //public int Team1ID { get; set; }

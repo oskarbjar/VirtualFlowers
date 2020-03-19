@@ -78,6 +78,7 @@ namespace VirtualFlowersMVC.Models
         public double BombExplosionsWin35 { get; set; }
         public double BombExplosionsWin45 { get; set; }
         public double BombExplosionsWin55 { get; set; }
+        public double BombExplosionsWin65 { get; set; }
         public double BombDefuses { get; set; }
         public double BombDefusesWin25 { get; set; }
         public double BombDefusesWin35 { get; set; }
@@ -93,6 +94,15 @@ namespace VirtualFlowersMVC.Models
         public double GrenadeKillWin { get; set; }
         public double ZuesKill { get; set; }
         public double ZuesKillWin { get; set; }
+        
+        public double Round1BombWin { get; set; }
+        public double Round1DefuseWin { get; set; }
+        public double Round1TimeoutWin { get; set; }
+        public double Round1KillWin { get; set; }
+        public double Round16BombWin { get; set; }
+        public double Round16DefuseWin { get; set; }
+        public double Round16TimeoutWin { get; set; }
+        public double Round16KillWin { get; set; }
         public Tuple<double, string> FirstRound1HWinPercent { get; set; }
         public Tuple<double, string> FirstRound2HWinPercent { get; set; }
         public SuggestedMapModel SuggestedMap { get; set; }
