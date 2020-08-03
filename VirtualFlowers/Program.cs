@@ -74,33 +74,36 @@ namespace VirtualFlowers
             };
             var matchesHtml = GetHtmlDocument(url);
             //var matchesHtml = page.Load(url);    
-            
-            var liveMatchesSelection = "//div[@class='live-match']//@href";
-            var LiveMatchesCollectionNodes = matchesHtml.DocumentNode.SelectNodes(liveMatchesSelection);
 
-            var upcomingMatches = "//div[@class='upcoming-matches']";
-            var UpcomingMatchesCollectionNodes = matchesHtml.DocumentNode.SelectNodes(upcomingMatches);
-            var UpcomingMatchesCollection = UpcomingMatchesCollectionNodes[0].ChildNodes[1].SelectNodes("//div[@class='match']//@href");
+            //var liveMatchesSelection = "//a[@class='match a-reset']//@href";
+            //var LiveMatchesCollectionNodes = matchesHtml.DocumentNode.SelectNodes(liveMatchesSelection);
+
+            //var upcomingMatches = "//div[@class='upcoming-matches']";
+            //var UpcomingMatchesCollectionNodes = matchesHtml.DocumentNode.SelectNodes(upcomingMatches);
+            //var UpcomingMatchesCollection = UpcomingMatchesCollectionNodes[0].ChildNodes[1].SelectNodes("//div[@class='match']//@href");
+
+            var allMatchesSelection = "//a[@class='match a-reset']//@href";
+            var AllMatchesCollection = matchesHtml.DocumentNode.SelectNodes(allMatchesSelection);
 
             // Go through live matches.
-            if (LiveMatchesCollectionNodes != null)
-            {
-                foreach (var item in LiveMatchesCollectionNodes.Take(100))
-                {
-                    var objectToAdd = new UrlViewModel();
-                    var urls = item.Attributes[0].Value;
-                    objectToAdd.Url = urls;
-                    objectToAdd.BestOf3 = false;
-                    Models.Add(objectToAdd);
-                }
-            }
+            //if (LiveMatchesCollectionNodes != null)
+            //{
+            //    foreach (var item in LiveMatchesCollectionNodes.Take(100))
+            //    {
+            //        var objectToAdd = new UrlViewModel();
+            //        var urls = item.Attributes[0].Value;
+            //        objectToAdd.Url = urls;
+            //        objectToAdd.BestOf3 = false;
+            //        Models.Add(objectToAdd);
+            //    }
+            //}
 
             // Go through upcoming matches.
-            foreach (var item in UpcomingMatchesCollection.Take(100))
+            foreach (var item in AllMatchesCollection.Take(100))
             {
                 var objectToAdd = new UrlViewModel();
                 string classValue = item.GetAttributeValue("class", "");
-                if (classValue.Contains("analytics")) // don't show analytics link
+                if (classValue.IndexOf("analytics", StringComparison.OrdinalIgnoreCase) >= 0) // don't show analytics link
                     continue;
                 else
                     objectToAdd.Url = item.GetAttributeValue("href", "").ToString();
@@ -109,16 +112,16 @@ namespace VirtualFlowers
                 bool bBo3 = false;
                 string bo3 = item.Descendants("div") // All div
                     .Where(d => d.Attributes.Contains("class") // contains class attribute
-                    && d.Attributes["class"].Value.Contains("map-text")).Select(p => p.InnerText).FirstOrDefault();
+                    && d.Attributes["class"].Value.Contains("matchMeta")).Select(p => p.InnerText).FirstOrDefault();
                 
                 if (bo3 != null && bo3.Contains("bo3"))
                     bBo3 = true;
                 objectToAdd.BestOf3 = bBo3;
 
                 // Check if Game is ready (or still waiting for opponents)
-                bool bGameNotReady = !item.Descendants("td") // All td
+                bool bGameNotReady = !item.Descendants("div") // All div
                     .Any(d => d.Attributes.Contains("class") // contains class attribute
-                    && d.Attributes["class"].Value.Contains("team-cell")); // contains
+                    && d.Attributes["class"].Value.Contains("matchTeams")); // contains
 
                 if(!bGameNotReady)
                 { 
