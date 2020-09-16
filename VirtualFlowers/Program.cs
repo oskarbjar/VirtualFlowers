@@ -738,9 +738,13 @@ namespace VirtualFlowers
             {
                 // Get team names and ids
                 model.Team1Name = teamnames[0].FirstChild.Attributes["Title"].Value;
+                model.Team1ID = db.Team.Single(p => p.TeamName == model.Team1Name).TeamId;
                 model.Team2Name = teamnames[1].FirstChild.Attributes["Title"].Value;
-                model.Team1ID = GetTeamID(teamnames[0].FirstChild.Attributes["src"].Value);
-                model.Team2ID = GetTeamID(teamnames[1].FirstChild.Attributes["src"].Value);
+                model.Team2ID = db.Team.Single(p => p.TeamName == model.Team2Name).TeamId;
+
+                //*** teamid was removed from html ***
+                //model.Team1ID = GetTeamID(teamnames[0].FirstChild.Attributes["src"].Value);
+                //model.Team2ID = GetTeamID(teamnames[1].FirstChild.Attributes["src"].Value);
 
                 // Count explosion, defuses and timout wins in all history halfs
                 foreach (var half in results)
@@ -1128,49 +1132,63 @@ namespace VirtualFlowers
 
         public Tuple<int, int> GetTeamIdsFromUrl(string matchUrls)
         {
-            string url = "";
-            HtmlDocument matchHtml = new HtmlDocument();
-
-            if (matchUrls.Length > 0)
+            try
             {
-                matchHtml = GetHtmlDocument(matchUrls);
-                //matchHtml = HWeb.Load(matchUrls);
+                HtmlDocument matchHtml = new HtmlDocument();
+
+                if (matchUrls.Length > 0)
+                {
+                    matchHtml = GetHtmlDocument(matchUrls);
+                    //matchHtml = HWeb.Load(matchUrls);
+                }
+
+                int Team1Id = 0;
+                int Team2Id = 0;
+                string sTeam1Info = "";
+                string sTeam2Info = "";
+
+                //*********** GET IDs FROM PAGE ***********
+                //******** Team 1 ********
+                var LeftNode = matchHtml.DocumentNode.SelectSingleNode("//div[@class='team1-gradient']/a");
+                // Get href value
+                if (LeftNode.Attributes.Contains("href"))
+                    sTeam1Info = LeftNode.Attributes["href"].Value;
+
+                // href value format "/team/id/name"
+                if (!string.IsNullOrEmpty(sTeam1Info))
+                {
+                    Team1Id = GetTeamIDFromUrl(sTeam1Info);
+                    var Team1Name = LeftNode.Descendants("div") // All div
+                        .Where(d => d.Attributes.Contains("class") // contains class attribute
+                        && d.Attributes["class"].Value.Contains("teamName")).Select(p => p.InnerText).FirstOrDefault();
+
+                    CheckIfNeedToCreateTeam(Team1Id, Team1Name);
+                }
+
+                //******** Team 2 ********
+                var RightNode = matchHtml.DocumentNode.SelectSingleNode("//div[@class='team2-gradient']/a");
+                // Get href value
+                if (RightNode.Attributes.Contains("href"))
+                    sTeam2Info = RightNode.Attributes["href"].Value;
+
+                // href value format "/team/id/name"
+                if (!string.IsNullOrEmpty(sTeam2Info))
+                {
+                    Team2Id = GetTeamIDFromUrl(sTeam2Info);
+                    var Team2Name = RightNode.Descendants("div") // All div
+                        .Where(d => d.Attributes.Contains("class") // contains class attribute
+                        && d.Attributes["class"].Value.Contains("teamName")).Select(p => p.InnerText).FirstOrDefault();
+                    CheckIfNeedToCreateTeam(Team2Id, Team2Name);
+                }
+                //*****************************************
+
+                var tupleString = new Tuple<int, int>(Team1Id, Team2Id);
+                return tupleString;
             }
-
-
-            string[] stringSeperators = { "src=\"https://static.hltv.org/images/team/logo/" };
-            string[] SecondSpilt = { "<img alt=\" " };
-            string[] thirdSplilt = { "\" class=\"" };
-            #region Team1
-
-            var team1IdHtmlString = $"//*[@class='team1-gradient']";
-            var urls = $"//*[@class='team1-gradient']/a";
-
-            var team1GradientSection = matchHtml.DocumentNode.SelectNodes(urls);
-            var htmlSectionss = matchHtml.DocumentNode.SelectNodes(team1IdHtmlString);
-            var Team1Name = htmlSectionss[0].InnerText.TrimStart().TrimEnd();
-
-            string team11Id = GenerateTeamID(stringSeperators, SecondSpilt, thirdSplilt, team1GradientSection);
-            int Team1Id = Convert.ToInt32(team11Id);
-            CheckIfNeedToCreateTeam(Team1Id, Team1Name);
-            #endregion
-            #region Team2
-
-            var team2IdHtmlString = $"//*[@class='team2-gradient']";
-            var urlsTeam2 = $"//*[@class='team2-gradient']/a";
-
-            var htmlSectionsss = matchHtml.DocumentNode.SelectNodes(urlsTeam2);
-            var htmlSectionss2 = matchHtml.DocumentNode.SelectNodes(team2IdHtmlString);
-            var Team2Name = htmlSectionss2[0].InnerText.TrimStart().TrimEnd();
-
-
-            string team2Id = GenerateTeamID(stringSeperators, SecondSpilt, thirdSplilt, htmlSectionsss);
-            int Team2Id = Convert.ToInt32(team2Id);
-            CheckIfNeedToCreateTeam(Team2Id, Team2Name);
-            #endregion
-
-            var tupleString = new Tuple<int, int>(Team1Id, Team2Id);
-            return tupleString;
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         private static string GenerateTeamID(string[] stringSeperators, string[] SecondSpilt, string[] thirdSplilt, HtmlNodeCollection htmlSectionsss)

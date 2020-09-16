@@ -265,7 +265,9 @@
     <Content Include="Content\Image\plus-sign.png" />
     <Content Include="Content\Image\ranking.gif" />
     <Content Include="Content\Image\teamlogo\0.svg" />
+    <Content Include="Content\Image\teamlogo\10150.svg" />
     <Content Include="Content\Image\teamlogo\10315.png" />
+    <Content Include="Content\Image\teamlogo\10371.png" />
     <Content Include="Content\Image\teamlogo\10386.svg" />
     <Content Include="Content\Image\teamlogo\10399.png" />
     <Content Include="Content\Image\teamlogo\10421.png" />
