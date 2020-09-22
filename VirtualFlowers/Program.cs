@@ -355,7 +355,7 @@ namespace VirtualFlowers
                     foreach (var item in span1Name)
                     {
                         //td[@class="plaintext"]
-                        var players = item.SelectNodes("//*[@class='players']/*[@class='table']//*[@class='player']//@href");
+                        var players = item.SelectNodes("//*[@class='players']/*[@class='table']//*[@class='player']");////@href");
 
                         foreach (var player in players)
                         {
@@ -368,8 +368,8 @@ namespace VirtualFlowers
 
                             if (names != "")
                             {
-
-                                var ids = GetPlayerID(player.Attributes[0].Value);
+                                var id = player.Descendants("div").Where(d => d.Attributes.Contains("data-player-id")).Select(p => p.Attributes["data-player-id"].Value).FirstOrDefault();
+                                var ids = Convert.ToInt32(id);
                                 var pl = new Player();
 
                                 pl.PlayerId = ids;
@@ -729,18 +729,25 @@ namespace VirtualFlowers
             
             var gameHtml = GetHtmlDocument(fullUrl);
             //HtmlDocument gameHtml = HWeb.Load(fullUrl);
-            var teamNameHtml = "//*[@class='round-history-team-row']";
+            //var teamNameHtml = "//*[@class='round-history-team-row']";
+            var teamLeft = "//*[@class='match-info-box']/*[@class='team-left']";
+            var teamRight = "//*[@class='match-info-box']/*[@class='team-right']";
             var resultHtml = "//*[@class='round-history-team-row']/*[@class='round-history-half']";
             var results = gameHtml.DocumentNode.SelectNodes(resultHtml);
-            var teamnames = gameHtml.DocumentNode.SelectNodes(teamNameHtml);
+            var teamLeftHtml = gameHtml.DocumentNode.SelectNodes(teamLeft);
+            var teamRightHtml = gameHtml.DocumentNode.SelectNodes(teamRight);
+            //var teamnames = gameHtml.DocumentNode.SelectNodes(teamNameHtml);
 
-            if (teamnames != null)
+            if (teamLeftHtml != null && teamRightHtml != null)
             {
                 // Get team names and ids
-                model.Team1Name = teamnames[0].FirstChild.Attributes["Title"].Value;
-                model.Team1ID = db.Team.Single(p => p.TeamName == model.Team1Name).TeamId;
-                model.Team2Name = teamnames[1].FirstChild.Attributes["Title"].Value;
-                model.Team2ID = db.Team.Single(p => p.TeamName == model.Team2Name).TeamId;
+                model.Team1Name = teamLeftHtml.Descendants("img").Where(d => d.Attributes.Contains("class") && d.Attributes["class"].Value.Contains("team-logo")).Select(p => p.Attributes["title"].Value).FirstOrDefault();
+                var leftLink = teamLeftHtml.Descendants("a").Where(d => d.Attributes.Contains("href") && d.Attributes["href"].Value.Contains("/stats/teams")).Select(p => p.Attributes["href"].Value).FirstOrDefault();
+                model.Team1ID = GetTeamIDFromStatsUrl(leftLink);
+
+                model.Team2Name = teamRightHtml.Descendants("img").Where(d => d.Attributes.Contains("class") && d.Attributes["class"].Value.Contains("team-logo")).Select(p => p.Attributes["title"].Value).FirstOrDefault();
+                var rightLink = teamRightHtml.Descendants("a").Where(d => d.Attributes.Contains("href") && d.Attributes["href"].Value.Contains("/stats/teams")).Select(p => p.Attributes["href"].Value).FirstOrDefault();
+                model.Team2ID = GetTeamIDFromStatsUrl(rightLink);
 
                 //*** teamid was removed from html ***
                 //model.Team1ID = GetTeamID(teamnames[0].FirstChild.Attributes["src"].Value);
@@ -913,10 +920,10 @@ namespace VirtualFlowers
                 {
                     var position = results[i].Descendants("span").Where(d => d.Attributes.Contains("class") && d.Attributes["class"].Value.Contains("position")).Select(p => p.InnerHtml).FirstOrDefault();
                     var name = results[i].Descendants("span").Where(d => d.Attributes.Contains("class") && d.Attributes["class"].Value.Contains("name")).Select(p => p.InnerHtml).FirstOrDefault();
-                    var teamlogourl = results[i].Descendants("img").Where(d => d.Attributes.Contains("title") && d.Attributes["title"].Value.Contains(name)).Select(p => p.Attributes["src"].Value).FirstOrDefault();
+                    var moreLink = results[i].Descendants("a").Where(d => d.Attributes.Contains("class") && d.Attributes["class"].Value.Contains("moreLink")).Select(p => p.Attributes["href"].Value).FirstOrDefault();
                     var points = results[i].Descendants("span").Where(d => d.Attributes.Contains("class") && d.Attributes["class"].Value.Contains("points")).Select(p => p.InnerHtml).FirstOrDefault();
 
-                    var teamID = int.Parse(teamlogourl.Replace("https://static.hltv.org/images/team/logo/", ""));
+                    var teamID = GetTeamIDFromUrl(moreLink);
                     //var sTeamId = results[i].SelectNodes(".//*[@class='name js-link']");
                     //var teamID = GetTeamIDs(sTeamId[0].OuterHtml);
                     //var points = GetPoints(results[i].SelectNodes(".//*[@class='points']")[0].InnerHtml);
@@ -1061,6 +1068,20 @@ namespace VirtualFlowers
         private int GetTeamIDFromUrl(string url)
         {
             string[] stringSeperators = { "/team/" };
+            var result = url.Split(stringSeperators, StringSplitOptions.None);
+
+            string[] stringsep = { "/" };
+            var results = result[1].Split(stringsep, StringSplitOptions.None);
+
+            int teamId = 0;
+            Int32.TryParse(results[0], out teamId);
+
+            return teamId;
+        }
+
+        private int GetTeamIDFromStatsUrl(string url)
+        {
+            string[] stringSeperators = { "/teams/" };
             var result = url.Split(stringSeperators, StringSplitOptions.None);
 
             string[] stringsep = { "/" };
