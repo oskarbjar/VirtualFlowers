@@ -198,19 +198,19 @@
                 </td>
                 <td>
                     @Html.Raw(Math.Round((map.Sum(p => p.GrenadeKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1))% - Y: @Html.Raw(Math.Round(1 / (Math.Round((map.Sum(p => p.GrenadeKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1) / 100), 1))<br />
-                    @Html.Raw(100 - Math.Round((map.Sum(p => p.GrenadeKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1))% - N: @Html.Raw(Math.Round(1 / ((100 - Math.Round((map.Sum(p => p.GrenadeKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1)) / 100), 1))
+                    @Html.Raw(Math.Round(100 - (map.Sum(p => p.GrenadeKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1))% - N: @Html.Raw(Math.Round(1 / ((100 - Math.Round((map.Sum(p => p.GrenadeKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1)) / 100), 1))
                 </td>
                 <td>
                     @Html.Raw(Math.Round((map.Sum(p => p.MolotovKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1))% - Y: @Html.Raw(Math.Round(1 / (Math.Round((map.Sum(p => p.MolotovKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1) / 100), 1))<br />
-                    @Html.Raw(100 - Math.Round((map.Sum(p => p.MolotovKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1))% - N: @Html.Raw(Math.Round(1 / ((100 - Math.Round((map.Sum(p => p.MolotovKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1)) / 100), 1))
+                    @Html.Raw(Math.Round(100 - (map.Sum(p => p.MolotovKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1))% - N: @Html.Raw(Math.Round(1 / ((100 - Math.Round((map.Sum(p => p.MolotovKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1)) / 100), 1))
                 </td>
                 <td>
                     @Html.Raw(Math.Round((map.Sum(p => p.ZuesKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1))% - Y: @Html.Raw(Math.Round(1 / (Math.Round((map.Sum(p => p.ZuesKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1) / 100), 1))<br />
-                    @Html.Raw(100 - Math.Round((map.Sum(p => p.ZuesKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1))% - N: @Html.Raw(Math.Round(1 / ((100 - Math.Round((map.Sum(p => p.ZuesKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1)) / 100), 1))
+                    @Html.Raw(Math.Round(100 - (map.Sum(p => p.ZuesKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1))% - N: @Html.Raw(Math.Round(1 / ((100 - Math.Round((map.Sum(p => p.ZuesKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1)) / 100), 1))
                 </td>
                 <td>
                     @Html.Raw(Math.Round((map.Sum(p => p.KnifeKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1))% - Y: @Html.Raw(Math.Round(1 / (Math.Round((map.Sum(p => p.KnifeKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1) / 100), 1))<br />
-                    @Html.Raw(100 - Math.Round((map.Sum(p => p.KnifeKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1))% - N: @Html.Raw(Math.Round(1 / ((100 - Math.Round((map.Sum(p => p.KnifeKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1)) / 100), 1))
+                    @Html.Raw(Math.Round(100 - (map.Sum(p => p.KnifeKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1))% - N: @Html.Raw(Math.Round(1 / ((100 - Math.Round((map.Sum(p => p.KnifeKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1)) / 100), 1))
                 </td>
             </tr>
         }
@@ -287,19 +287,19 @@
                 </td>
                 <td>
                     @Html.Raw(Math.Round((map.Sum(p => p.GrenadeKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1))% - Y: @Html.Raw(Math.Round(1 / (Math.Round((map.Sum(p => p.GrenadeKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1) / 100), 1))<br />
-                    @Html.Raw(100 - Math.Round((map.Sum(p => p.GrenadeKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1))% - N: @Html.Raw(Math.Round(1 / ((100 - Math.Round((map.Sum(p => p.GrenadeKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1)) / 100), 1))
+                    @Html.Raw(Math.Round(100 - (map.Sum(p => p.GrenadeKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1))% - N: @Html.Raw(Math.Round(1 / ((100 - Math.Round((map.Sum(p => p.GrenadeKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1)) / 100), 1))
                 </td>
                 <td>
                     @Html.Raw(Math.Round((map.Sum(p => p.MolotovKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1))% - Y: @Html.Raw(Math.Round(1 / (Math.Round((map.Sum(p => p.MolotovKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1) / 100), 1))<br />
-                    @Html.Raw(100 - Math.Round((map.Sum(p => p.MolotovKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1))% - N: @Html.Raw(Math.Round(1 / ((100 - Math.Round((map.Sum(p => p.MolotovKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1)) / 100), 1))
+                    @Html.Raw(Math.Round(100 - (map.Sum(p => p.MolotovKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1))% - N: @Html.Raw(Math.Round(1 / ((100 - Math.Round((map.Sum(p => p.MolotovKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1)) / 100), 1))
                 </td>
                 <td>
                     @Html.Raw(Math.Round((map.Sum(p => p.ZuesKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1))% - Y: @Html.Raw(Math.Round(1 / (Math.Round((map.Sum(p => p.ZuesKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1) / 100), 1))<br />
-                    @Html.Raw(100 - Math.Round((map.Sum(p => p.ZuesKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1))% - N: @Html.Raw(Math.Round(1 / ((100 - Math.Round((map.Sum(p => p.ZuesKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1)) / 100), 1))
+                    @Html.Raw(Math.Round(100 - (map.Sum(p => p.ZuesKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1))% - N: @Html.Raw(Math.Round(1 / ((100 - Math.Round((map.Sum(p => p.ZuesKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1)) / 100), 1))
                 </td>
                 <td>
                     @Html.Raw(Math.Round((map.Sum(p => p.KnifeKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1))% - Y: @Html.Raw(Math.Round(1 / (Math.Round((map.Sum(p => p.KnifeKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1) / 100), 1))<br />
-                    @Html.Raw(100 - Math.Round((map.Sum(p => p.KnifeKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1))% - N: @Html.Raw(Math.Round(1 / ((100 - Math.Round((map.Sum(p => p.KnifeKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1)) / 100), 1))
+                    @Html.Raw(Math.Round(100 - (map.Sum(p => p.KnifeKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1))% - N: @Html.Raw(Math.Round(1 / ((100 - Math.Round((map.Sum(p => p.KnifeKillWin) / (double)map.Sum(p => p.TotalMatches)) * 100, 1)) / 100), 1))
                 </td>
             </tr>
         }
