@@ -163,7 +163,7 @@
                 K
             </th>
         </tr>
-        @foreach (var map in maplist3M)
+        @foreach (var map in maplist3M.Where(p => p.Count > 0))
         {
             <tr class="mapline @map.FirstOrDefault().Map.ToLower()">
                 <td>
@@ -252,7 +252,7 @@
                 K
             </th>
         </tr>
-        @foreach (var map in maplist6M)
+        @foreach (var map in maplist6M.Where(p => p.Count > 0))
         {
             <tr class="mapline @map.FirstOrDefault().Map.ToLower()">
                 <td>
@@ -350,7 +350,7 @@
                 R16 K
             </th>
         </tr>
-        @foreach (var map in maplist3M)
+        @foreach (var map in maplist3M.Where(p => p.Count > 0))
         {
             <tr class="mapline @map.FirstOrDefault().Map.ToLower()">
                 <td>
@@ -427,7 +427,7 @@
                 R16 K
             </th>
         </tr>
-        @foreach (var map in maplist6M)
+        @foreach (var map in maplist6M.Where(p => p.Count > 0))
         {
             <tr class="mapline @map.FirstOrDefault().Map.ToLower()">
                 <td>
