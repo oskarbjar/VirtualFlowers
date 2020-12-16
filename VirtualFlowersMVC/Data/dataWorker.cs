@@ -94,7 +94,7 @@ namespace VirtualFlowersMVC.Data
 
         #region COMPARE
 
-        public async Task<TeamStatisticPeriodModel> GetTeamPeriodStatistics(int TeamId, List<string> PeriodSelection, ExpectedLineUp expectedLinup, int secondaryTeamId, bool NoCache, int MinFullTeamRanking, string teamRank, string logo)
+        public async Task<TeamStatisticPeriodModel> GetTeamPeriodStatistics(int TeamId, List<string> PeriodSelection, ExpectedLineUp expectedLinup, int secondaryTeamId, bool NoCache, int MinFullTeamRanking, string teamRank, string logo, int? ignoreTeamId = null)
         {
             var result = new TeamStatisticPeriodModel();
             result.TeamId = TeamId;
@@ -104,13 +104,13 @@ namespace VirtualFlowersMVC.Data
             result.Logo = logo;
             foreach (var period in PeriodSelection)
             {
-                await Task.Run(() => result.TeamStatistics.Add(GetTeamPeriodStatistics(TeamId, (PeriodEnum)int.Parse(period), expectedLinup, secondaryTeamId, NoCache, MinFullTeamRanking))).ConfigureAwait(false);
+                await Task.Run(() => result.TeamStatistics.Add(GetTeamPeriodStatistics(TeamId, (PeriodEnum)int.Parse(period), expectedLinup, secondaryTeamId, NoCache, MinFullTeamRanking, ignoreTeamId))).ConfigureAwait(false);
             }
 
             return result;
         }
 
-        public TeamStatisticModel GetTeamPeriodStatistics(int TeamId, PeriodEnum period, ExpectedLineUp expectedLinup, int secondaryTeamId, bool NoCache, int MinFullTeamRanking)
+        public TeamStatisticModel GetTeamPeriodStatistics(int TeamId, PeriodEnum period, ExpectedLineUp expectedLinup, int secondaryTeamId, bool NoCache, int MinFullTeamRanking, int? ignoreTeamId = null)
         {
             var result = new TeamStatisticModel();
             var dTo = DateTime.Now;
@@ -133,7 +133,7 @@ namespace VirtualFlowersMVC.Data
                     break;
             }
 
-            result.Maps = GetMapStatistics(TeamId, dFrom, dTo, expectedLinup, secondaryTeamId, NoCache, MinFullTeamRanking);
+            result.Maps = GetMapStatistics(TeamId, dFrom, dTo, expectedLinup, secondaryTeamId, NoCache, MinFullTeamRanking, ignoreTeamId);
 
             foreach (var map in mapList)
             {
@@ -149,7 +149,7 @@ namespace VirtualFlowersMVC.Data
             return result;
         }
 
-        public List<MapStatisticModel> GetMapStatistics(int TeamId, DateTime dFrom, DateTime dTo, ExpectedLineUp expectedLinup, int secondaryTeamId, bool NoCache, int MinFullTeamRanking)
+        public List<MapStatisticModel> GetMapStatistics(int TeamId, DateTime dFrom, DateTime dTo, ExpectedLineUp expectedLinup, int secondaryTeamId, bool NoCache, int MinFullTeamRanking, int? ignoreTeamId = null)
         {
             var result = new List<MapStatisticModel>();
             List<Match> fixedMatches = null;
@@ -162,9 +162,19 @@ namespace VirtualFlowersMVC.Data
                 fixedMatches = (List<Match>)Cache.Get(CACHEKEY);
             else
             {
-                var matches = _db.Match
-                    .Where(p => (p.Team1Id == TeamId || p.Team2Id == TeamId)
-                    && (p.Date >= dFrom.Date && p.Date <= dTo.Date)).ToList();
+                List<Match> matches = new List<Match>();
+                if (ignoreTeamId.HasValue)
+                {
+                    matches = _db.Match
+                        .Where(p => (p.Team1Id == TeamId || p.Team2Id == TeamId) && !(p.Team1Id == ignoreTeamId.Value || p.Team2Id == ignoreTeamId.Value)
+                        && (p.Date >= dFrom.Date && p.Date <= dTo.Date)).ToList();
+                }
+                else
+                {
+                    matches = _db.Match
+                        .Where(p => (p.Team1Id == TeamId || p.Team2Id == TeamId)
+                        && (p.Date >= dFrom.Date && p.Date <= dTo.Date)).ToList();
+                }
 
                 // Fix matches so that "our" team is always Team1, to simplify later query
                 fixedMatches = FixTeamMatches(matches, TeamId);

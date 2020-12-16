@@ -210,7 +210,7 @@ namespace VirtualFlowersMVC.Controllers
                         var logo2 = CheckIfLogoExist(model.Team2Id);
                         var team2Info = _dataWorker.GetTeamDetails(model.Team2Id);
                         var team2Rank = _program.GetTeamRank(team2Info.TeamId, team2Info.TeamName);
-                        model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team2Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeam2Id, model.NoCache, ftr, team2Rank, logo2));
+                        model.Teams.Add(await _dataWorker.GetTeamPeriodStatistics(model.Team2Id, model.PeriodSelection, model.ExpectedLineUp, secondaryTeam2Id, model.NoCache, ftr, team2Rank, logo2, model.Team1Id));
                         if (model.Teams != null && model.Teams.Count > 0)
                         {
                             _dataWorker.GenerateSuggestedMaps(ref model);
