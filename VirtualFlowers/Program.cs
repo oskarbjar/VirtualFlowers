@@ -497,6 +497,8 @@ namespace VirtualFlowers
                     var fullUrl = prefix + xx;
 
                     var roundDetail = GetRoundsV2(matchUrl, TeamId);
+                    if (roundDetail is null)
+                        return Task.FromResult(0);
 
                     var players = GetTeamLineupFromDetails(fullUrl);
                     if (!players.Players.Any())
@@ -558,6 +560,7 @@ namespace VirtualFlowers
 
                         BombExplosions = rounds.BombExplosions,
                         BombDefuses = rounds.BombDefuses,
+                        BombDefuses1stHalf = rounds.BombDefuses1stHalf,
                         TimeOut = rounds.TimeOut,
                         GrenadeKill = rounds.GrenadeKill,
                         MolotovKill = rounds.MolotovKill,
@@ -761,6 +764,10 @@ namespace VirtualFlowers
                     roundHistory.TimeOut += half.Descendants("img").Count(p => p.Attributes["src"].Value.Contains("stopwatch"));
                 }
 
+                // Get first half defuses
+                roundHistory.BombDefuses1stHalf += results[0].Descendants("img").Count(p => p.Attributes["src"].Value.Contains("bomb_defused"));
+                roundHistory.BombDefuses1stHalf += results[2].Descendants("img").Count(p => p.Attributes["src"].Value.Contains("bomb_defused"));
+
                 // Get which team won 1st and 16th round
                 if (results[0].ChildNodes[0].Attributes["title"].Value.Length > 0) // ef ekki length!
                 {
@@ -813,6 +820,8 @@ namespace VirtualFlowers
                 //gameHtml = HWeb.Load(heatmapUrl);
                 var playersHtml = "//*[@class='player']";
                 var playerResult = gameHtml.DocumentNode.SelectNodes(playersHtml);
+                if (playerResult is null)
+                    return null;
                 foreach (var player in playerResult)
                 {
                     if (player.Descendants("select").Any(p => p.InnerText.Contains("hegrenade")))

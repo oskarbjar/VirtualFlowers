@@ -75,7 +75,7 @@ namespace VirtualFlowersMVC.Controllers
         }
 
         // public List<string> overviewurls = new List<string>();
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpGet]
         public ActionResult Overview()
         {
@@ -97,7 +97,7 @@ namespace VirtualFlowersMVC.Controllers
             return View(list);
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult> Overview(List<OverViewViewModel> list)
         {

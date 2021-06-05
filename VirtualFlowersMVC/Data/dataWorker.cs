@@ -115,7 +115,7 @@ namespace VirtualFlowersMVC.Data
             var result = new TeamStatisticModel();
             var dTo = DateTime.Now;
             var dFrom = new DateTime();
-            var mapList = new List<string> { "nuke", "overpass", "cobblestone", "train", "inferno", "mirage", "cache", "vertigo" };
+            var mapList = new List<string> { "nuke", "overpass", "cobblestone", "train", "inferno", "mirage", "cache", "vertigo", "ancient" };
 
             switch (period)
             {
@@ -296,7 +296,10 @@ namespace VirtualFlowersMVC.Data
                 BombDefuses = n.Sum(p => p.BombDefuses), //Math.Round(n.Sum(p => p.BombDefuses) / (double)n.Count(), 1),
                 BombDefusesWin25 = n.Count(p => p.BombDefuses > 2.5),
                 BombDefusesWin35 = n.Count(p => p.BombDefuses > 3.5),
-                BombDefusesWin45 = n.Count(p => p.BombDefuses > 4.5),//Math.Round((n.Count(p => p.BombDefuses > 3.5) / (double)n.Count()) * 100, 1),
+                BombDefusesWin45 = n.Count(p => p.BombDefuses > 4.5),//Math.Round((n.Count(p => p.BombDefuses > 3.5) / (double)n.Count()) * 100, 1),,
+                BombDefuses1stHalf = n.Sum(p => p.BombDefuses1stHalf), //Math.Round(n.Sum(p => p.BombDefuses) / (double)n.Count(), 1),
+                BombDefuses1stHalfWin15 = n.Count(p => p.BombDefuses1stHalf > 1.5),
+                BombDefuses1stHalfWin25 = n.Count(p => p.BombDefuses1stHalf > 2.5),
                 TimeOut = n.Sum(p => p.TimeOut), //Math.Round(n.Sum(p => p.TimeOut) / (double)n.Count(), 1),
                 TimeOutWin05 = n.Count(p => p.TimeOut > 0.5),
                 TimeOutWin15 = n.Count(p => p.TimeOut > 1.5),//Math.Round((n.Count(p => p.TimeOut > 0.5) / (double)n.Count()) * 100, 1),
@@ -581,6 +584,8 @@ namespace VirtualFlowersMVC.Data
                     return "cch";
                 case "vertigo":
                     return "ver";
+                case "ancient":
+                    return "anc";
                 default:
                     return "";
             }
@@ -625,6 +630,7 @@ namespace VirtualFlowersMVC.Data
                 T2Player5Id = n.Team1Id == TeamId ? n.T2Player5Id : n.T1Player5Id,
                 BombExplosions = n.BombExplosions,
                 BombDefuses = n.BombDefuses,
+                BombDefuses1stHalf = n.BombDefuses1stHalf,
                 TimeOut = n.TimeOut,
                 GrenadeKill = n.GrenadeKill,
                 MolotovKill = n.MolotovKill,

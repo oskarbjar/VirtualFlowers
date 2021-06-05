@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26228.4
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30204.135
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtualFlowers", "VirtualFlowers\VirtualFlowers.csproj", "{7F58940B-CB3D-41E1-9E04-1881067BF4AC}"
 EndProject
@@ -10,6 +10,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtualFlowersMVC", "VirtualFlowersMVC\VirtualFlowersMVC.csproj", "{989D271F-274E-491D-A6D4-B645D8A605C2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtualFlowersFootball", "VirtualFlowersFootball\VirtualFlowersFootball.csproj", "{DBD83E91-82B9-45C6-949C-15CC9B71DFA9}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{ECBC4E1C-557A-453C-9D8E-B68F121A6686}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,8 +35,15 @@ Global
 		{DBD83E91-82B9-45C6-949C-15CC9B71DFA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DBD83E91-82B9-45C6-949C-15CC9B71DFA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DBD83E91-82B9-45C6-949C-15CC9B71DFA9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ECBC4E1C-557A-453C-9D8E-B68F121A6686}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ECBC4E1C-557A-453C-9D8E-B68F121A6686}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ECBC4E1C-557A-453C-9D8E-B68F121A6686}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ECBC4E1C-557A-453C-9D8E-B68F121A6686}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {83FFBA30-9D43-479C-BF64-C4B4DDEF8FBC}
 	EndGlobalSection
 EndGlobal
