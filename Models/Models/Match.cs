@@ -60,6 +60,7 @@ namespace Models
 
         public int BombExplosions { get; set; }
         public int BombDefuses    { get; set; }
+        public int BombDefuses1stHalf { get; set; }
         public int TimeOut        { get; set; }
         public int KnifeKill      { get; set; }
         public int MolotovKill    { get; set; }
@@ -95,6 +96,7 @@ namespace Models
         public bool R16WinCt { get; set; }
 
         public int BombExplosions { get; set; }
+        public int BombDefuses1stHalf { get; set; }
         public int BombDefuses { get; set; }
         public int TimeOut { get; set; }
         public int KnifeKill { get; set; }

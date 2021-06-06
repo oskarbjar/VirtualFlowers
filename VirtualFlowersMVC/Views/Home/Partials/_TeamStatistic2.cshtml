@@ -60,6 +60,10 @@
                 D
             </th>
             <th style="cursor: help" class="htmlTooltipLeft">
+                <div class="tooltiptext"><b>Bomb defuse 1st half round win</b> </div>
+                D1
+            </th>
+            <th style="cursor: help" class="htmlTooltipLeft">
                 <div class="tooltiptext"><b>Timeout round win</b> </div>
                 T
             </th>
@@ -90,93 +94,100 @@
         </tr>
         @foreach (var map in period.Maps)
         {
-            <tr class="mapline @map.Map.ToLower()">
-                <td>
-                    @if (map.SuggestedMap != null)
-                    {
-                        <i class="@map.SuggestedMap.SuggestiveMapClass" title="+@map.SuggestedMap.WinLossRecord wins - Win: @map.SuggestedMap.WinPercent% - Diff.R: @map.SuggestedMap.DifficultyRating - TFR: @map.SuggestedMap.TFRating"></i>
-                    }
-                </td>
-                <td style="cursor: help" class="htmlTooltip">
-                    <div class="tooltiptext">@Html.Raw(@map.TitleMapMatches)</div>
-                    @map.Map.ToLower()
-                </td>
-                <td>
-                    @map.TotalWins / @map.TotalLosses
-                </td>
-                @*<td>
-                        @map.WinPercent%
-                    </td>
-                    <td style="cursor: help" class="htmlTooltipCenter">
-                        <div class="tooltiptext"><b>Av.(win):</b> @map.AverageWinRoundsWhenWin / @map.AverageLossRoundsWhenWin <br /><b>Av.(loss):</b> @map.AverageWinRoundsWhenLoss / @map.AverageLossRoundsWhenLoss</div>
-                        @map.AverageWinRounds / @map.AverageLossRounds
-                    </td>
-                    <td style="cursor: help" class="htmlTooltipCenter">
-                        <div class="tooltiptext">@Html.Raw(@map.FirstRound1HWinPercent.Item2)</div>
-                        @map.FirstRound1HWinPercent.Item1%
-                    </td>
-                    <td style="cursor: help" class="htmlTooltipCenter">
-                        <div class="tooltiptext">@Html.Raw(@map.FirstRound2HWinPercent.Item2)</div>
-                        @map.FirstRound2HWinPercent.Item1%
-                    </td>*@
-                <td style="cursor: help" class="htmlTooltipLeft">
-                    <div class="tooltiptext">
-                        @Html.Raw(Math.Round((map.BombExplosionsWin45 / (double)map.TotalMatches) * 100, 1))% - Over 4.5 Odds: @Html.Raw(Math.Round(1 / (Math.Round((map.BombExplosionsWin45 / (double)map.TotalMatches) * 100, 1) / 100), 1))<br />
-                        @Html.Raw(100 - Math.Round((map.BombExplosionsWin45 / (double)map.TotalMatches) * 100, 1))% - Under 4.5 Odds: @Html.Raw(Math.Round(1 / ((100 - Math.Round((map.BombExplosionsWin45 / (double)map.TotalMatches) * 100, 1)) / 100), 1))
-                    </div>
-                    @Math.Round(map.BombExplosions / (double)map.TotalMatches, 1)
-                </td>
-                <td style="cursor: help" class="htmlTooltipLeft">
-                    <div class="tooltiptext">
-                        @Html.Raw(Math.Round((map.BombDefusesWin35 / (double)map.TotalMatches) * 100, 1))% - Over 3.5 Odds: @Html.Raw(Math.Round(1 / (Math.Round((map.BombDefusesWin35 / (double)map.TotalMatches) * 100, 1) / 100), 1))<br />
-                        @Html.Raw(100 - Math.Round((map.BombDefusesWin35 / (double)map.TotalMatches) * 100, 1))% - Under 3.5 Odds: @Html.Raw(Math.Round(1 / ((100 - Math.Round((map.BombDefusesWin35 / (double)map.TotalMatches) * 100, 1)) / 100), 1))
-                    </div>
-                    @Math.Round(map.BombDefuses / (double)map.TotalMatches, 1)
-                </td>
-                <td style="cursor: help" class="htmlTooltipLeft">
-                    <div class="tooltiptext">
-                        @Html.Raw(Math.Round((map.TimeOutWin05 / (double)map.TotalMatches) * 100, 1))% - Over 0.5 Odds: @Html.Raw(Math.Round(1 / (Math.Round((map.TimeOutWin05 / (double)map.TotalMatches) * 100, 1) / 100), 1))<br />
-                        @Html.Raw(100 - Math.Round((map.TimeOutWin05 / (double)map.TotalMatches) * 100, 1))% - Under 0.5 Odds: @Html.Raw(Math.Round(1 / ((100 - Math.Round((map.TimeOutWin05 / (double)map.TotalMatches) * 100, 1)) / 100), 1))
-                    </div>
-                    @Math.Round(map.TimeOut / (double)map.TotalMatches, 1)
-                </td>
-                <td style="cursor: help" class="htmlTooltipLeft">
-                    <div class="tooltiptext">
-                        @Html.Raw(Math.Round((map.GrenadeKillWin / (double)map.TotalMatches) * 100, 1))% - Yes Odds: @Html.Raw(Math.Round(1 / (Math.Round((map.GrenadeKillWin / (double)map.TotalMatches) * 100, 1) / 100), 1))<br />
-                        @Html.Raw(100 - Math.Round((map.GrenadeKillWin / (double)map.TotalMatches) * 100, 1))% - No Odds: @Html.Raw(Math.Round(1 / ((100 - Math.Round((map.GrenadeKillWin / (double)map.TotalMatches) * 100, 1)) / 100), 1))
-                    </div>
-                    @Math.Round(map.GrenadeKill / (double)map.TotalMatches, 1)
-                </td>
-                <td style="cursor: help" class="htmlTooltipLeft">
-                    <div class="tooltiptext">
-                        @Html.Raw(Math.Round((map.MolotovKillWin / (double)map.TotalMatches) * 100, 1))% - Yes Odds: @Html.Raw(Math.Round(1 / (Math.Round((map.MolotovKillWin / (double)map.TotalMatches) * 100, 1) / 100), 1))<br />
-                        @Html.Raw(100 - Math.Round((map.MolotovKillWin / (double)map.TotalMatches) * 100, 1))% - No Odds: @Html.Raw(Math.Round(1 / ((100 - Math.Round((map.MolotovKillWin / (double)map.TotalMatches) * 100, 1)) / 100), 1))
-                    </div>
-                    @Math.Round(map.MolotovKill / (double)map.TotalMatches, 1)
-                </td>
-                <td style="cursor: help" class="htmlTooltipLeft">
-                    <div class="tooltiptext">
-                        @Html.Raw(Math.Round((map.ZuesKillWin / (double)map.TotalMatches) * 100, 1))% - Yes Odds: @Html.Raw(Math.Round(1 / (Math.Round((map.ZuesKillWin / (double)map.TotalMatches) * 100, 1) / 100), 1))<br />
-                        @Html.Raw(100 - Math.Round((map.ZuesKillWin / (double)map.TotalMatches) * 100, 1))% - No Odds: @Html.Raw(Math.Round(1 / ((100 - Math.Round((map.ZuesKillWin / (double)map.TotalMatches) * 100, 1)) / 100), 1))
-                    </div>
-                    @Math.Round(map.ZuesKill / (double)map.TotalMatches, 1)
-                </td>
-                <td style="cursor: help" class="htmlTooltipLeft">
-                    <div class="tooltiptext">
-                        @Html.Raw(Math.Round((map.KnifeKillWin / (double)map.TotalMatches) * 100, 1))% - Yes Odds: @Html.Raw(Math.Round(1 / (Math.Round((map.KnifeKillWin / (double)map.TotalMatches) * 100, 1) / 100), 1))<br />
-                        @Html.Raw(100 - Math.Round((map.KnifeKillWin / (double)map.TotalMatches) * 100, 1))% - No Odds: @Html.Raw(Math.Round(1 / ((100 - Math.Round((map.KnifeKillWin / (double)map.TotalMatches) * 100, 1)) / 100), 1))
-                    </div>
-                    @Math.Round(map.KnifeKill / (double)map.TotalMatches, 1)
-                </td>
-                <td style="cursor: help" class="htmlTooltipLeft">
-                    <div class="tooltiptext">@Html.Raw(@map.DiffTitleGroupBy)</div>
-                    @map.DifficultyRating
-                </td>
-                <td style="cursor: help" class="htmlTooltipLeft">
-                    <div class="tooltiptext">@Html.Raw(@map.FullTeamGroupBy)</div>
-                    @Math.Round(@map.FullTeamRanking, 1)
-                </td>
-            </tr>
+    <tr class="mapline @map.Map.ToLower()">
+        <td>
+            @if (map.SuggestedMap != null)
+            {
+                <i class="@map.SuggestedMap.SuggestiveMapClass" title="+@map.SuggestedMap.WinLossRecord wins - Win: @map.SuggestedMap.WinPercent% - Diff.R: @map.SuggestedMap.DifficultyRating - TFR: @map.SuggestedMap.TFRating"></i>
+            }
+        </td>
+        <td style="cursor: help" class="htmlTooltip">
+            <div class="tooltiptext">@Html.Raw(@map.TitleMapMatches)</div>
+            @map.Map.ToLower()
+        </td>
+        <td>
+            @map.TotalWins / @map.TotalLosses
+        </td>
+        @*<td>
+            @map.WinPercent%
+        </td>
+        <td style="cursor: help" class="htmlTooltipCenter">
+            <div class="tooltiptext"><b>Av.(win):</b> @map.AverageWinRoundsWhenWin / @map.AverageLossRoundsWhenWin <br /><b>Av.(loss):</b> @map.AverageWinRoundsWhenLoss / @map.AverageLossRoundsWhenLoss</div>
+            @map.AverageWinRounds / @map.AverageLossRounds
+        </td>
+        <td style="cursor: help" class="htmlTooltipCenter">
+            <div class="tooltiptext">@Html.Raw(@map.FirstRound1HWinPercent.Item2)</div>
+            @map.FirstRound1HWinPercent.Item1%
+        </td>
+        <td style="cursor: help" class="htmlTooltipCenter">
+            <div class="tooltiptext">@Html.Raw(@map.FirstRound2HWinPercent.Item2)</div>
+            @map.FirstRound2HWinPercent.Item1%
+        </td>*@
+        <td style="cursor: help" class="htmlTooltipLeft">
+            <div class="tooltiptext">
+                @Html.Raw(Math.Round((map.BombExplosionsWin45 / (double)map.TotalMatches) * 100, 1))% - Over 4.5 Odds: @Html.Raw(Math.Round(1 / (Math.Round((map.BombExplosionsWin45 / (double)map.TotalMatches) * 100, 1) / 100), 1))<br />
+                @Html.Raw(100 - Math.Round((map.BombExplosionsWin45 / (double)map.TotalMatches) * 100, 1))% - Under 4.5 Odds: @Html.Raw(Math.Round(1 / ((100 - Math.Round((map.BombExplosionsWin45 / (double)map.TotalMatches) * 100, 1)) / 100), 1))
+            </div>
+            @Math.Round(map.BombExplosions / (double)map.TotalMatches, 1)
+        </td>
+        <td style="cursor: help" class="htmlTooltipLeft">
+            <div class="tooltiptext">
+                @Html.Raw(Math.Round((map.BombDefusesWin35 / (double)map.TotalMatches) * 100, 1))% - Over 3.5 Odds: @Html.Raw(Math.Round(1 / (Math.Round((map.BombDefusesWin35 / (double)map.TotalMatches) * 100, 1) / 100), 1))<br />
+                @Html.Raw(100 - Math.Round((map.BombDefusesWin35 / (double)map.TotalMatches) * 100, 1))% - Under 3.5 Odds: @Html.Raw(Math.Round(1 / ((100 - Math.Round((map.BombDefusesWin35 / (double)map.TotalMatches) * 100, 1)) / 100), 1))
+            </div>
+            @Math.Round(map.BombDefuses / (double)map.TotalMatches, 1)
+        </td>
+        <td style="cursor: help" class="htmlTooltipLeft">
+            <div class="tooltiptext">
+                @Html.Raw(Math.Round((map.BombDefuses1stHalfWin15 / (double)map.TotalMatches) * 100, 1))% - Over 1.5 Odds: @Html.Raw(Math.Round(1 / (Math.Round((map.BombDefuses1stHalfWin15 / (double)map.TotalMatches) * 100, 1) / 100), 1))<br />
+                @Html.Raw(100 - Math.Round((map.BombDefuses1stHalfWin15 / (double)map.TotalMatches) * 100, 1))% - Under 1.5 Odds: @Html.Raw(Math.Round(1 / ((100 - Math.Round((map.BombDefuses1stHalfWin15 / (double)map.TotalMatches) * 100, 1)) / 100), 1))
+            </div>
+            @Math.Round(map.BombDefuses1stHalf / (double)map.TotalMatches, 1)
+        </td>
+        <td style="cursor: help" class="htmlTooltipLeft">
+            <div class="tooltiptext">
+                @Html.Raw(Math.Round((map.TimeOutWin05 / (double)map.TotalMatches) * 100, 1))% - Over 0.5 Odds: @Html.Raw(Math.Round(1 / (Math.Round((map.TimeOutWin05 / (double)map.TotalMatches) * 100, 1) / 100), 1))<br />
+                @Html.Raw(100 - Math.Round((map.TimeOutWin05 / (double)map.TotalMatches) * 100, 1))% - Under 0.5 Odds: @Html.Raw(Math.Round(1 / ((100 - Math.Round((map.TimeOutWin05 / (double)map.TotalMatches) * 100, 1)) / 100), 1))
+            </div>
+            @Math.Round(map.TimeOut / (double)map.TotalMatches, 1)
+        </td>
+        <td style="cursor: help" class="htmlTooltipLeft">
+            <div class="tooltiptext">
+                @Html.Raw(Math.Round((map.GrenadeKillWin / (double)map.TotalMatches) * 100, 1))% - Yes Odds: @Html.Raw(Math.Round(1 / (Math.Round((map.GrenadeKillWin / (double)map.TotalMatches) * 100, 1) / 100), 1))<br />
+                @Html.Raw(100 - Math.Round((map.GrenadeKillWin / (double)map.TotalMatches) * 100, 1))% - No Odds: @Html.Raw(Math.Round(1 / ((100 - Math.Round((map.GrenadeKillWin / (double)map.TotalMatches) * 100, 1)) / 100), 1))
+            </div>
+            @Math.Round(map.GrenadeKill / (double)map.TotalMatches, 1)
+        </td>
+        <td style="cursor: help" class="htmlTooltipLeft">
+            <div class="tooltiptext">
+                @Html.Raw(Math.Round((map.MolotovKillWin / (double)map.TotalMatches) * 100, 1))% - Yes Odds: @Html.Raw(Math.Round(1 / (Math.Round((map.MolotovKillWin / (double)map.TotalMatches) * 100, 1) / 100), 1))<br />
+                @Html.Raw(100 - Math.Round((map.MolotovKillWin / (double)map.TotalMatches) * 100, 1))% - No Odds: @Html.Raw(Math.Round(1 / ((100 - Math.Round((map.MolotovKillWin / (double)map.TotalMatches) * 100, 1)) / 100), 1))
+            </div>
+            @Math.Round(map.MolotovKill / (double)map.TotalMatches, 1)
+        </td>
+        <td style="cursor: help" class="htmlTooltipLeft">
+            <div class="tooltiptext">
+                @Html.Raw(Math.Round((map.ZuesKillWin / (double)map.TotalMatches) * 100, 1))% - Yes Odds: @Html.Raw(Math.Round(1 / (Math.Round((map.ZuesKillWin / (double)map.TotalMatches) * 100, 1) / 100), 1))<br />
+                @Html.Raw(100 - Math.Round((map.ZuesKillWin / (double)map.TotalMatches) * 100, 1))% - No Odds: @Html.Raw(Math.Round(1 / ((100 - Math.Round((map.ZuesKillWin / (double)map.TotalMatches) * 100, 1)) / 100), 1))
+            </div>
+            @Math.Round(map.ZuesKill / (double)map.TotalMatches, 1)
+        </td>
+        <td style="cursor: help" class="htmlTooltipLeft">
+            <div class="tooltiptext">
+                @Html.Raw(Math.Round((map.KnifeKillWin / (double)map.TotalMatches) * 100, 1))% - Yes Odds: @Html.Raw(Math.Round(1 / (Math.Round((map.KnifeKillWin / (double)map.TotalMatches) * 100, 1) / 100), 1))<br />
+                @Html.Raw(100 - Math.Round((map.KnifeKillWin / (double)map.TotalMatches) * 100, 1))% - No Odds: @Html.Raw(Math.Round(1 / ((100 - Math.Round((map.KnifeKillWin / (double)map.TotalMatches) * 100, 1)) / 100), 1))
+            </div>
+            @Math.Round(map.KnifeKill / (double)map.TotalMatches, 1)
+        </td>
+        <td style="cursor: help" class="htmlTooltipLeft">
+            <div class="tooltiptext">@Html.Raw(@map.DiffTitleGroupBy)</div>
+            @map.DifficultyRating
+        </td>
+        <td style="cursor: help" class="htmlTooltipLeft">
+            <div class="tooltiptext">@Html.Raw(@map.FullTeamGroupBy)</div>
+            @Math.Round(@map.FullTeamRanking, 1)
+        </td>
+    </tr>
         }
     </table>
 }

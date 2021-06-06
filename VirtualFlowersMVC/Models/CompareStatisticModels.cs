@@ -83,6 +83,9 @@ namespace VirtualFlowersMVC.Models
         public double BombDefusesWin25 { get; set; }
         public double BombDefusesWin35 { get; set; }
         public double BombDefusesWin45 { get; set; }
+        public double BombDefuses1stHalf { get; set; }
+        public double BombDefuses1stHalfWin15 { get; set; }
+        public double BombDefuses1stHalfWin25 { get; set; }
         public double TimeOut { get; set; }
         public double TimeOutWin05 { get; set; }
         public double TimeOutWin15 { get; set; }

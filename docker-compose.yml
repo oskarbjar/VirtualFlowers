@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  virtualflowersmvc:
+    image: ${DOCKER_REGISTRY-}virtualflowersmvc
+    build:
+      context: .\VirtualFlowersMVC
+      dockerfile: Dockerfile
