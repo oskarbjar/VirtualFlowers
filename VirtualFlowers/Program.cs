@@ -820,32 +820,33 @@ namespace VirtualFlowers
                 //gameHtml = HWeb.Load(heatmapUrl);
                 var playersHtml = "//*[@class='player']";
                 var playerResult = gameHtml.DocumentNode.SelectNodes(playersHtml);
-                if (playerResult is null)
-                    return null;
-                foreach (var player in playerResult)
+                if (playerResult != null)
                 {
-                    if (player.Descendants("select").Any(p => p.InnerText.Contains("hegrenade")))
+                    foreach (var player in playerResult)
                     {
-                        var hegrenade = player.Descendants("select").Where(p => p.InnerText.Contains("hegrenade")).FirstOrDefault().InnerText;
-                        int.TryParse(hegrenade.Substring(hegrenade.IndexOf("hegrenade (") + "hegrenade (".Length, 1), out int nrHegrenade);
-                        roundHistory.GrenadeKill += nrHegrenade;
-                    }
-                    if (player.Descendants("select").Any(p => p.InnerText.Contains("inferno")))
-                    {
-                        var inferno = player.Descendants("select").Where(p => p.InnerText.Contains("inferno")).FirstOrDefault().InnerText;
-                        int.TryParse(inferno.Substring(inferno.IndexOf("inferno (")+ "inferno (".Length, 1), out int nrInferno);
-                        roundHistory.MolotovKill += nrInferno;
-                    }
-                    if (player.Descendants("select").Any(p => p.InnerText.Contains("taser")))
-                    {
-                        var taser = player.Descendants("select").Where(p => p.InnerText.Contains("taser")).FirstOrDefault().InnerText;
-                        int.TryParse(taser.Substring(taser.IndexOf("taser (") + "taser (".Length, 1), out int nrTaser);
-                        roundHistory.ZuesKill += nrTaser;
-                    }
-                    if (player.Descendants("select").Any(p => p.InnerText.Contains("knife")))
-                    {
-                        // Different kind of knifes, we just increase by 1
-                        roundHistory.KnifeKill += 1;
+                        if (player.Descendants("select").Any(p => p.InnerText.Contains("hegrenade")))
+                        {
+                            var hegrenade = player.Descendants("select").Where(p => p.InnerText.Contains("hegrenade")).FirstOrDefault().InnerText;
+                            int.TryParse(hegrenade.Substring(hegrenade.IndexOf("hegrenade (") + "hegrenade (".Length, 1), out int nrHegrenade);
+                            roundHistory.GrenadeKill += nrHegrenade;
+                        }
+                        if (player.Descendants("select").Any(p => p.InnerText.Contains("inferno")))
+                        {
+                            var inferno = player.Descendants("select").Where(p => p.InnerText.Contains("inferno")).FirstOrDefault().InnerText;
+                            int.TryParse(inferno.Substring(inferno.IndexOf("inferno (") + "inferno (".Length, 1), out int nrInferno);
+                            roundHistory.MolotovKill += nrInferno;
+                        }
+                        if (player.Descendants("select").Any(p => p.InnerText.Contains("taser")))
+                        {
+                            var taser = player.Descendants("select").Where(p => p.InnerText.Contains("taser")).FirstOrDefault().InnerText;
+                            int.TryParse(taser.Substring(taser.IndexOf("taser (") + "taser (".Length, 1), out int nrTaser);
+                            roundHistory.ZuesKill += nrTaser;
+                        }
+                        if (player.Descendants("select").Any(p => p.InnerText.Contains("knife")))
+                        {
+                            // Different kind of knifes, we just increase by 1
+                            roundHistory.KnifeKill += 1;
+                        }
                     }
                 }
 
