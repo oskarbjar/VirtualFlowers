@@ -39,7 +39,7 @@ namespace VirtualFlowersMVC.Controllers
 
         //
         // POST: /Home/Compare
-        [Authorize]
+        //[Authorize]
         [HttpPost]
         public async Task<ActionResult> Compare(CompareStatisticModel model)
         {
